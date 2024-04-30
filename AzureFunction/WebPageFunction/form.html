@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Common Ground Hope Scale</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #C5B4E2;
+            /* Your primary color */
+            --secondary-color: #AC1E2D;
+            /* Your secondary color */
+            --secondary-hover-color: #9B1729;
+            /* A darker shade for the hover state */
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: #fff;
+            /* Change as needed */
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-hover-color);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: #fff;
+            /* Change as needed */
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-hover-color);
+        }
+
+        .text-secondary-color {
+            color: var(--secondary-color);
+        }
+
+        .form-checkbox:checked {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .focus\:ring-primary:focus {
+            ring-color: var(--primary-color);
+        }
+
+        .focus\:ring-secondary:focus {
+            ring-color: var(--secondary-color);
+        }
+
+        .hope-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .hope-table th,
+        .hope-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .hope-table thead th {
+            background-color: #f3f4f6;
+            font-weight: bold;
+        }
+
+        .question-row {
+            background-color: #e2e8f0;
+            /* Adjusted for better visibility */
+            font-weight: bold;
+            text-align: left;
+            /* Aligns text to the left */
+        }
+
+        .response-row {
+            background-color: #ffffff;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('hopeScaleForm');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission behavior
+                const formData = new FormData(form);
+                const jsonOutput = {
+                    fields: [
+                        // Construct your JSON object here based on form data
+                    ]
+                };
+                console.log(JSON.stringify(jsonOutput)); // For demonstration, logging to console
+
+                // Optionally, send the JSON data to a server or API endpoint
+                // fetch('/api/submit', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify(jsonOutput)
+                // }).then(response => response.json())
+                //   .then(data => console.log(data))
+                //   .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+</head>
+
+<body class="bg-gray-100 text-gray-700 font-sans leading-normal">
+    <div class="flex justify-center pt-10">
+        <form id="hopeScaleForm" action="/submit-your-form" method="post" class="w-full max-w-4xl bg-white rounded-lg shadow-xl p-6">
+            <!-- Client Information Section -->
+
+            <h1 class="text-3xl font-bold mb-4 secondary-text">Hope Survey Form</h1>
+            <div class="mb-6 p-4 border rounded-lg bg-white">
+                <h2 class="text-xl font-semibold mb-4">Client Information</h2>
+                <div class="flex flex-wrap -mx-3">
+                    <!-- Client Name -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">Client Name</div>
+                        <div class="text-gray-600" id="client-name">CARR Malik</div>
+                    </div>
+
+                    <!-- Client DOB -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">Client DOB</div>
+                        <div class="text-gray-600" id="client-dob">03/08/1996</div>
+                    </div>
+
+                    <!-- Client Address -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">Client Address</div>
+                        <div class="text-gray-600" id="client-address">1234 Street Ln, City, State</div>
+                    </div>
+
+                    <!-- Client Phone -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">Client Phone</div>
+                        <div class="text-gray-600" id="client-phone">(248) 238-4678</div>
+                    </div>
+
+                    <!-- CONID -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">CONID</div>
+                        <div class="text-gray-600" id="conid">781350</div>
+                    </div>
+
+                    <!-- Medical Risk -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">Medical Risk</div>
+                        <div class="text-gray-600" id="medical-risk">No Medical Risk</div>
+                    </div>
+
+                    <!-- Last 4 of SSN -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">Last 4 of SSN</div>
+                        <div class="text-gray-600" id="ssn">1234</div>
+                    </div>
+
+                    <!-- Insurance Information -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">Insurance Information</div>
+                        <div class="text-gray-600" id="insurance-info">Provider Plan Details</div>
+                    </div>
+
+                    <!-- Primary Care Physician -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">Primary Care Physician</div>
+                        <div class="text-gray-600" id="primary-care-physician">Dr. Jane Doe</div>
+                    </div>
+
+                    <!-- Emergency Contact -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">Emergency Contact</div>
+                        <div class="text-gray-600" id="emergency-contact">John Doe (555) 555-5555</div>
+                    </div>
+
+                    <!-- Current Medications -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">Current Medications</div>
+                        <div class="text-gray-600" id="current-medications">Medication List</div>
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="w-full md:w-1/2 px-3 mb-6">
+                        <div class="text-gray-700 font-bold">Gender</div>
+                        <div class="text-gray-600" id="gender">Male</div>
+                    </div>
+                </div>
+            </div>
+
+            <h1 class="text-3xl font-bold mb-4 secondary-text">Common Ground Hope Scale</h1>
+            <p class="mb-6">Our goal is to better understand how we can help you move from crisis to hope. Your input is
+                important to help us achieve that goal.</p>
+            <!-- Hope Comparison Table Section -->
+            <div class="mb-6 p-4 border rounded-lg bg-white">
+                <h2 class="text-xl font-semibold mb-4">How hopeful were you that you can do the following when things
+                    aren't going well before and after Common Ground helped you?</h2>
+                <div class="overflow-x-auto">
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">Try new solutions to my challenges</td>
+                            </tr>
+                            <tr>
+                                <th></th> <!-- Empty for the row labels (Before/After) -->
+                                <th>No Hope</th>
+                                <th>Little Hope</th>
+                                <th>Some Hope</th>
+                                <th>Strong Hope</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td>Before</td>
+                                <td><input type="radio" name="question1_before" value="No Hope"></td>
+                                <td><input type="radio" name="question1_before" value="Little Hope"></td>
+                                <td><input type="radio" name="question1_before" value="Some Hope"></td>
+                                <td><input type="radio" name="question1_before" value="Strong Hope"></td>
+                            </tr>
+                            <tr class="response-row">
+                                <td>After</td>
+                                <td><input type="radio" name="question1_after" value="No Hope"></td>
+                                <td><input type="radio" name="question1_after" value="Little Hope"></td>
+                                <td><input type="radio" name="question1_after" value="Some Hope"></td>
+                                <td><input type="radio" name="question1_after" value="Strong Hope"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">Find resources to help me</td>
+                            </tr>
+                            <tr>
+                                <th></th> <!-- Empty for the row labels (Before/After) -->
+                                <th>No Hope</th>
+                                <th>Little Hope</th>
+                                <th>Some Hope</th>
+                                <th>Strong Hope</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td>Before</td>
+                                <td><input type="radio" name="question2_before" value="No Hope"></td>
+                                <td><input type="radio" name="question2_before" value="Little Hope"></td>
+                                <td><input type="radio" name="question2_before" value="Some Hope"></td>
+                                <td><input type="radio" name="question2_before" value="Strong Hope"></td>
+                            </tr>
+                            <tr class="response-row">
+                                <td>After</td>
+                                <td><input type="radio" name="question2_after" value="No Hope"></td>
+                                <td><input type="radio" name="question2_after" value="Little Hope"></td>
+                                <td><input type="radio" name="question2_after" value="Some Hope"></td>
+                                <td><input type="radio" name="question2_after" value="Strong Hope"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">Contact someone if I need support</td>
+                            </tr>
+                            <tr>
+                                <th></th> <!-- Empty for the row labels (Before/After) -->
+                                <th>No Hope</th>
+                                <th>Little Hope</th>
+                                <th>Some Hope</th>
+                                <th>Strong Hope</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td>Before</td>
+                                <td><input type="radio" name="question3_before" value="No Hope"></td>
+                                <td><input type="radio" name="question3_before" value="Little Hope"></td>
+                                <td><input type="radio" name="question3_before" value="Some Hope"></td>
+                                <td><input type="radio" name="question3_before" value="Strong Hope"></td>
+                            </tr>
+                            <tr class="response-row">
+                                <td>After</td>
+                                <td><input type="radio" name="question3_after" value="No Hope"></td>
+                                <td><input type="radio" name="question3_after" value="Little Hope"></td>
+                                <td><input type="radio" name="question3_after" value="Some Hope"></td>
+                                <td><input type="radio" name="question3_after" value="Strong Hope"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">Meet the goals that I set for myself</td>
+                            </tr>
+                            <tr>
+                                <th></th> <!-- Empty for the row labels (Before/After) -->
+                                <th>No Hope</th>
+                                <th>Little Hope</th>
+                                <th>Some Hope</th>
+                                <th>Strong Hope</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td>Before</td>
+                                <td><input type="radio" name="question4_before" value="No Hope"></td>
+                                <td><input type="radio" name="question4_before" value="Little Hope"></td>
+                                <td><input type="radio" name="question4_before" value="Some Hope"></td>
+                                <td><input type="radio" name="question4_before" value="Strong Hope"></td>
+                            </tr>
+                            <tr class="response-row">
+                                <td>After</td>
+                                <td><input type="radio" name="question4_after" value="No Hope"></td>
+                                <td><input type="radio" name="question4_after" value="Little Hope"></td>
+                                <td><input type="radio" name="question4_after" value="Some Hope"></td>
+                                <td><input type="radio" name="question4_after" value="Strong Hope"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">Have the ability to identify the things in life that are important to me
+                                </td>
+                            </tr>
+                            <tr>
+                                <th></th> <!-- Empty for the row labels (Before/After) -->
+                                <th>No Hope</th>
+                                <th>Little Hope</th>
+                                <th>Some Hope</th>
+                                <th>Strong Hope</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td>Before</td>
+                                <td><input type="radio" name="question5_before" value="No Hope"></td>
+                                <td><input type="radio" name="question5_before" value="Little Hope"></td>
+                                <td><input type="radio" name="question5_before" value="Some Hope"></td>
+                                <td><input type="radio" name="question5_before" value="Strong Hope"></td>
+                            </tr>
+                            <tr class="response-row">
+                                <td>After</td>
+                                <td><input type="radio" name="question5_after" value="No Hope"></td>
+                                <td><input type="radio" name="question5_after" value="Little Hope"></td>
+                                <td><input type="radio" name="question5_after" value="Some Hope"></td>
+                                <td><input type="radio" name="question5_after" value="Strong Hope"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="mb-6 p-4 border rounded-lg bg-white">
+                <h2 class="text-xl font-semibold mb-4">Please select the response that best rates your level of
+                    agreement or
+                    disagreement with the following statements</h2>
+                <div class="overflow-x-auto">
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">I feel more hopeful because of my visit to Common Ground.</td>
+                            </tr>
+                            <tr>
+                                <th>Strongly Disagree</th>
+                                <th>Disagree</th>
+                                <th>Agree</th>
+                                <th>Strongly Agree</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td><input type="radio" name="question6" value="No Hope"></td>
+                                <td><input type="radio" name="question6" value="Little Hope"></td>
+                                <td><input type="radio" name="question6" value="Some Hope"></td>
+                                <td><input type="radio" name="question6" value="Strong Hope"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">The staff that worked with me were friendly and welcoming.</td>
+                            </tr>
+                            <tr>
+                                <th>Strongly Disagree</th>
+                                <th>Disagree</th>
+                                <th>Agree</th>
+                                <th>Strongly Agree</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td><input type="radio" name="question7" value="No Hope"></td>
+                                <td><input type="radio" name="question7" value="Little Hope"></td>
+                                <td><input type="radio" name="question7" value="Some Hope"></td>
+                                <td><input type="radio" name="question7" value="Strong Hope"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">I was satisfied with the amount of help I received</td>
+                            </tr>
+                            <tr>
+                                <th>Strongly Disagree</th>
+                                <th>Disagree</th>
+                                <th>Agree</th>
+                                <th>Strongly Agree</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td><input type="radio" name="question8" value="No Hope"></td>
+                                <td><input type="radio" name="question8" value="Little Hope"></td>
+                                <td><input type="radio" name="question8" value="Some Hope"></td>
+                                <td><input type="radio" name="question8" value="Strong Hope"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">If a friend were in need of similar help, I would recommend Common
+                                    Ground to him or her</td>
+                            </tr>
+                            <tr>
+                                <th>Strongly Disagree</th>
+                                <th>Disagree</th>
+                                <th>Agree</th>
+                                <th>Strongly Agree</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td><input type="radio" name="question9" value="No Hope"></td>
+                                <td><input type="radio" name="question9" value="Little Hope"></td>
+                                <td><input type="radio" name="question9" value="Some Hope"></td>
+                                <td><input type="radio" name="question9" value="Strong Hope"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Memo Fields for Additional Comments -->
+            <div class="mb-6">
+                <label for="additional-comments" class="block text-sm font-medium text-gray-700"></label>
+                <textarea id="additional-comments" name="additional-comments" rows="4"
+                    class="mt-1 block w-full rounded-md shadow-sm border-2 border-gray-600"
+                    placeholder=" If you did not receive the kind or type of help that you expected, what could we do to help?"></textarea>
+                <!-- Textareas for each of the memo questions as in the JSON -->
+            </div>
+            <div class="mb-6">
+                <label for="additional-comments" class="block text-sm font-medium text-gray-700"></label>
+                <textarea id="additional-comments" name="additional-comments" rows="4"
+                    class="mt-1 block w-full rounded-md shadow-sm border-2 border-gray-600"
+                    placeholder=" If you did not feel more hope when you left our services, was there anything more we could have done?"></textarea>
+                <!-- Textareas for each of the memo questions as in the JSON -->
+            </div>
+            <div class="mb-6">
+                <label for="additional-comments" class="block text-sm font-medium text-gray-700"></label>
+                <textarea id="additional-comments" name="additional-comments" rows="4"
+                    class="mt-1 block w-full rounded-md shadow-sm border-2 border-gray-600"
+                    placeholder=" Are there any other comments you would like to make?"></textarea>
+                <!-- Textareas for each of the memo questions as in the JSON -->
+            </div>
+
+            <!-- Client Declined Checkbox -->
+            <div class="flex items-center mb-6">
+                <input id="HS_ClientDeclinedForm" name="HS_ClientDeclinedForm" type="checkbox"
+                    class="form-checkbox h-5 w-5 text-secondary-color" />
+                <label for="HS_ClientDeclinedForm" class="ml-2 block text-sm font-medium text-gray-700">Client declined
+                    to complete form</label>
+            </div>
+            <!-- Submit and Cancel Buttons -->
+            <div class="flex justify-end space-x-4 mt-6">
+                <button type="button"
+                    class="px-6 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-primary btn-primary hover:bg-purple-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">Cancel</button>
+                <button type="submit"
+                    class="px-6 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md bg-secondary btn-secondary hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-colors duration-150">Submit</button>
+            </div>
+
+        </form>
+    </div>
+</body>
+
+</html>
