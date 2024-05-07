@@ -1,8 +1,7 @@
 from datetime import datetime
 import os
 import time
-
-# from typing import LiteralString
+from typing import LiteralString
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
@@ -89,6 +88,7 @@ def login(driver, username, password, url):
         # Handle MFA
         if config.get("mfa"):
             handle_mfa(driver)
+
     except Exception as e:
         print(f"An exception occurred during login: {e}")
 
@@ -104,17 +104,18 @@ def accept_alert(driver):
         alert = driver.switch_to.alert
         alert.accept()
     except:
-        print("accept_alert ")
+        print(" accept_alert ")
         pass
 
 
 def get_appointments(driver):
-    schedule_url = f"https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
+    schedule_url: LiteralString = (
+        f"https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
+    )
     driver.get(schedule_url)
     # Call this function before interacting with elements that might trigger alerts
     accept_alert(driver)
-    print("getting schedule_url: ", schedule_url)
-    time.sleep(10)
+    time.sleep(5)
 
     if driver.current_url != schedule_url:
         print("Login has failed")
@@ -131,6 +132,7 @@ def get_appointments(driver):
             )
         )
     )
+
     button.click()
 
     time.sleep(3)
@@ -189,7 +191,7 @@ def main():
     print("Initializing driver...")
     driver = initialize_driver()
     if driver:
-        print(" driver Succesfully Ini...")
+        print(" driver Succesfully Initialized...")
 
     login(driver, username, password, login_url)
     time.sleep(2)
