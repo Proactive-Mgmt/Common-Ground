@@ -1,0 +1,13 @@
+{
+  "credentials": {
+    "login_url": "https://static.practicefusion.com/apps/ehr/index.html#/login",
+    "username": "syoung@commongroundhelps.org",
+    "password": "Evolution!"
+  },
+  "selenium_options": {
+    "headless": true,
+    "window_size": "1920,1080"
+  },
+  "log_level": "DEBUG",
+  "mfa": false
+}
