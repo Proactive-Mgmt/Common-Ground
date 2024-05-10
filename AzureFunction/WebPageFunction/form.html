@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Common Ground Hope Scale</title>
@@ -45,7 +44,8 @@
         }
 
         .focus\:ring-primary:focus {
-            box-shadow: 0 0 0 3px var(--primary-color); /* Adjust the size of the ring with the '3px' value */
+            box-shadow: 0 0 0 3px var(--primary-color);
+            /* Adjust the size of the ring with the '3px' value */
         }
 
         .focus\:ring-secondary:focus {
@@ -82,39 +82,17 @@
             background-color: #ffffff;
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('hopeScaleForm');
-            form.addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent the default form submission behavior
-                const formData = new FormData(form);
-                const jsonOutput = {
-                    fields: [
-                        // Construct your JSON object here based on form data
-                    ]
-                };
-                console.log(JSON.stringify(jsonOutput)); // For demonstration, logging to console
-
-                // Optionally, send the JSON data to a server or API endpoint
-                // fetch('/api/submit', {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     },
-                //     body: JSON.stringify(jsonOutput)
-                // }).then(response => response.json())
-                //   .then(data => console.log(data))
-                //   .catch(error => console.error('Error:', error));
-            });
-        });
-    </script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"
+        integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"
+        crossorigin="anonymous"></script>
 </head>
 
 <body class="bg-gray-100 text-gray-700 font-sans leading-normal">
     <div class="flex justify-center pt-10">
-        <form id="hopeScaleForm" action="/submit-your-form" method="post" class="w-full max-w-4xl bg-white rounded-lg shadow-xl p-6">
+        <form id="hopeScaleForm" action="/submit-your-form" method="post"
+            class="w-full max-w-4xl bg-white rounded-lg shadow-xl p-6"
+            hx-post="http://localhost:7071/api/WebPageFunction/run" hx-target="#response-output" hx-swap="outerHTML">
             <!-- Client Information Section -->
-
             <h1 class="text-3xl font-bold mb-4 secondary-text">Hope Survey Form</h1>
             <div class="mb-6 p-4 border rounded-lg bg-white">
                 <h2 class="text-xl font-semibold mb-4">Client Information</h2>
@@ -197,7 +175,7 @@
             <p class="mb-6">Our goal is to better understand how we can help you move from crisis to hope. Your input is
                 important to help us achieve that goal.</p>
             <!-- Hope Comparison Table Section -->
-            <div class="mb-6 p-4 border rounded-lg bg-white">
+            <div id="hope-comparison-section" class="mb-6 p-4 border rounded-lg bg-white">
                 <h2 class="text-xl font-semibold mb-4">How hopeful were you that you can do the following when things
                     aren't going well before and after Common Ground helped you?</h2>
                 <div class="overflow-x-auto">
@@ -355,11 +333,9 @@
                 </div>
             </div>
 
-
-            <div class="mb-6 p-4 border rounded-lg bg-white">
-                <h2 class="text-xl font-semibold mb-4">Please select the response that best rates your level of
-                    agreement or
-                    disagreement with the following statements</h2>
+            <!-- Agree disagree Section -->
+            <div id="agree-disagree-section" class="mb-6 p-4 border rounded-lg bg-white">
+                <h2 class="text-xl font-semibold mb-4">Please select the response that best rates your level of agreement or disagreement with the following statements</h2>
                 <div class="overflow-x-auto">
                     <table class="hope-table">
                         <thead>
