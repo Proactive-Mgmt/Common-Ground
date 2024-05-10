@@ -174,7 +174,7 @@ def get_appointments(driver):
             "patientName": row[1].split("\n")[0].strip(),
             "patientDOB": row[1].split("\n")[3].strip(),
             "patientPhone": patientPhone,
-            "appointmentTime": appointmentTime.strftime("%Y-%m-%d %H:%M:%S"),
+            "appointmentTime": appointmentTime.strftime("%Y-%m-%dT%H:%M"),
             "appointmentStatus": row[0],
         }
         appointments.append(appointment)
