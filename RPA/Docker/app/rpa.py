@@ -1,11 +1,7 @@
 from datetime import datetime
 import os
 import time
-
-# Import transformation modules
-from Docker.app.save import save_appointments
-
-# from typing import LiteralString
+from typing import LiteralString
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
@@ -13,21 +9,6 @@ import json
 import logging
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-
-# Configure logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename="selenium_log.log",
-    filemode="w",
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-)
-
-with open("config.json") as config_file:
-    config = json.load(config_file)
-    credentials = config["credentials"]
-    username = credentials["username"]
-    password = credentials["password"]
-    login_url = credentials["login_url"]
 
 
 def initialize_driver():
@@ -92,6 +73,7 @@ def login(driver, username, password, url):
         # Handle MFA
         if config.get("mfa"):
             handle_mfa(driver)
+
     except Exception as e:
         print(f"An exception occurred during login: {e}")
 
@@ -107,23 +89,21 @@ def accept_alert(driver):
         alert = driver.switch_to.alert
         alert.accept()
     except:
-        print("accept_alert ")
+        print(" accept_alert ")
         pass
 
 
 def get_appointments(driver):
-    schedule_url = f"https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
+    schedule_url: LiteralString = (
+        f"https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
+    )
     driver.get(schedule_url)
     # Call this function before interacting with elements that might trigger alerts
     accept_alert(driver)
-    print("getting schedule_url: ", schedule_url)
-    time.sleep(10)
+    time.sleep(5)
 
     if driver.current_url != schedule_url:
-        print(
-            f"Login has failed driver.current_url {driver.current_url} schedule_url: {schedule_url}"
-        )
-        return
+        print("")
     else:
         print("Login Successful")
 
@@ -136,9 +116,10 @@ def get_appointments(driver):
             )
         )
     )
+
     button.click()
 
-    time.sleep(5)
+    time.sleep(3)
 
     # Find the HTML element representing the table
     table = driver.find_element(
@@ -174,13 +155,19 @@ def get_appointments(driver):
         dummy_date = datetime.today().date()
         # # Combine the time object with the dummy date
         appointmentTime = datetime.combine(dummy_date, time_object)
+        patientDOBraw = row[1].split("\n")[3].strip()
+        # Convert the input date string to a datetime object
+        date_object: datetime = datetime.strptime(patientDOBraw, "%m/%d/%Y")
+        patientDOB = date_object.strftime("%Y-%m-%d")
 
         appointment = {
             "patientName": row[1].split("\n")[0].strip(),
-            "patientDOB": row[1].split("\n")[3].strip(),
+            "patientDOB": patientDOB,
             "patientPhone": patientPhone,
             "appointmentTime": appointmentTime.strftime("%Y-%m-%dT%H:%M"),
             "appointmentStatus": row[0],
+            "provider": row[3],
+            "type": row[4],
         }
         appointments.append(appointment)
 
@@ -188,22 +175,35 @@ def get_appointments(driver):
     return json.dumps(appointments, indent=4)
 
 
-def main():
+with open("config.json") as config_file:
+    config = json.load(config_file)
+    credentials = config["credentials"]
+    username = credentials["username"]
+    password = credentials["password"]
+    login_url = credentials["login_url"]
+
+
+def return_appointments():
     # Load config file
+
+    # print(f"username: {username} password: {password} login_url: {login_url}")
 
     print("Initializing driver...")
     driver = initialize_driver()
     if driver:
-        print(" driver Succesfully Ini...")
+        print(" driver Succesfully Initialized...")
 
     login(driver, username, password, login_url)
     time.sleep(2)
     # print("Starting to process accounts...")
     appointments = get_appointments(driver)
-    save_appointments(appointments)
 
-    print(f"Appointments: {appointments}")
+    # save_appointments(appointments)
+
+    # print(f"Appointments: {appointments}")
+
+    return appointments
 
 
 if __name__ == "__main__":
-    main()
+    return_appointments()
