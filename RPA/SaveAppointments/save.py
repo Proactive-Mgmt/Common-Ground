@@ -10,6 +10,7 @@ with open("config.json") as config_file:
 
 
 def get_appoiments():
+
     appointments: list[dict[str, str]] = [
         {
             "patientName": "BRUCE WAYNE",
@@ -22,13 +23,13 @@ def get_appoiments():
     return appointments
 
 
-def save_appointments():
+def save_appointments(appointments):
     connection_string = f"DefaultEndpointsProtocol=https;AccountName={account_name};==>REPLACED==>={account_key};EndpointSuffix=core.windows.net"
     table_name = "appointments"
     table_client = TableClient.from_connection_string(connection_string, table_name)
 
     # Define your data (assuming you have a list of appointments in JSON format)
-    appointments = get_appoiments()
+    # appointments = get_appoiments()
 
     # Insert or update each appointment
     for appointment in appointments:
@@ -43,4 +44,6 @@ def save_appointments():
 
 
 if __name__ == "__main__":
-    save_appointments()
+    appointments = get_appoiments()
+
+    save_appointments(appointments)

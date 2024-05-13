@@ -198,7 +198,7 @@ def main():
     time.sleep(2)
     # print("Starting to process accounts...")
     appointments = get_appointments(driver)
-    save_appointments()
+    save_appointments(appointments)
 
     print(f"Appointments: {appointments}")
 

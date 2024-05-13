@@ -10,6 +10,9 @@ import logging
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
+# from SaveAppointments.save import save_appointments
+
+
 # Configure logging
 logging.basicConfig(
     level=logging.DEBUG,
@@ -182,6 +185,8 @@ def get_appointments(driver):
             "patientPhone": patientPhone,
             "appointmentTime": appointmentTime.strftime("%Y-%m-%dT%H:%M"),
             "appointmentStatus": row[0],
+            "provider": row[3],
+            "type": row[4],
         }
         appointments.append(appointment)
 
@@ -192,6 +197,21 @@ def get_appointments(driver):
 def main():
     # Load config file
 
+    # Configure logging
+    logging.basicConfig(
+        level=logging.DEBUG,
+        filename="selenium_log.log",
+        filemode="w",
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
+
+    with open("config.json") as config_file:
+        config = json.load(config_file)
+        credentials = config["credentials"]
+        username = credentials["username"]
+        password = credentials["password"]
+        login_url = credentials["login_url"]
+
     print("Initializing driver...")
     driver = initialize_driver()
     if driver:
@@ -201,6 +221,8 @@ def main():
     time.sleep(2)
     # print("Starting to process accounts...")
     appointments = get_appointments(driver)
+
+    # save_appointments(appointments)
 
     print(f"Appointments: {appointments}")
 
