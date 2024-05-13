@@ -2,6 +2,9 @@ from datetime import datetime
 import os
 import time
 
+# Import transformation modules
+from SaveAppointments.save import save_appointments
+
 # from typing import LiteralString
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -195,6 +198,7 @@ def main():
     time.sleep(2)
     # print("Starting to process accounts...")
     appointments = get_appointments(driver)
+    save_appointments()
 
     print(f"Appointments: {appointments}")
 

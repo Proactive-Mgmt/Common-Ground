@@ -171,10 +171,14 @@ def get_appointments(driver):
         dummy_date = datetime.today().date()
         # # Combine the time object with the dummy date
         appointmentTime = datetime.combine(dummy_date, time_object)
+        patientDOBraw = row[1].split("\n")[3].strip()
+        # Convert the input date string to a datetime object
+        date_object: datetime = datetime.strptime(patientDOBraw, "%m/%d/%Y")
+        patientDOB = date_object.strftime("%Y-%m-%d")
 
         appointment = {
             "patientName": row[1].split("\n")[0].strip(),
-            "patientDOB": row[1].split("\n")[3].strip(),
+            "patientDOB": patientDOB,
             "patientPhone": patientPhone,
             "appointmentTime": appointmentTime.strftime("%Y-%m-%dT%H:%M"),
             "appointmentStatus": row[0],
