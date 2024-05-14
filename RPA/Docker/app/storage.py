@@ -46,11 +46,12 @@ def save_appointments(appointments):
         appointment["PartitionKey"] = appointment["patientPhone"][-1]
 
         entity = TableEntity(**appointment)
+
         table_client.upsert_entity(entity)
 
     print("Data inserted/updated successfully!")
 
 
-# if __name__ == "__main__":
-#     appointments: list[dict[str, str]] = get_appoiments()
-#     save_appointments(appointments)
+if __name__ == "__main__":
+    appointments: list[dict[str, str]] = get_appoiments()
+    save_appointments(appointments)

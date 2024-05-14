@@ -1,6 +1,6 @@
 import json
 import logging
-import save
+import storage as storage
 from rpa import return_appointments
 
 
@@ -25,7 +25,7 @@ def main():
 
     # print("Starting to process accounts...")
     appointments = return_appointments()
-    save.save_appointments(appointments)
+    storage.save_appointments(appointments)
 
     # save_appointments(appointments)
 
