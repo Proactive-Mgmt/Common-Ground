@@ -2,6 +2,7 @@ import json
 import logging
 import storage as storage
 from rpa import return_appointments
+import message as message
 
 
 logging.basicConfig(
@@ -24,9 +25,29 @@ def main():
     print("Initializing orchestrator")
 
     # print("Starting to process accounts...")
-    appointments = return_appointments()
-    storage.save_appointments(appointments)
 
+    appointments = json.loads(return_appointments())
+
+    # Filter Python objects with list comprehensions
+    print("Pre filter", appointments)
+    # Filter appointments
+    filtered_appointments = [
+        appointment
+        for appointment in appointments
+        if appointment["provider"] == "BHUC COMMON GROUND"
+        and appointment["type"] == "CLINICIAN"
+        and appointment["appointmentStatus"] == "Seen"
+    ]
+
+    print("Post Filter", filtered_appointments)
+
+    storage.save_appointments(filtered_appointments)
+
+    appointments = storage.get_appointments()
+
+    processed_appointments = message.process_messages(appointments)
+    print("processed_appointments ", processed_appointments)
+    storage.save_processed_appointments(processed_appointments)
     # save_appointments(appointments)
 
     print(f"Appointments: {appointments}")

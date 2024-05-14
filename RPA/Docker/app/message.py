@@ -3,6 +3,7 @@ import json
 import os
 from twilio.rest import Client
 from azure.data.tables import TableClient
+from datetime import datetime, timezone
 
 with open("config.json") as config_file:
     config = json.load(config_file)
@@ -14,36 +15,39 @@ with open("config.json") as config_file:
     campaign_sid = credentials["campaign_sid"]
 
 
-def main():
+def process_messages(appointments):
     # Initialize the Twilio client
     client = Client(account_sid, auth_token)
-    entities = get_appointments()
-    for entity in entities:
-        for key in entity.keys():
-            print(f"Key: {key}, Value: {entity[key]}")
-        sendMessage(client, entity["patientPhone"])
-    print("OK")
+    # appointments = get_appointments()
+
+    for appointment in appointments:
+        # for key in appointment.keys():
+        #     print(f"Key: {key}, Value: {appointment[key]}")
+        message_sid = sendMessage(
+            client, appointment["patientPhone"], appointment["RowKey"]
+        )
+        appointment["sentOn"] = message_sid
+        appointment["message_sid"] = datetime.now(timezone.utc)
+    return appointments
 
 
 def get_appointments() -> None:
-
-    connection_string = "==>REPLACED==>=***REMOVED***;EndpointSuffix=core.windows.net"
-    table_name = "appointments"
-
-    table_client: TableClient = TableClient.from_connection_string(
-        conn_str=connection_string, table_name=table_name
-    )
-
-    my_filter = "patientName  eq 'BRUCE WAYNE'"
-    entities = table_client.query_entities(my_filter)
-
-    # for entity in entities:
-    #     for key in entity.keys():
-    #         print(f"Key: {key}, Value: {entity[key]}")
-    return list(entities)
+    return [
+        {
+            "patientName": "BRUCE WAYNE",
+            "patientDOB": "2001-06-15",
+            "patientPhone": "1234123412",
+            "appointmentTime": "2024-04-29T11:00",
+            "appointmentStatus": "Seen",
+            "provider": "BHUC COMMON GROUND",
+            "type": "CLINICIAN",
+            "sentOn ": "",
+            "message_sid ": "",
+        }
+    ]
 
 
-def sendMessage(client, to_phone_number):
+def sendMessage(client, to_phone_number, rowKey):
 
     # Define the message parameters
     to_phone_number = (
@@ -59,8 +63,8 @@ def sendMessage(client, to_phone_number):
         messaging_service_sid=campaign_sid,
     )
     print(f"SMS sent with SID: {message.sid}")
-    return True
+    return message.sid
 
 
 if __name__ == "__main__":
-    main()
+    process_messages(get_appointments())

@@ -100,10 +100,10 @@ def get_appointments(driver):
     driver.get(schedule_url)
     # Call this function before interacting with elements that might trigger alerts
     accept_alert(driver)
-    time.sleep(5)
+    time.sleep(10)
 
     if driver.current_url != schedule_url:
-        print("")
+        print("Login Failed")
     else:
         print("Login Successful")
 
