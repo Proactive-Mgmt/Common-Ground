@@ -82,16 +82,14 @@
             background-color: #ffffff;
         }
     </style>
-    <script src="https://unpkg.com/htmx.org@1.9.12"
+    <!-- <script src="https://unpkg.com/htmx.org@1.9.12"
         integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"
-        crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script> -->
 </head>
 
 <body class="bg-gray-100 text-gray-700 font-sans leading-normal">
     <div class="flex justify-center pt-10">
-        <form id="hopeScaleForm" action="/submit-your-form" method="post"
-            class="w-full max-w-4xl bg-white rounded-lg shadow-xl p-6"
-            hx-post="http://localhost:7071/api/WebPageFunction/run" hx-target="#response-output" hx-swap="outerHTML">
+        <form id="hopeScaleForm" action="/api/submit" method="get" class="w-full max-w-4xl bg-white rounded-lg shadow-xl p-6">
             <!-- Client Information Section -->
             <h1 class="text-3xl font-bold mb-4 secondary-text">Hope Survey Form</h1>
             <div class="mb-6 p-4 border rounded-lg bg-white">
