@@ -9,7 +9,7 @@
     "window_size": "1920,1080"
   },
   "log_level": "DEBUG",
-  "mfa": false,
+  "mfa": true,
   "connection_string": {
     "account_key": "***REMOVED***",
     "account_name": "hopescalesurvey9d6a"
@@ -23,5 +23,11 @@
   "testing": {
     "to_phone_number": "+12487237903",
     "message_body": "message_body"
+  },
+  "callharbor": {
+    "client_id": "proactivemgmt",
+    "client_secret": "11b521761b6ed524a519818835289b31",
+    "username": "sms@proactivemgmt",
+    "password": "kB8zaXGbDD4-xdk0"
   }
 }

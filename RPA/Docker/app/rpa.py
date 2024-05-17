@@ -1,7 +1,9 @@
 from datetime import datetime
 import os
+import re
 import time
 from typing import LiteralString
+import requests
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
@@ -34,24 +36,114 @@ def initialize_driver():
     )
 
     # Test with profile
-    options.add_argument("user-data-dir=" + os.path.join(os.getcwd(), "ChromeProfile"))
+    # options.add_argument("user-data-dir=" + os.path.join(os.getcwd(), "ChromeProfile"))
 
     print("Driver initialized successfully.")
 
     return webdriver.Chrome(options=options)
 
 
-def RequestCode():
-    code = "code"
-    print("Requesting code...")
-    # Ask for code and get message id
+def get_token():
+    # Call Harbor API credentials
+    callharbor = config["callharbor"]
+    client_id = callharbor["client_id"]
+    client_secret = callharbor["client_secret"]
+    ch_username = callharbor["username"]
+    ch_password = callharbor["password"]
 
-    print(code)
-    return code
+    # "callharbor": {
+    # "client_id": "proactivemgmt",
+    # "client_secret": "11b521761b6ed524a519818835289b31",
+    # "username": "sms@proactivemgmt",
+    # "password": "kB8zaXGbDD4-xdk0"
+
+    # Construct the request URL
+    url = f"https://control.callharbor.com/ns-api/oauth2/token/?grant_type=password&client_id={client_id}&client_secret={client_secret}&username={ch_username}&password={ch_password}"
+
+    # Send the GET request
+    response = requests.get(url)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Extract the access token from the response
+        access_token = response.json().get("access_token")
+        if access_token:
+            # print(f"Access Token: {access_token}")
+            return access_token
+        else:
+            print("Failed to retrieve access token")
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
+
+
+def get_session(access_token):
+    # Call Harbor API access token (replace with your token)
+    # Construct the request headers
+    headers: dict[str, str] = {
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/json",
+    }
+    # print(access_token)
+    # Construct the request URL
+    url = "https://control.callharbor.com/ns-api/?object=messagesession&action=read&domain=proactivemgmt.com&user=1000&limit=5&session_id=a106d2896653bf9eb03c9226efaadb69"
+
+    # Send the GET request
+    response = requests.get(url, headers=headers)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Print the response content
+        # print("session_id: ", response.json())
+        return response.json()
+
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
+
+
+def RequestCode():
+    print("Requesting code...")
+    # return "12345"
+    access_token = get_token()
+    session_json = get_session(access_token)
+    if session_json:
+        # Assuming the response is a list of dictionaries
+        pattern = r"Your code is: (\d+)"
+
+        for data in session_json:
+            # Extract the last_mesg attribute
+            message = data["last_mesg"]
+            match: re.Match[str] | None = re.search(pattern, message)
+            if match:
+                code: str | json.Any = match.group(1)
+                print(code)
+                return code
+            else:
+                print(f"No code found in the message. Message= {message}")
+    else:
+        print(f"Error: No message")
 
 
 def handle_mfa(driver):
     print("Handling MFA...")
+    WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.ID, "sendCallButton"))
+    )
+
+    send_call_button = driver.find_element(By.ID, "sendCallButton")
+    send_call_button.click()
+    time.sleep(5)
+    code = RequestCode()
+    if not code:
+        raise Exception("MFA code not retrieved.")
+
+    code_field = driver.find_element(By.ID, "code")
+    code_field.send_keys(code)
+
+    send_code_button = driver.find_element(By.ID, "sendCodeButton")
+    send_code_button.click()
+
+    # Wait for the MFA process to complete and navigate to the next page
+    WebDriverWait(driver, 20).until(EC.url_changes)
     print("MFA handled successfully.")
 
 
@@ -62,8 +154,9 @@ def login(driver, username, password, url):
         # print(f"Attempting login for user: {username}")
         driver.get(url)
 
-        # username_field = driver.find_element(By.ID, "inputUsername")
-        # username_field.send_keys(username)
+        username_field = driver.find_element(By.ID, "inputUsername")
+        username_field.clear()
+        username_field.send_keys(username)
 
         password_field = driver.find_element(By.ID, "inputPswd")
         password_field.send_keys(password)
@@ -95,17 +188,13 @@ def accept_alert(driver):
 
 def get_appointments(driver):
     schedule_url: LiteralString = (
-        f"https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
+        "https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
     )
     driver.get(schedule_url)
     # Call this function before interacting with elements that might trigger alerts
     accept_alert(driver)
     time.sleep(10)
-
-    if driver.current_url != schedule_url:
-        print("Login Failed")
-    else:
-        print("Login Successful")
+    print(f"driver.current_url: {driver.current_url}")
 
     # Wait until the button is clickable
     button = WebDriverWait(driver, 10).until(
@@ -120,7 +209,6 @@ def get_appointments(driver):
     button.click()
 
     time.sleep(3)
-
     # Find the HTML element representing the table
     table = driver.find_element(
         By.CSS_SELECTOR, 'table[data-element="table-agenda-print"]'
@@ -172,6 +260,7 @@ def get_appointments(driver):
         appointments.append(appointment)
 
     # Convert the list of dictionaries to JSON
+
     return json.dumps(appointments, indent=4)
 
 
@@ -198,12 +287,8 @@ def return_appointments():
     # print("Starting to process accounts...")
     appointments = get_appointments(driver)
 
-    # save_appointments(appointments)
-
-    # print(f"Appointments: {appointments}")
-
     return appointments
 
 
 if __name__ == "__main__":
-    return_appointments()
+    print("Appiments: ", return_appointments())

@@ -26,8 +26,9 @@ def process_messages(appointments):
         message_sid = sendMessage(
             client, appointment["patientPhone"], appointment["RowKey"]
         )
-        appointment["sentOn"] = message_sid
-        appointment["message_sid"] = datetime.now(timezone.utc)
+        appointment["sentOn"] = datetime.now(timezone.utc)
+        appointment["message_sid"] = message_sid
+
     return appointments
 
 
