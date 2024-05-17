@@ -13,7 +13,7 @@ RUN echo "http://dl-4.alpinelinux.org/alpine/v3.14/main" >> /etc/apk/repositorie
 WORKDIR /app
 # upgrade pip and install requirements
 RUN pip install --upgrade pip && \
-    pip install webdriver-manager selenium 
+    pip install webdriver-manager selenium azure-data-tables twilio
 
 COPY . .
 

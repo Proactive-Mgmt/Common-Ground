@@ -5,7 +5,7 @@
     "password": "Evolution!"
   },
   "selenium_options": {
-    "headless": false,
+    "headless": true,
     "window_size": "1920,1080"
   },
   "log_level": "DEBUG",
