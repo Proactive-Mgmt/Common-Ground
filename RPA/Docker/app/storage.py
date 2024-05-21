@@ -1,4 +1,5 @@
 import json
+import uuid
 from azure.data.tables import TableClient, TableEntity
 
 
@@ -30,6 +31,7 @@ def save_appointments(appointments):
         appointment["PartitionKey"] = appointment["patientPhone"][-1]
         appointment["sentOn"] = ""
         appointment["message_sid"] = ""
+        appointment["guid"] = uuid.uuid4()
 
         entity = TableEntity(**appointment)
         try:

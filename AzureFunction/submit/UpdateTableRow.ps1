@@ -42,6 +42,6 @@ function Update-TableRow {
 
     # Save the updated row back to the table
     Update-AzTableRow -Table $StorageTable.CloudTable -Entity $ExistingRow
-    Write-Host "ok"
+    Write-Host "Update-TableRow succesfull"
 }
 
