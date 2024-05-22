@@ -51,12 +51,6 @@ def get_token():
     ch_username = callharbor["username"]
     ch_password = callharbor["password"]
 
-    # "callharbor": {
-    # "client_id": "proactivemgmt",
-    # "client_secret": "11b521761b6ed524a519818835289b31",
-    # "username": "sms@proactivemgmt",
-    # "password": "kB8zaXGbDD4-xdk0"
-
     # Construct the request URL
     url = f"https://control.callharbor.com/ns-api/oauth2/token/?grant_type=password&client_id={client_id}&client_secret={client_secret}&username={ch_username}&password={ch_password}"
 
@@ -85,6 +79,7 @@ def get_session(access_token):
     }
     # print(access_token)
     # Construct the request URL
+    print(f"access_token: {access_token}")
     url = "https://control.callharbor.com/ns-api/?object=messagesession&action=read&domain=proactivemgmt.com&user=1000&limit=5&session_id=a106d2896653bf9eb03c9226efaadb69"
 
     # Send the GET request
@@ -104,6 +99,7 @@ def RequestCode():
     print("Requesting code...")
     # return "12345"
     access_token = get_token()
+
     session_json = get_session(access_token)
     if session_json:
         # Assuming the response is a list of dictionaries
@@ -196,6 +192,20 @@ def get_appointments(driver):
     time.sleep(10)
     print(f"driver.current_url: {driver.current_url}")
 
+    if config.get("get_yestdays_records"):
+        decrementbutton = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[@class='btn-sm decrement-date']")
+            )
+        )
+        if decrementbutton:
+            decrementbutton.click()
+            print("decrementbutton clicked ")
+        else:
+            print("decrementbutton not found ")
+
+        time.sleep(10)
+
     # Wait until the button is clickable
     button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable(
@@ -205,7 +215,7 @@ def get_appointments(driver):
             )
         )
     )
-
+    print("schedulebutton clicked ")
     button.click()
 
     time.sleep(3)

@@ -1,4 +1,6 @@
+import hashlib
 import json
+import traceback
 import uuid
 from azure.data.tables import TableClient, TableEntity
 
@@ -15,31 +17,55 @@ def save_appointments(appointments):
     connection_string = f"DefaultEndpointsProtocol=https;AccountName={account_name};==>REPLACED==>={account_key};EndpointSuffix=core.windows.net"
     print(connection_string)
     table_name = "appointments"
-    table_client = TableClient.from_connection_string(connection_string, table_name)
+    table_client: TableClient = TableClient.from_connection_string(
+        connection_string, table_name
+    )
 
     # appointments_json = json.loads(appointments)
 
     for appointment in appointments:
         #  compound key (dob+lastname+phonenumber)+
-        row_key = (
+        row_key = generate_deterministic_uuid(
             appointment["patientDOB"]
             + appointment["patientName"].split()[1]
             + appointment["patientPhone"]
         )
+        # row_key = (
+        #     appointment["patientDOB"]
+        #     + appointment["patientName"].split()[1]
+        #     + appointment["patientPhone"]
+        # )
+
         # print("row_key ", row_key)
+        print(f"row_key: {row_key}")
+        print(f"row_key: {row_key[-1]}")
+
         appointment["RowKey"] = row_key
-        appointment["PartitionKey"] = appointment["patientPhone"][-1]
+        appointment["PartitionKey"] = row_key[-1]
         appointment["sentOn"] = ""
         appointment["message_sid"] = ""
-        appointment["guid"] = uuid.uuid4()
-
         entity = TableEntity(**appointment)
         try:
             table_client.create_entity(entity)
-        except:
-            continue
+            print("ok")
+        except Exception as e:
+            print("An error occurred:", e)
+            traceback.print_exc()
 
     print("Data inserted successfully!")
+
+
+def generate_deterministic_uuid(input_string):
+    # Create an MD5 hash of the input string
+    md5_hash = hashlib.md5(input_string.encode()).hexdigest()
+
+    # Convert the MD5 hash to a UUID
+    deterministic_uuid = uuid.UUID(md5_hash)
+
+    return str(deterministic_uuid)
+
+
+# Example usage
 
 
 def get_appointments() -> None:

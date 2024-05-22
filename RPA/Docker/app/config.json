@@ -10,6 +10,7 @@
   },
   "log_level": "DEBUG",
   "mfa": true,
+  "get_yestdays_records": true,
   "connection_string": {
     "account_key": "***REMOVED***",
     "account_name": "hopescalesurvey9d6a"
