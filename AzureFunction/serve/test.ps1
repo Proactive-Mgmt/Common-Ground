@@ -1,4 +1,4 @@
-. .\UpdateTableRow.ps1
+. .\GetTableRow.ps1
 # Define the parameters
 $PartitionKey = '2'
 $RowKey = '1234123412'

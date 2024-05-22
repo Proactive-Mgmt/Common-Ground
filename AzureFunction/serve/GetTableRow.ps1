@@ -1,0 +1,44 @@
+# Ensure the Az and Azure.Storage.Tables modules are imported
+Import-Module AzTable
+
+# Define a function named Get-TableRow
+function Get-TableRow {
+    param (
+        [string]$PartitionKey,  # Parameter: The partition key of the row to retrieve
+        [string]$RowKey        # Parameter: The row key of the row to retrieve
+    )
+
+    $ErrorActionPreference = 'stop'  # Set error action preference to 'stop' to halt execution on error
+
+    # Define Azure Storage account connection string and table name
+    $ConnectionString = '==>REPLACED==>=***REMOVED***;EndpointSuffix=core.windows.net'
+    $TableName = 'appointments'
+
+    # Create the storage context using the connection string
+    $ctx = New-AzStorageContext -ConnectionString $ConnectionString
+
+    # Get the storage table using the context and table name
+    $StorageTable = Get-AzStorageTable -Name $TableName -Context $ctx
+
+    # Retrieve the existing row from the storage table using PartitionKey and RowKey
+    $ExistingRow = Get-AzTableRow -Table $StorageTable.CloudTable -PartitionKey $PartitionKey -RowKey $RowKey
+
+    # Check if the row exists
+    if (-not $ExistingRow) {
+        Write-Error "Row with PartitionKey '$PartitionKey' and RowKey '$RowKey' does not exist."
+        return $null
+    }
+
+    # Access the properties of the row to extract patientName and patientDOB
+    $patientName = $ExistingRow.patientName
+    $patientDOB = $ExistingRow.patientDOB
+
+    # Create a hashtable to store patient information
+    $patientInfo = @{
+        patientName = $patientName  # Store patientName in the hashtable
+        patientDOB = $patientDOB    # Store patientDOB in the hashtable
+    }
+
+    # Return the patient information hashtable
+    return $patientInfo
+}
