@@ -47,7 +47,6 @@ def save_appointments(appointments):
         entity = TableEntity(**appointment)
         try:
             table_client.create_entity(entity)
-            print("ok")
         except Exception as e:
             print("An error occurred:", e)
             traceback.print_exc()

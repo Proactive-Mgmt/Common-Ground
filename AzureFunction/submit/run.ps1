@@ -1,8 +1,8 @@
 
 param($Request, $TriggerMetadata)
 # . C:\Repos\cg-hopescalesurvey\cg-hopescalesurvey\AzureFunction\submit\UpdateTableRow.ps1
-# . .submit\UpdateTableRow.ps1
-. .\submit\UpdateTableRow.ps1
+# . .\submit\UpdateTableRow.ps1
+. "$PSScriptRoot\UpdateTableRow.ps1"
 $Parameters = $Request.Query
 
 # foreach ($key in $Parameters.Keys) {

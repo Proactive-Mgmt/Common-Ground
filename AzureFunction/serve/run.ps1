@@ -1,7 +1,7 @@
 param($Request, $TriggerMetadata)
+# . .\serve\GetTableRow.ps1
+. "$PSScriptRoot\GetTableRow.ps1"
 
-# . .serve\GetTableRow.ps1
-. .\serve\GetTableRow.ps1
 
 $RowKey = $Request.Query.id 
 $PartitionKey = $RowKey[-1]
