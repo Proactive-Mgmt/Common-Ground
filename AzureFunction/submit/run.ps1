@@ -18,12 +18,10 @@ foreach ($key in $Parameters.Keys) {
 $RowKey = $Parameters["id"]
 $PartitionKey = $RowKey[-1]
 $paramHashtable.Remove("id") 
-
-# Define the parameters
-# $PartitionKey = '2'
-# $RowKey = '1234123412'
-# Call the function
-
+$paramHashtable.Remove("code") 
+# Add the current date and time to the hashtable
+$paramHashtable.Add("surveyCompletedOn", (Get-Date))
+Write-Host $RowKey 
 
 
 Write-Host  $paramHashtable
@@ -36,5 +34,5 @@ Write-Host  $jsonResponse
 Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
         StatusCode  = [System.Net.HttpStatusCode]::OK
         ContentType = "text/plain"
-        Body        = "Form data processed successfully. Thanks you!"  
+        Body        = "Form data processed successfully. Thank you!"  
     })
