@@ -59,6 +59,11 @@
             margin-bottom: 20px;
         }
 
+        .text-row {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
         .hope-table th,
         .hope-table td {
             padding: 12px;
@@ -82,6 +87,42 @@
         .response-row {
             background-color: #ffffff;
         }
+
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .options table {
+            margin-bottom: 20px;
+        }
+
+        .options table th,
+        .options table td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        @media only screen and (max-width: 600px) {
+
+            .options table th,
+            .options table td {
+                display: block;
+            }
+
+            .options table th {
+                display: none;
+            }
+
+            .options table td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+            }
+        }
     </style>
     <!-- <script src="https://unpkg.com/htmx.org@1.9.12"
         integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"
@@ -104,193 +145,247 @@
                 <h2 class="text-xl font-semibold mb-4">How hopeful were you that you can do the following when things
                     aren't going well before and after Common Ground helped you?</h2>
                 <div class="overflow-x-auto">
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">Try new solutions to my challenges</td>
-                            </tr>
-                            <tr>
-                                <th></th> <!-- Empty for the row labels (Before/After) -->
-                                <th>No Hope</th>
-                                <th>Little Hope</th>
-                                <th>Some Hope</th>
-                                <th>Strong Hope</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td>Before</td>
-                                <td><input type="radio" name="TryNewSolutionsToMyChallenges_before" value="No Hope">
-                                </td>
-                                <td><input type="radio" name="TryNewSolutionsToMyChallenges_before" value="Little Hope">
-                                </td>
-                                <td><input type="radio" name="TryNewSolutionsToMyChallenges_before" value="Some Hope">
-                                </td>
-                                <td><input type="radio" name="TryNewSolutionsToMyChallenges_before" value="Strong Hope">
-                                </td>
-                            </tr>
-                            <tr class="response-row">
-                                <td>After</td>
-                                <td><input type="radio" name="TryNewSolutionsToMyChallenges_after" value="No Hope"></td>
-                                <td><input type="radio" name="TryNewSolutionsToMyChallenges_after" value="Little Hope">
-                                </td>
-                                <td><input type="radio" name="TryNewSolutionsToMyChallenges_after" value="Some Hope">
-                                </td>
-                                <td><input type="radio" name="TryNewSolutionsToMyChallenges_after" value="Strong Hope">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">Find resources to help me</td>
-                            </tr>
-                            <tr>
-                                <th></th> <!-- Empty for the row labels (Before/After) -->
-                                <th>No Hope</th>
-                                <th>Little Hope</th>
-                                <th>Some Hope</th>
-                                <th>Strong Hope</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td>Before</td>
-                                <td><input type="radio" name="FindResourcesToHelpMe_before" value="No Hope"></td>
-                                <td><input type="radio" name="FindResourcesToHelpMe_before" value="Little Hope"></td>
-                                <td><input type="radio" name="FindResourcesToHelpMe_before" value="Some Hope"></td>
-                                <td><input type="radio" name="FindResourcesToHelpMe_before" value="Strong Hope"></td>
-                            </tr>
-                            <tr class="response-row">
-                                <td>After</td>
-                                <td><input type="radio" name="FindResourcesToHelpMe_after" value="No Hope"></td>
-                                <td><input type="radio" name="FindResourcesToHelpMe_after" value="Little Hope"></td>
-                                <td><input type="radio" name="FindResourcesToHelpMe_after" value="Some Hope"></td>
-                                <td><input type="radio" name="FindResourcesToHelpMe_after" value="Strong Hope"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">Contact someone if I need support</td>
-                            </tr>
-                            <tr>
-                                <th></th> <!-- Empty for the row labels (Before/After) -->
-                                <th>No Hope</th>
-                                <th>Little Hope</th>
-                                <th>Some Hope</th>
-                                <th>Strong Hope</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td>Before</td>
-                                <td><input type="radio" name="ContactSomeoneIfINeedSupport_before" value="No Hope"></td>
-                                <td><input type="radio" name="ContactSomeoneIfINeedSupport_before" value="Little Hope">
-                                </td>
-                                <td><input type="radio" name="ContactSomeoneIfINeedSupport_before" value="Some Hope">
-                                </td>
-                                <td><input type="radio" name="ContactSomeoneIfINeedSupport_before" value="Strong Hope">
-                                </td>
-                            </tr>
-                            <tr class="response-row">
-                                <td>After</td>
-                                <td><input type="radio" name="ContactSomeoneIfINeedSupport_after" value="No Hope"></td>
-                                <td><input type="radio" name="ContactSomeoneIfINeedSupport_after" value="Little Hope">
-                                </td>
-                                <td><input type="radio" name="ContactSomeoneIfINeedSupport_after" value="Some Hope">
-                                </td>
-                                <td><input type="radio" name="ContactSomeoneIfINeedSupport_after" value="Strong Hope">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">Meet the goals that I set for myself</td>
-                            </tr>
-                            <tr>
-                                <th></th> <!-- Empty for the row labels (Before/After) -->
-                                <th>No Hope</th>
-                                <th>Little Hope</th>
-                                <th>Some Hope</th>
-                                <th>Strong Hope</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td>Before</td>
-                                <td><input type="radio" name="MeetTheGoalsThatISetForMyself_before" value="No Hope">
-                                </td>
-                                <td><input type="radio" name="MeetTheGoalsThatISetForMyself_before" value="Little Hope">
-                                </td>
-                                <td><input type="radio" name="MeetTheGoalsThatISetForMyself_before" value="Some Hope">
-                                </td>
-                                <td><input type="radio" name="MeetTheGoalsThatISetForMyself_before" value="Strong Hope">
-                                </td>
-                            </tr>
-                            <tr class="response-row">
-                                <td>After</td>
-                                <td><input type="radio" name="MeetTheGoalsThatISetForMyself_after" value="No Hope"></td>
-                                <td><input type="radio" name="MeetTheGoalsThatISetForMyself_after" value="Little Hope">
-                                </td>
-                                <td><input type="radio" name="MeetTheGoalsThatISetForMyself_after" value="Some Hope">
-                                </td>
-                                <td><input type="radio" name="MeetTheGoalsThatISetForMyself_after" value="Strong Hope">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">Have the ability to identify the things in life that are important to me
-                                </td>
-                            </tr>
-                            <tr>
-                                <th></th> <!-- Empty for the row labels (Before/After) -->
-                                <th>No Hope</th>
-                                <th>Little Hope</th>
-                                <th>Some Hope</th>
-                                <th>Strong Hope</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td>Before</td>
-                                <td><input type="radio"
-                                        name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_before"
-                                        value="No Hope"></td>
-                                <td><input type="radio"
-                                        name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_before"
-                                        value="Little Hope"></td>
-                                <td><input type="radio"
-                                        name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_before"
-                                        value="Some Hope"></td>
-                                <td><input type="radio"
-                                        name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_before"
-                                        value="Strong Hope"></td>
-                            </tr>
-                            <tr class="response-row">
-                                <td>After</td>
-                                <td><input type="radio"
-                                        name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_after"
-                                        value="No Hope"></td>
-                                <td><input type="radio"
-                                        name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_after"
-                                        value="Little Hope"></td>
-                                <td><input type="radio"
-                                        name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_after"
-                                        value="Some Hope"></td>
-                                <td><input type="radio"
-                                        name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_after"
-                                        value="Strong Hope"></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="options">
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">Try new solutions to my challenges</td>
+                                </tr>
+                                <tr>
+                                    <th></th> <!-- Empty for the row labels (Before/After) -->
+                                    <th>No Hope</th>
+                                    <th>Little Hope</th>
+                                    <th>Some Hope</th>
+                                    <th>Strong Hope</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td class="text-row ">Before</td>
+                                    <td data-label="No Hope">
+                                        <input type="radio" name="TryNewSolutionsToMyChallenges_before" value="No Hope">
+                                    </td>
+                                    <td data-label="Little Hope"><input type="radio"
+                                            name="TryNewSolutionsToMyChallenges_before" value="Little Hope">
+                                    </td>
+                                    <td data-label="Some Hope"><input type="radio"
+                                            name="TryNewSolutionsToMyChallenges_before" value="Some Hope">
+                                    </td>
+                                    <td data-label="Strong Hope"><input type="radio"
+                                            name="TryNewSolutionsToMyChallenges_before" value="Strong Hope">
+                                    </td>
+                                </tr>
+                                <tr class="response-row">
+
+                                    <td class="text-row ">After</td>
+                                    <td data-label="No Hope"><input type="radio"
+                                            name="TryNewSolutionsToMyChallenges_after" value="No Hope">
+                                    </td>
+                                    <td data-label="Little Hope"><input type="radio"
+                                            name="TryNewSolutionsToMyChallenges_after" value="Little Hope">
+                                    </td>
+                                    <td data-label="Some Hope">
+                                        <input type="radio" name="TryNewSolutionsToMyChallenges_after"
+                                            value="Some Hope">
+                                    </td>
+                                    <td data-label="Strong Hope"><input type="radio"
+                                            name="TryNewSolutionsToMyChallenges_after" value="Strong Hope">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">Find resources to help me</td>
+                                </tr>
+                                <tr>
+                                    <th></th> <!-- Empty for the row labels (Before/After) -->
+                                    <th>No Hope</th>
+                                    <th>Little Hope</th>
+                                    <th>Some Hope</th>
+                                    <th>Strong Hope</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td class="text-row ">Before</td>
+                                    <td data-label="No Hope">
+                                        <input type="radio" name="FindResourcesToHelpMe_before" value="No Hope">
+                                    </td>
+                                    <td data-label="Little Hope"><input type="radio" name="FindResourcesToHelpMe_before"
+                                            value="Little Hope">
+                                    </td>
+                                    <td data-label="Some Hope">
+                                        <input type="radio" name="FindResourcesToHelpMe_before" value="Some Hope">
+                                    </td>
+                                    <td data-label="Some Hope"><input type="radio" name="FindResourcesToHelpMe_before"
+                                            value="Strong Hope">
+                                    </td>
+                                </tr>
+                                <tr class="response-row">
+                                    <td class="text-row ">After</td>
+
+                                    <td data-label="No Hope"><input type="radio" name="FindResourcesToHelpMe_after"
+                                            value="No Hope"></td>
+                                    <td data-label="Little Hope"><input type="radio" name="FindResourcesToHelpMe_after"
+                                            value="Little Hope"></td>
+                                    <td data-label="Some Hope"><input type="radio" name="FindResourcesToHelpMe_after"
+                                            value="Some Hope"></td>
+                                    <td data-label="Strong Hope"><input type="radio" name="FindResourcesToHelpMe_after"
+                                            value="Strong Hope"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">Contact someone if I need support</td>
+                                </tr>
+                                <tr>
+                                    <th></th> <!-- Empty for the row labels (Before/After) -->
+                                    <th>No Hope</th>
+                                    <th>Little Hope</th>
+                                    <th>Some Hope</th>
+                                    <th>Strong Hope</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td class="text-row ">Before</td>
+                                    <td data-label="No Hope">
+                                        <input type="radio" name="ContactSomeoneIfINeedSupport_before" value="No Hope">
+                                    </td>
+                                    <td data-label="No Hope">
+                                        <input type="radio" name="ContactSomeoneIfINeedSupport_before"
+                                            value="Little Hope">
+                                    </td>
+                                    <td data-label="No Hope">
+                                        <input type="radio" name="ContactSomeoneIfINeedSupport_before"
+                                            value="Some Hope">
+                                    </td>
+                                    <td data-label="No Hope">
+                                        <input type="radio" name="ContactSomeoneIfINeedSupport_before"
+                                            value="Strong Hope">
+                                    </td>
+                                </tr>
+                                <tr class="response-row">
+                                    <td class="text-row ">After</td>
+                                    <td data-label="No Hope"><input type="radio"
+                                            name="ContactSomeoneIfINeedSupport_after" value="No Hope">
+                                    </td>
+                                    <td data-label="No Hope"><input type="radio"
+                                            name="ContactSomeoneIfINeedSupport_after" value="Little Hope">
+                                    </td>
+                                    <td data-label="No Hope"><input type="radio"
+                                            name="ContactSomeoneIfINeedSupport_after" value="Some Hope">
+                                    </td>
+                                    <td data-label="No Hope"><input type="radio"
+                                            name="ContactSomeoneIfINeedSupport_after" value="Strong Hope">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">Meet the goals that I set for myself</td>
+                                </tr>
+                                <tr>
+                                    <th></th> <!-- Empty for the row labels (Before/After) -->
+                                    <th>No Hope</th>
+                                    <th>Little Hope</th>
+                                    <th>Some Hope</th>
+                                    <th>Strong Hope</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+
+                                    <td class="text-row ">Before</td>
+                                    <td data-label="No Hope"><input type="radio"
+                                            name="MeetTheGoalsThatISetForMyself_before" value="No Hope">
+                                    </td>
+                                    <td data-label="Little Hope"><input type="radio"
+                                            name="MeetTheGoalsThatISetForMyself_before" value="Little Hope">
+                                    </td>
+                                    <td data-label="Some Hope"><input type="radio"
+                                            name="MeetTheGoalsThatISetForMyself_before" value="Some Hope">
+                                    </td>
+                                    <td data-label="Strong Hope"><input type="radio"
+                                            name="MeetTheGoalsThatISetForMyself_before" value="Strong Hope">
+                                    </td>
+                                </tr>
+                                <tr class="response-row">
+                                    <td class="text-row ">After</td>
+                                    <td data-label="No Hope"><input type="radio"
+                                            name="MeetTheGoalsThatISetForMyself_after" value="No Hope">
+                                    </td>
+                                    <td data-label="Little Hope"><input type="radio"
+                                            name="MeetTheGoalsThatISetForMyself_after" value="Little Hope">
+                                    </td>
+                                    <td data-label="Some Hope"><input type="radio"
+                                            name="MeetTheGoalsThatISetForMyself_after" value="Some Hope">
+                                    </td>
+                                    <td data-label="Strong Hope"><input type="radio"
+                                            name="MeetTheGoalsThatISetForMyself_after" value="Strong Hope">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">Have the ability to identify the things in life that are important
+                                        to me
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th></th> <!-- Empty for the row labels (Before/After) -->
+                                    <th>No Hope</th>
+                                    <th>Little Hope</th>
+                                    <th>Some Hope</th>
+                                    <th>Strong Hope</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td class="text-row ">Before</td>
+                                    <td data-label="No Hope">
+                                        <input type="radio"
+                                            name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_before"
+                                            value="No Hope">
+                                    </td>
+                                    <td data-label="Little Hope"><input type="radio"
+                                            name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_before"
+                                            value="Little Hope"></td>
+                                    <td data-label="Some Hope"><input type="radio"
+                                            name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_before"
+                                            value="Some Hope"></td>
+                                    <td data-label="Strong Hope"><input type="radio"
+                                            name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_before"
+                                            value="Strong Hope"></td>
+                                </tr>
+                                <tr class="response-row">
+
+                                    <td class="text-row ">After</td>
+                                    <td data-label="No Hope"><input type="radio"
+                                            name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_after"
+                                            value="No Hope"></td>
+                                    <td data-label="Little Hope"><input type="radio"
+                                            name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_after"
+                                            value="Little Hope"></td>
+                                    <td data-label="Some Hope"><input type="radio"
+                                            name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_after"
+                                            value="Some Hope"></td>
+                                    <td data-label="Strong Hope"><input type="radio"
+                                            name="HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_after"
+                                            value="Strong Hope"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
 
@@ -299,201 +394,235 @@
                 <h2 class="text-xl font-semibold mb-4">Please select the response that best rates your level of
                     agreement or disagreement with the following statements</h2>
                 <div class="overflow-x-auto">
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">I feel more hopeful because of my visit to Common Ground.</td>
-                            </tr>
-                            <tr>
-                                <th>Strongly Disagree</th>
-                                <th>Disagree</th>
-                                <th>Agree</th>
-                                <th>Strongly Agree</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td><input type="radio" name="MoreHopeByVisit" value="Strongly Disagree"></td>
-                                <td><input type="radio" name="MoreHopeByVisit" value="Disagree"></td>
-                                <td><input type="radio" name="MoreHopeByVisit" value="Agree"></td>
-                                <td><input type="radio" name="MoreHopeByVisit" value="Strongly Agree"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">The staff that worked with me were friendly and welcoming.</td>
-                            </tr>
-                            <tr>
-                                <th>Strongly Disagree</th>
-                                <th>Disagree</th>
-                                <th>Agree</th>
-                                <th>Strongly Agree</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td><input type="radio" name="StaffFriendlyAndWelcoming" value="Strongly Disagree"></td>
-                                <td><input type="radio" name="StaffFriendlyAndWelcoming" value="Disagree"></td>
-                                <td><input type="radio" name="StaffFriendlyAndWelcoming" value="Agree"></td>
-                                <td><input type="radio" name="StaffFriendlyAndWelcoming" value="Strongly Agree"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">I was satisfied with the amount of help I received</td>
-                            </tr>
-                            <tr>
-                                <th>Strongly Disagree</th>
-                                <th>Disagree</th>
-                                <th>Agree</th>
-                                <th>Strongly Agree</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td><input type="radio" name="SatisfiedWithHelpReceived" value="Strongly Disagree"></td>
-                                <td><input type="radio" name="SatisfiedWithHelpReceived" value="Disagree"></td>
-                                <td><input type="radio" name="SatisfiedWithHelpReceived" value="Agree"></td>
-                                <td><input type="radio" name="SatisfiedWithHelpReceived" value="Strongly Agree"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">If a friend were in need of similar help, I would recommend Common
-                                    Ground to him or her</td>
-                            </tr>
-                            <tr>
-                                <th>Strongly Disagree</th>
-                                <th>Disagree</th>
-                                <th>Agree</th>
-                                <th>Strongly Agree</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td><input type="radio" name="RecommendCommonGroundToFriendInNeed"
-                                        value="Strongly Disagree">
-                                </td>
-                                <td><input type="radio" name="RecommendCommonGroundToFriendInNeed" value="Disagree">
-                                </td>
-                                <td><input type="radio" name="RecommendCommonGroundToFriendInNeed" value="Agree"></td>
-                                <td><input type="radio" name="RecommendCommonGroundToFriendInNeed"
-                                        value="Strongly Agree"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">Did the providers explain all he information clearly?</td>
-                            </tr>
-                            <tr>
-                                <th>Yes</th>
-                                <th>No</th>
+                    <div class="options">
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">I feel more hopeful because of my visit to Common Ground.</td>
+                                </tr>
+                                <tr>
+                                    <th>Strongly Disagree</th>
+                                    <th>Disagree</th>
+                                    <th>Agree</th>
+                                    <th>Strongly Agree</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td data-label="Strongly Disagree"><input type="radio" name="MoreHopeByVisit"
+                                            value="Strongly Disagree"></td>
+                                    <td data-label="Disagree"><input type="radio" name="MoreHopeByVisit"
+                                            value="Disagree">
+                                    </td>
+                                    <td data-label="Agree"><input type="radio" name="MoreHopeByVisit" value="Agree">
+                                    </td>
+                                    <td data-label="Strongly Agree"><input type="radio" name="MoreHopeByVisit"
+                                            value="Strongly Agree"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">The staff that worked with me were friendly and welcoming.</td>
+                                </tr>
+                                <tr>
+                                    <th>Strongly Disagree</th>
+                                    <th>Disagree</th>
+                                    <th>Agree</th>
+                                    <th>Strongly Agree</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td data-label="Strongly Disagree"><input type="radio"
+                                            name="StaffFriendlyAndWelcoming" value="Strongly Disagree">
+                                    </td>
+                                    <td data-label="Disagree"><input type="radio" name="StaffFriendlyAndWelcoming"
+                                            value="Disagree"></td>
+                                    <td data-label="Agree"><input type="radio" name="StaffFriendlyAndWelcoming"
+                                            value="Agree"></td>
+                                    <td data-label="Strongly Agree"><input type="radio" name="StaffFriendlyAndWelcoming"
+                                            value="Strongly Agree">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">I was satisfied with the amount of help I received</td>
+                                </tr>
+                                <tr>
+                                    <th>Strongly Disagree</th>
+                                    <th>Disagree</th>
+                                    <th>Agree</th>
+                                    <th>Strongly Agree</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td data-label="Strongly Disagree"><input type="radio"
+                                            name="SatisfiedWithHelpReceived" value="Strongly Disagree">
+                                    </td>
+                                    <td data-label="Disagree"><input type="radio" name="SatisfiedWithHelpReceived"
+                                            value="Disagree"></td>
+                                    <td data-label="Agree"><input type="radio" name="SatisfiedWithHelpReceived"
+                                            value="Agree"></td>
+                                    <td data-label="Strongly Agree"><input type="radio" name="SatisfiedWithHelpReceived"
+                                            value="Strongly Agree">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">If a friend were in need of similar help, I would recommend Common
+                                        Ground to him or her</td>
+                                </tr>
+                                <tr>
+                                    <th>Strongly Disagree</th>
+                                    <th>Disagree</th>
+                                    <th>Agree</th>
+                                    <th>Strongly Agree</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td data-label="Strongly Disagree"><input type="radio"
+                                            name="RecommendCommonGroundToFriendInNeed" value="Strongly Disagree">
+                                    </td>
+                                    <td data-label="Disagree"><input type="radio"
+                                            name="RecommendCommonGroundToFriendInNeed" value="Disagree">
+                                    </td>
+                                    <td data-label="Agree"><input type="radio"
+                                            name="RecommendCommonGroundToFriendInNeed" value="Agree">
+                                    </td>
+                                    <td data-label="Strongly Agree"><input type="radio"
+                                            name="RecommendCommonGroundToFriendInNeed" value="Strongly Agree"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">Did the providers explain all he information clearly?</td>
+                                </tr>
+                                <tr>
+                                    <th>Yes</th>
+                                    <th>No</th>
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td><input type="radio" name="InformationClearly" value="Yes">
-                                </td>
-                                <td><input type="radio" name="InformationClearly" value="No">
-                                </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td data-label="Yes"><input type="radio" name="InformationClearly" value="Yes">
+                                    </td>
+                                    <td data-label="No"><input type="radio" name="InformationClearly" value="No">
+                                    </td>
 
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">Was the reason for your visit appropriately addressed?</td>
-                            </tr>
-                            <tr>
-                                <th>Yes</th>
-                                <th>No</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">Was the reason for your visit appropriately addressed?</td>
+                                </tr>
+                                <tr>
+                                    <th>Yes</th>
+                                    <th>No</th>
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td><input type="radio" name="reasonAppropriatelyAddressed" value="Yes">
-                                </td>
-                                <td><input type="radio" name="reasonAppropriatelyAddressed" value="No">
-                                </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td data-label="Yes"><input type="radio" name="reasonAppropriatelyAddressed"
+                                            value="Yes">
+                                    </td>
+                                    <td data-label="No"><input type="radio" name="reasonAppropriatelyAddressed"
+                                            value="No">
+                                    </td>
 
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">On a scale of 1-5, How did you find the experience of scheduling an
-                                    appointment?</td>
-                            </tr>
-                            <tr>
-                                <th>1 - Very difficult</th>
-                                <th>2 - Difficult</th>
-                                <th>3 - Neutral</th>
-                                <th>4 - Easy</th>
-                                <th>5 - Very Easy</th>
-
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td><input type="radio" name="ExperienceOfSchedulingAnAppointment" value="1">
-                                </td>
-                                <td><input type="radio" name="ExperienceOfSchedulingAnAppointment" value="2">
-                                </td>
-                                <td><input type="radio" name="ExperienceOfSchedulingAnAppointment" value="3">
-                                </td>
-                                <td><input type="radio" name="ExperienceOfSchedulingAnAppointment" value="4">
-                                </td>
-                                <td><input type="radio" name="ExperienceOfSchedulingAnAppointment" value="5">
-                                </td>
-
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="hope-table">
-                        <thead>
-                            <tr class="question-row">
-                                <td colspan="5">On a scale of 1-5, How would you rate your overall experience?
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>1 - Unsatisfied</th>
-                                <th>2 - Somewhat Unsatisfied</th>
-                                <th>3 - Neutral</th>
-                                <th>4 - Satisfied</th>
-                                <th>5 - Very Satisfied</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">On a scale of 1-5, How did you find the experience of scheduling an
+                                        appointment?</td>
+                                </tr>
+                                <tr>
+                                    <th>1 - Very difficult</th>
+                                    <th>2 - Difficult</th>
+                                    <th>3 - Neutral</th>
+                                    <th>4 - Easy</th>
+                                    <th>5 - Very Easy</th>
 
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="response-row">
-                                <td><input type="radio" name="rateYourOverallExperience" value="1">
-                                </td>
-                                <td><input type="radio" name="rateYourOverallExperience" value="2">
-                                </td>
-                                <td><input type="radio" name="rateYourOverallExperience" value="3">
-                                </td>
-                                <td><input type="radio" name="rateYourOverallExperience" value="4">
-                                </td>
-                                <td><input type="radio" name="rateYourOverallExperience" value="5">
-                                </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td data-label="1 - Very difficult"><input type="radio"
+                                            name="ExperienceOfSchedulingAnAppointment" value="1">
+                                    </td>
+                                    <td data-label="2 - Difficult"><input type="radio"
+                                            name="ExperienceOfSchedulingAnAppointment" value="2">
+                                    </td>
+                                    <td data-label="3 - Neutral"><input type="radio"
+                                            name="ExperienceOfSchedulingAnAppointment" value="3">
+                                    </td>
+                                    <td data-label="4 - Easy"><input type="radio"
+                                            name="ExperienceOfSchedulingAnAppointment" value="4">
+                                    </td>
+                                    <td data-label="5 - Very Easy"><input type="radio"
+                                            name="ExperienceOfSchedulingAnAppointment" value="5">
+                                    </td>
 
-                            </tr>
-                        </tbody>
-                    </table>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="hope-table">
+                            <thead>
+                                <tr class="question-row">
+                                    <td colspan="5">On a scale of 1-5, How would you rate your overall experience?
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>1 - Unsatisfied</th>
+                                    <th>2 - Somewhat Unsatisfied</th>
+                                    <th>3 - Neutral</th>
+                                    <th>4 - Satisfied</th>
+                                    <th>5 - Very Satisfied</th>
+
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="response-row">
+                                    <td data-label="1 - Unsatisfied"><input type="radio"
+                                            name="rateYourOverallExperience" value="1">
+                                    </td>
+                                    <td data-label="2 - Somewhat Unsatisfied"><input type="radio"
+                                            name="rateYourOverallExperience" value="2">
+                                    </td>
+                                    <td data-label="3 - Neutral"><input type="radio" name="rateYourOverallExperience"
+                                            value="3">
+                                    </td>
+                                    <td data-label="4 - Satisfied"><input type="radio" name="rateYourOverallExperience"
+                                            value="4">
+                                    </td>
+                                    <td data-label="5 - Very Satisfied"><input type="radio"
+                                            name="rateYourOverallExperience" value="5">
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <!-- Memo Fields for Additional Comments -->
@@ -524,15 +653,16 @@
                 <!-- Textareas for each of the memo questions as in the JSON -->
             </div>
 
+            <input type="hidden" name="code" value="***REMOVED***"><input>
             <!-- Submit and Cancel Buttons -->
             <div class="flex justify-end space-x-4 mt-6">
-                <button type="button"
-                    class="px-6 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-primary btn-primary hover:bg-purple-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">Cancel</button>
-                <button type="submit"
-                    class="px-6 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md bg-secondary btn-secondary hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-colors duration-150">Submit</button>
+                <!-- <button type="button"
+                    class="px-6 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-primary btn-primary hover:bg-purple-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">Cancel</button> -->
+                <button type="submit" class="px-12 py-4 border border-transparent shadow-sm text-sm font-medium rounded-md bg-secondary 
+                    btn-secondary hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary 
+                    transition-colors duration-150">Submit</button>
             </div>
 
-            <input type="hidden" name="code" value="***REMOVED***"><input>
 
         </form>
     </div>
