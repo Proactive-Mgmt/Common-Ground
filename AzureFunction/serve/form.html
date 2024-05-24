@@ -388,6 +388,112 @@
                             </tr>
                         </tbody>
                     </table>
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">Did the providers explain all he information clearly?</td>
+                            </tr>
+                            <tr>
+                                <th>Yes</th>
+                                <th>No</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td><input type="radio" name="InformationClearly" value="Yes">
+                                </td>
+                                <td><input type="radio" name="InformationClearly" value="No">
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">Was the reason for your visit appropriately addressed?</td>
+                            </tr>
+                            <tr>
+                                <th>Yes</th>
+                                <th>No</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td><input type="radio" name="reasonAppropriatelyAddressed" value="Yes">
+                                </td>
+                                <td><input type="radio" name="reasonAppropriatelyAddressed" value="No">
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">On a scale of 1-5, How did you find the experience of scheduling an
+                                    appointment?</td>
+                            </tr>
+                            <tr>
+                                <th>1 - Very difficult</th>
+                                <th>2 - Difficult</th>
+                                <th>3 - Neutral</th>
+                                <th>4 - Easy</th>
+                                <th>5 - Very Easy</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td><input type="radio" name="ExperienceOfSchedulingAnAppointment" value="1">
+                                </td>
+                                <td><input type="radio" name="ExperienceOfSchedulingAnAppointment" value="2">
+                                </td>
+                                <td><input type="radio" name="ExperienceOfSchedulingAnAppointment" value="3">
+                                </td>
+                                <td><input type="radio" name="ExperienceOfSchedulingAnAppointment" value="4">
+                                </td>
+                                <td><input type="radio" name="ExperienceOfSchedulingAnAppointment" value="5">
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="hope-table">
+                        <thead>
+                            <tr class="question-row">
+                                <td colspan="5">On a scale of 1-5, How would you rate your overall experience?
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>1 - Unsatisfied</th>
+                                <th>2 - Somewhat Unsatisfied</th>
+                                <th>3 - Neutral</th>
+                                <th>4 - Satisfied</th>
+                                <th>5 - Very Satisfied</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="response-row">
+                                <td><input type="radio" name="rateYourOverallExperience" value="1">
+                                </td>
+                                <td><input type="radio" name="rateYourOverallExperience" value="2">
+                                </td>
+                                <td><input type="radio" name="rateYourOverallExperience" value="3">
+                                </td>
+                                <td><input type="radio" name="rateYourOverallExperience" value="4">
+                                </td>
+                                <td><input type="radio" name="rateYourOverallExperience" value="5">
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <!-- Memo Fields for Additional Comments -->
@@ -418,13 +524,6 @@
                 <!-- Textareas for each of the memo questions as in the JSON -->
             </div>
 
-            <!-- Client Declined Checkbox -->
-            <div class="flex items-center mb-6">
-                <input id="ClientDeclinedForm" name="ClientDeclinedForm" type="checkbox"
-                    class="form-checkbox h-5 w-5 text-secondary-color" />
-                <label for="ClientDeclinedForm" class="ml-2 block text-sm font-medium text-gray-700">Client declined
-                    to complete form</label>
-            </div>
             <!-- Submit and Cancel Buttons -->
             <div class="flex justify-end space-x-4 mt-6">
                 <button type="button"
