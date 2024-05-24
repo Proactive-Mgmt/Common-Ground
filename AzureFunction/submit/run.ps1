@@ -31,8 +31,15 @@ Write-Host "Update completed successfully."
 $jsonResponse = $paramHashtable | ConvertTo-Json
 Write-Host  $jsonResponse
 
+
+$htmlPath = "$PSScriptRoot\success.html"
+$htmlContent = Get-Content $htmlPath -Raw
+
 Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
         StatusCode  = [System.Net.HttpStatusCode]::OK
-        ContentType = "text/plain"
-        Body        = "Form data processed successfully. Thank you!"  
+        ContentType = "text/html"
+        Body        = $htmlContent
     })
+
+
+
