@@ -59,7 +59,7 @@ def sendMessage(client, to_phone_number, rowKey, patientName):
     to_phone_number = (
         "+12487237903"  # Replace with the recipient's phone number  248 882 9722
     )
-    message_body = f"Hi {patientName}, thank you for visiting us! We hope your recent appointment was helpful. Please take a moment to share your feedback anonymously in our short survey. Your input helps us improve our services. Tap {link} to start. Thank you! "
+    message_body = f"Hi {patientName.title()}, thank you for visiting us! We hope your recent appointment was helpful. Please take a moment to share your feedback anonymously in our short survey. Your input helps us improve our services. Tap {link} to start. Thank you! "
 
     # Send the SMS
     message = client.messages.create(
