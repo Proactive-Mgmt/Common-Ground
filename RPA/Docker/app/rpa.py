@@ -301,4 +301,9 @@ def return_appointments():
 
 
 if __name__ == "__main__":
-    print("Appiments: ", return_appointments())
+    try:
+        print("First attempt. Appointments: ", return_appointments())
+    except:
+        print("Fist attempt failed. Waiting 60 second to second attempt... ")
+        time.sleep(60)
+        print("Second attempt. Appointments: ", return_appointments())
