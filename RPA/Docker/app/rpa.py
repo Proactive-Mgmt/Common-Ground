@@ -283,27 +283,32 @@ with open("config.json") as config_file:
 
 
 def return_appointments():
-    # Load config file
+    try:
+        driver = initialize_driver()
+        if driver:
+            print(" driver Succesfully Initialized...")
 
-    # print(f"username: {username} password: {password} login_url: {login_url}")
+        login(driver, username, password, login_url)
+        time.sleep(2)
+        # print("Starting to process accounts...")
+        appointments = get_appointments(driver)
 
-    print("Initializing driver...")
-    driver = initialize_driver()
-    if driver:
-        print(" driver Succesfully Initialized...")
+        return appointments
 
-    login(driver, username, password, login_url)
-    time.sleep(2)
-    # print("Starting to process accounts...")
-    appointments = get_appointments(driver)
+    except Exception as e:
+        raise e
 
-    return appointments
+
+def run_rpa():
+    try:
+        print("First attempt. Appointments: ")
+        return return_appointments()
+    except:
+
+        print("Fist attempt failed. Waiting 60 second to second attempt... ")
+        time.sleep(60)
+        return return_appointments()
 
 
 if __name__ == "__main__":
-    try:
-        print("First attempt. Appointments: ", return_appointments())
-    except:
-        print("Fist attempt failed. Waiting 60 second to second attempt... ")
-        time.sleep(60)
-        print("Second attempt. Appointments: ", return_appointments())
+    run_rpa()

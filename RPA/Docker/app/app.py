@@ -1,7 +1,7 @@
 import json
 import logging
 import storage as storage
-from rpa import return_appointments
+from rpa import run_rpa
 import message as message
 
 
@@ -26,7 +26,7 @@ def main():
 
     # print("Starting to process accounts...")
 
-    appointments = json.loads(return_appointments())
+    appointments = json.loads(run_rpa())
 
     # Filter Python objects with list comprehensions
     print("Pre filter", appointments)
