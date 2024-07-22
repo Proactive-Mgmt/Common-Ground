@@ -11,7 +11,6 @@ import json
 import logging
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-import pyotp
 
 
 def initialize_driver():
@@ -48,37 +47,81 @@ def initialize_driver():
 
     return webdriver.Chrome(options=options)
 
-def scrape_ch_mfa(driver):
-    try:
-        driver.execute_script("window.open('https://control.callharbor.com/portal/messages', '_blank');")
-        driver.switch_to.window(driver.window_handles[-1])
-        driver.find_element(By.NAME, "data[Login][username]").send_keys("sms@proactivemgmt")
-        driver.find_element(By.NAME, "data[Login][password]").send_keys("kB8zaXGbDD4-xdk0")
-        driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Log In"]').click()
-        
-        WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/login/mfa/1"))
-        
-        mfa_code = pyotp.TOTP("JINDQR33AJDPJXED").now()
-        driver.find_element(By.NAME, "data[Login][passcode]").send_keys(mfa_code)
-        driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Submit"]').click()
-        
-        driver.get("https://control.callharbor.com/portal/messages")
-        WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/messages"))
-        
-        message_xpath = '/html/body/div[2]/div[5]/div[2]/div[2]/div[1]/table/tbody/tr[1]/td[4]/div'
-        message_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, message_xpath)))
-        
-        message_text = message_element.text
-        match = re.search(r"Your code is: (\d+)", message_text)
-        
-        driver.close()
-        driver.switch_to.window(driver.window_handles[0])
-        
-        return match.group(1) if match else None
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None
+def get_token():
+    # Call Harbor API credentials
+    callharbor = config["callharbor"]
+    client_id = callharbor["client_id"]
+    client_secret = callharbor["client_secret"]
+    ch_username = callharbor["username"]
+    ch_password = callharbor["password"]
+
+    # Construct the request URL
+    url = f"https://control.callharbor.com/ns-api/oauth2/token/?grant_type=password&client_id={client_id}&client_secret={client_secret}&username={ch_username}&password={ch_password}"
+
+    # Send the GET request
+    response = requests.get(url)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Extract the access token from the response
+        access_token = response.json().get("access_token")
+        if access_token:
+            # print(f"Access Token: {access_token}")
+            return access_token
+        else:
+            print("Failed to retrieve access token")
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
+
+
+def get_session(access_token):
+    # Call Harbor API access token (replace with your token)
+    # Construct the request headers
+    headers: dict[str, str] = {
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/json",
+    }
+    # print(access_token)
+    # Construct the request URL
+    print(f"access_token: {access_token}")
+    url = "https://control.callharbor.com/ns-api/?object=messagesession&action=read&domain=proactivemgmt.com&user=1000&limit=5&session_id=a106d2896653bf9eb03c9226efaadb69"
+
+    # Send the GET request
+    response = requests.get(url, headers=headers)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Print the response content
+        # print("session_id: ", response.json())
+        return response.json()
+
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
+
+
+def RequestCode():
+    print("Requesting code...")
+    # return "12345"
+    access_token = get_token()
+
+    session_json = get_session(access_token)
+    if session_json:
+        # Assuming the response is a list of dictionaries
+        pattern = r"Your code is: (\d+)"
+
+        for data in session_json:
+            # Extract the last_mesg attribute
+            message = data["last_mesg"]
+            match: re.Match[str] | None = re.search(pattern, message)
+            if match:
+                code: str | json.Any = match.group(1)
+                print(code)
+                return code
+            else:
+                print(f"No code found in the message. Message= {message}")
+    else:
+        print(f"Error: No message")
 
 
 def handle_mfa(driver):
@@ -90,7 +133,7 @@ def handle_mfa(driver):
     send_call_button = driver.find_element(By.ID, "sendCallButton")
     send_call_button.click()
     time.sleep(5)
-    code = scrape_ch_mfa(driver)
+    code = RequestCode()
     if not code:
         raise Exception("MFA code not retrieved.")
 
@@ -267,7 +310,7 @@ def run_rpa():
         return return_appointments()
     except:
 
-        print("First attempt failed. Waiting 60 seconds to second attempt... ")
+        print("Fist attempt failed. Waiting 60 second to second attempt... ")
         time.sleep(60)
         return return_appointments()
 

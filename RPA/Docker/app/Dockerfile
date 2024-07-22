@@ -16,7 +16,7 @@ WORKDIR /app
 
 # upgrade pip and install requirements
 RUN pip install --upgrade pip && \
-    pip install webdriver-manager selenium azure-data-tables twilio
+    pip install webdriver-manager selenium azure-data-tables twilio pyotp
 
 COPY . .
 

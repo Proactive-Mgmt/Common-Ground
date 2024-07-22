@@ -46,7 +46,9 @@ def save_appointments(appointments):
         appointment["message_sid"] = ""
         entity = TableEntity(**appointment)
         try:
+            print('create_entity here', entity)
             table_client.create_entity(entity)
+            #table_client.upsert_entity(entity, mode=UpdateMode.MERGE)
         except Exception as e:
             print("An error occurred:", e)
             traceback.print_exc()
@@ -112,7 +114,9 @@ def save_processed_appointments(appointments):
     for appointment in appointments:
         entity = TableEntity(**appointment)
         try:
+            print('updated_entity here', entity)
             table_client.update_entity(entity)
+            #table_client.upsert_entity(entity, mode=UpdateMode.MERGE)
         except:
             continue
 

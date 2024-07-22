@@ -2,7 +2,7 @@ import json
 import re
 from typing import LiteralString
 import requests
-
+import pyotp
 
 def get_token():
     # Call Harbor API credentials
@@ -31,11 +31,16 @@ def get_token():
 
 
 def get_session(access_token):
-    # Call Harbor API access token (replace with your token)
+    # Generate the MFA code using PyOTP
+    secret = "YOUR_SECRET_KEY"  # Replace with your actual secret key
+    totp = pyotp.TOTP(secret)
+    mfa_code = totp.now()
+
     # Construct the request headers
     headers: dict[str, str] = {
         "Authorization": f"Bearer {access_token}",
         "Accept": "application/json",
+        "X-MFA-Code": mfa_code,  # Add the MFA code to the headers
     }
     # print(access_token)
     # Construct the request URL
