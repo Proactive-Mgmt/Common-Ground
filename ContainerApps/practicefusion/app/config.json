@@ -1,8 +1,4 @@
 {
-  "credentials": {
-    "username": "syoung@commongroundhelps.org",
-    "password": "Evolution!"
-  },
   "selenium_options": {
     "headless": true,
     "window_size": "1920,1080"

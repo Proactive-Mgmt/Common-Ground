@@ -10,13 +10,11 @@ import logging
 import pyotp
 import re
 import time
+import os
 
 # GLOBAL CONFIG
 with open("config.json") as config_file:
     config = json.load(config_file)
-    credentials = config["credentials"]
-    username = credentials["username"]
-    password = credentials["password"]
 
 
 def initialize_driver():
@@ -91,21 +89,24 @@ def handle_mfa(driver):
     WebDriverWait(driver, 20).until(EC.url_changes)
 
 
-def login(driver, username, password):
-    logging.info(f"Attempting login for user: {username}")
+def login(driver):
+    PRACTICEFUSION_USERNAME = os.getenv('PRACTICEFUSION_USERNAME')
+    PRACTICEFUSION_PASSWORD = os.getenv('PRACTICEFUSION_PASSWORD')
+
+    logging.info('Attempting login for user: %s', PRACTICEFUSION_USERNAME)
     driver.get('https://static.practicefusion.com/apps/ehr/index.html#/login')
 
-    username_field = driver.find_element(By.ID, "inputUsername")
+    username_field = driver.find_element(By.ID, 'inputUsername')
     username_field.clear()
-    username_field.send_keys(username)
+    username_field.send_keys(PRACTICEFUSION_USERNAME)
 
-    password_field = driver.find_element(By.ID, "inputPswd")
-    password_field.send_keys(password)
-    login_button = driver.find_element(By.ID, "loginButton")
+    password_field = driver.find_element(By.ID, 'inputPswd')
+    password_field.send_keys(PRACTICEFUSION_PASSWORD)
+    login_button = driver.find_element(By.ID, 'loginButton')
     login_button.click()
 
     # Handle MFA
-    if config.get("mfa"):
+    if config.get('mfa'):
         handle_mfa(driver)
 
 
@@ -210,7 +211,7 @@ def get_appointments(driver):
 
 def run_rpa():
     driver = initialize_driver()
-    login(driver, username, password)
+    login(driver)
     time.sleep(2)
     appointments = get_appointments(driver)
 
