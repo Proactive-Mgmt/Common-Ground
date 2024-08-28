@@ -109,6 +109,7 @@ def login(driver):
 
 
 def get_appointments(driver):
+    GET_YESTERDAYS_RECORDS = os.getenv('GET_YESTERDAYS_RECORDS')
     schedule_url: LiteralString = (
         "https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
     )
@@ -125,7 +126,7 @@ def get_appointments(driver):
     time.sleep(10)
     logging.info(f"driver.current_url: {driver.current_url}")
 
-    if config.get("get_yestdays_records"):
+    if GET_YESTERDAYS_RECORDS == 'TRUE':
         decrementbutton = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//button[@class='btn-sm decrement-date']")

@@ -1,5 +1,4 @@
 {
-  "get_yestdays_records": false,
   "twilio_credentials": {
     "account_sid": "***REMOVED***",
     "auth_token": "4aa0082b2a8329e526229f27017d29f9",
