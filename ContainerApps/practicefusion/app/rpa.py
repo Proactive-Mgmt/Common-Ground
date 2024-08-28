@@ -17,7 +17,6 @@ with open("config.json") as config_file:
     credentials = config["credentials"]
     username = credentials["username"]
     password = credentials["password"]
-    login_url = credentials["login_url"]
 
 
 def initialize_driver():
@@ -92,9 +91,9 @@ def handle_mfa(driver):
     WebDriverWait(driver, 20).until(EC.url_changes)
 
 
-def login(driver, username, password, url):
+def login(driver, username, password):
     logging.info(f"Attempting login for user: {username}")
-    driver.get(url)
+    driver.get('https://static.practicefusion.com/apps/ehr/index.html#/login')
 
     username_field = driver.find_element(By.ID, "inputUsername")
     username_field.clear()
@@ -211,7 +210,7 @@ def get_appointments(driver):
 
 def run_rpa():
     driver = initialize_driver()
-    login(driver, username, password, login_url)
+    login(driver, username, password)
     time.sleep(2)
     appointments = get_appointments(driver)
 
