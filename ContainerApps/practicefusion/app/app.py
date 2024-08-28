@@ -1,8 +1,7 @@
-import json
 import logging
 import storage as storage
 from rpa import run_rpa
-import message as message
+from process_messages import process_messages
 
 def main():
     appointments = run_rpa()
@@ -24,7 +23,7 @@ def main():
 
     appointments = storage.get_appointments()
 
-    processed_appointments = message.process_messages(appointments)
+    processed_appointments = process_messages(appointments)
     storage.save_processed_appointments(processed_appointments)
 
     logging.info('processed_appointments:\n%s', processed_appointments)
