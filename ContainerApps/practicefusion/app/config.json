@@ -1,9 +1,0 @@
-{
-  "twilio_credentials": {
-    "account_sid": "***REMOVED***",
-    "auth_token": "4aa0082b2a8329e526229f27017d29f9",
-    "my_twilio_phone_number": "+13133567994!",
-    "campaign_sid": "MG54f629d20a3a58da7b332badcebcc382",
-    "survey_link": "https://survey.cghelps.org/api/serve?code=***REMOVED***"
-  }
-}

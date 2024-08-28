@@ -4,18 +4,13 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from typing import LiteralString
+from typing import LiteralString, List
 import json
 import logging
 import pyotp
 import re
 import time
 import os
-
-# GLOBAL CONFIG
-with open("config.json") as config_file:
-    config = json.load(config_file)
-
 
 def initialize_driver():
     logging.info('initialize_driver')
@@ -206,7 +201,7 @@ def get_appointments(driver):
     return appointments
 
 
-def run_rpa():
+def get_practicefusion_appointments() -> List[dict]:
     driver = initialize_driver()
     login(driver)
     time.sleep(2)
@@ -215,4 +210,4 @@ def run_rpa():
     return appointments
 
 if __name__ == "__main__":
-    run_rpa()
+    get_practicefusion_appointments()

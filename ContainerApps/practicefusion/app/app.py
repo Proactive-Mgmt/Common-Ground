@@ -1,10 +1,14 @@
 import logging
-import storage as storage
-from rpa import run_rpa
-from process_messages import process_messages
+from lib import (
+    get_practicefusion_appointments,
+    process_messages,
+    get_appointments,
+    save_appointments,
+    save_processed_appointments,
+)
 
 def main():
-    appointments = run_rpa()
+    appointments = get_practicefusion_appointments()
 
     logging.debug("Pre filter:\n%s", appointments)
 
@@ -19,12 +23,12 @@ def main():
 
     logging.debug("Post Filter:\n%s", filtered_appointments)
 
-    storage.save_appointments(filtered_appointments)
+    save_appointments(filtered_appointments)
 
-    appointments = storage.get_appointments()
+    appointments = get_appointments()
 
     processed_appointments = process_messages(appointments)
-    storage.save_processed_appointments(processed_appointments)
+    save_processed_appointments(processed_appointments)
 
     logging.info('processed_appointments:\n%s', processed_appointments)
     logging.info('appointments:\n%s', appointments)
