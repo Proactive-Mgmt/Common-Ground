@@ -5,7 +5,7 @@ from rpa import run_rpa
 import message as message
 
 def main():
-    appointments = json.loads(run_rpa())
+    appointments = run_rpa()
 
     logging.debug("Pre filter:\n%s", appointments)
 

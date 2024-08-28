@@ -42,60 +42,54 @@ def initialize_driver():
     return driver
 
 def scrape_ch_mfa(driver):
-    try:
-        driver.execute_script("window.open('https://control.callharbor.com/portal/messages', '_blank');")
-        driver.switch_to.window(driver.window_handles[-1])
-        driver.find_element(By.NAME, "data[Login][username]").send_keys("sms@proactivemgmt")
-        driver.find_element(By.NAME, "data[Login][password]").send_keys("kB8zaXGbDD4-xdk0")
-        driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Log In"]').click()
-        
-        WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/login/mfa/1"))
-        
-        mfa_code = pyotp.TOTP("JINDQR33AJDPJXED").now()
-        driver.find_element(By.NAME, "data[Login][passcode]").send_keys(mfa_code)
-        driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Submit"]').click()
-        
-        driver.get("https://control.callharbor.com/portal/messages")
-        WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/messages"))
-        
-        message_xpath = '/html/body/div[2]/div[5]/div[2]/div[2]/div[1]/table/tbody/tr[1]/td[4]/div'
-        message_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, message_xpath)))
-        
-        message_text = message_element.text
-        match = re.search(r"Your code is: (\d+)", message_text)
-        
-        driver.close()
-        driver.switch_to.window(driver.window_handles[0])
-        
-        return match.group(1) if match else None
-
-    except Exception as e:
-        logging.info(f"An error occurred: {e}")
-        return None
+    driver.execute_script("window.open('https://control.callharbor.com/portal/messages', '_blank');")
+    driver.switch_to.window(driver.window_handles[-1])
+    driver.find_element(By.NAME, "data[Login][username]").send_keys("sms@proactivemgmt")
+    driver.find_element(By.NAME, "data[Login][password]").send_keys("kB8zaXGbDD4-xdk0")
+    driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Log In"]').click()
+    
+    WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/login/mfa/1"))
+    
+    mfa_code = pyotp.TOTP("JINDQR33AJDPJXED").now()
+    driver.find_element(By.NAME, "data[Login][passcode]").send_keys(mfa_code)
+    driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Submit"]').click()
+    
+    driver.get("https://control.callharbor.com/portal/messages")
+    WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/messages"))
+    
+    message_xpath = '/html/body/div[2]/div[5]/div[2]/div[2]/div[1]/table/tbody/tr[1]/td[4]/div'
+    message_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, message_xpath)))
+    
+    message_text = message_element.text
+    match = re.search(r"Your code is: (\d+)", message_text)
+    
+    driver.close()
+    driver.switch_to.window(driver.window_handles[0])
+    
+    return match.group(1) if match else None
 
 
 def handle_mfa(driver):
-    logging.info("Handling MFA...")
+    logging.info('handle_mfa')
     WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.ID, "sendCallButton"))
+        EC.presence_of_element_located((By.ID, 'sendCallButton'))
     )
 
-    send_call_button = driver.find_element(By.ID, "sendCallButton")
+    send_call_button = driver.find_element(By.ID, 'sendCallButton')
     send_call_button.click()
     time.sleep(5)
     code = scrape_ch_mfa(driver)
     if not code:
-        raise Exception("MFA code not retrieved.")
+        raise Exception('MFA code not retrieved.')
 
-    code_field = driver.find_element(By.ID, "code")
+    code_field = driver.find_element(By.ID, 'code')
     code_field.send_keys(code)
 
-    send_code_button = driver.find_element(By.ID, "sendCodeButton")
+    send_code_button = driver.find_element(By.ID, 'sendCodeButton')
     send_code_button.click()
 
     # Wait for the MFA process to complete and navigate to the next page
     WebDriverWait(driver, 20).until(EC.url_changes)
-    logging.info("MFA handled successfully.")
 
 
 def login(driver, username, password, url):
@@ -123,7 +117,6 @@ def accept_alert(driver):
         alert.accept()
     except:
         logging.info('accept_alert')
-        pass
 
 
 def get_appointments(driver):
@@ -213,9 +206,7 @@ def get_appointments(driver):
         }
         appointments.append(appointment)
 
-    # Convert the list of dictionaries to JSON
-
-    return json.dumps(appointments, indent=4)
+    return appointments
 
 
 def run_rpa():
