@@ -4,6 +4,7 @@ import logging
 import os
 
 def process_messages(appointments):
+    logging.info('process_messages')
     TWILIO_ACCOUNT_SID  = os.getenv('TWILIO_ACCOUNT_SID')
     TWILIO_AUTH_TOKEN   = os.getenv('TWILIO_AUTH_TOKEN')
     TWILIO_CAMPAIGN_SID = os.getenv('TWILIO_CAMPAIGN_SID')
