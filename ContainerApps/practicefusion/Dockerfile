@@ -15,8 +15,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 WORKDIR /app
 
 # upgrade pip and install requirements
+COPY requirements.txt .
 RUN pip install --upgrade pip && \
-    pip install webdriver-manager selenium azure-data-tables twilio pyotp
+    pip install -r requirements.txt
 
 COPY ./app .
 
