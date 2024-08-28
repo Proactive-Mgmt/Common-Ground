@@ -108,7 +108,13 @@ def login(driver):
     handle_mfa(driver)
 
 
-def accept_alert(driver):
+def get_appointments(driver):
+    schedule_url: LiteralString = (
+        "https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
+    )
+    driver.get(schedule_url)
+
+    # Call this function before interacting with elements that might trigger alerts
     try:
         WebDriverWait(driver, 10).until(EC.alert_is_present())
         alert = driver.switch_to.alert
@@ -116,14 +122,6 @@ def accept_alert(driver):
     except:
         logging.info('accept_alert')
 
-
-def get_appointments(driver):
-    schedule_url: LiteralString = (
-        "https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
-    )
-    driver.get(schedule_url)
-    # Call this function before interacting with elements that might trigger alerts
-    accept_alert(driver)
     time.sleep(10)
     logging.info(f"driver.current_url: {driver.current_url}")
 
