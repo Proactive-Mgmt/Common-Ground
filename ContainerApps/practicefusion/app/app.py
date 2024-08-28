@@ -7,8 +7,6 @@ import message as message
 
 logging.basicConfig(
     level=logging.DEBUG,
-    filename="selenium_log.log",
-    filemode="w",
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
