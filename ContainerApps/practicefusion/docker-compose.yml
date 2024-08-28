@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  practicefusion:
+    image: commongroundcr.azurecr.io/practicefusion:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
