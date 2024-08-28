@@ -8,28 +8,13 @@
     "headless": true,
     "window_size": "1920,1080"
   },
-  "log_level": "DEBUG",
   "mfa": true,
   "get_yestdays_records": false,
-  "connection_string": {
-    "account_key": "***REMOVED***",
-    "account_name": "hopescalesurvey9d6a"
-  },
   "twilio_credentials": {
     "account_sid": "***REMOVED***",
     "auth_token": "4aa0082b2a8329e526229f27017d29f9",
     "my_twilio_phone_number": "+13133567994!",
     "campaign_sid": "MG54f629d20a3a58da7b332badcebcc382",
     "survey_link": "https://survey.cghelps.org/api/serve?code=***REMOVED***"
-  },
-  "testing": {
-    "to_phone_number": "+12487237903",
-    "message_body": "message_body"
-  },
-  "callharbor": {
-    "client_id": "proactivemgmt",
-    "client_secret": "11b521761b6ed524a519818835289b31",
-    "username": "sms@proactivemgmt",
-    "password": "kB8zaXGbDD4-xdk0"
   }
 }

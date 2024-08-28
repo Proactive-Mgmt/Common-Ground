@@ -1,22 +1,15 @@
 from azure.core.exceptions import ResourceExistsError
 from azure.data.tables import TableClient, TableEntity
 import hashlib
-import json
 import uuid
 import logging
+import os
 
 def save_appointments(appointments):
     logging.info('save_appointments')
 
-    with open('config.json') as config_file:
-        config = json.load(config_file)
-        credentials = config['connection_string']
-        account_key = credentials['account_key']
-        account_name = credentials['account_name']
-
-    connection_string = f'DefaultEndpointsProtocol=https;AccountName={account_name};==>REPLACED==>={account_key};EndpointSuffix=core.windows.net'
-    table_name = 'appointments'
-    table_client: TableClient = TableClient.from_connection_string(connection_string, table_name)
+    STORAGE_ACCOUNT_CONNECTION_STRING = os.getenv('STORAGE_ACCOUNT_CONNECTION_STRING')
+    table_client = TableClient.from_connection_string(STORAGE_ACCOUNT_CONNECTION_STRING, 'appointments')
 
     for appointment in appointments:
         #  compound key (dob+lastname+phonenumber)+
@@ -52,21 +45,11 @@ def generate_deterministic_uuid(input_string):
 
 
 def get_appointments() -> None:
-    logging.info('This is get_appointments ')
+    logging.info('get_appointments')
 
-    with open('config.json') as config_file:
-        config = json.load(config_file)
-        credentials = config['connection_string']
-        account_key = credentials['account_key']
-        account_name = credentials['account_name']
+    STORAGE_ACCOUNT_CONNECTION_STRING = os.getenv('STORAGE_ACCOUNT_CONNECTION_STRING')
+    table_client = TableClient.from_connection_string(STORAGE_ACCOUNT_CONNECTION_STRING, 'appointments')
 
-    connection_string = f'DefaultEndpointsProtocol=https;AccountName={account_name};==>REPLACED==>={account_key};EndpointSuffix=core.windows.net'
-
-    table_name = 'appointments'
-
-    table_client: TableClient = TableClient.from_connection_string(
-        conn_str=connection_string, table_name=table_name
-    )
     my_filter = "appointmentStatus eq 'Seen' and provider eq 'BHUC COMMON GROUND' and type eq 'CLINICIAN' and sentOn eq ''"
     entities = table_client.query_entities(my_filter)
 
@@ -76,15 +59,8 @@ def get_appointments() -> None:
 def save_processed_appointments(appointments):
     logging.info('save_processed_appointments')
 
-    with open('config.json') as config_file:
-        config = json.load(config_file)
-        credentials = config['connection_string']
-        account_key = credentials['account_key']
-        account_name = credentials['account_name']
-
-    connection_string = f'DefaultEndpointsProtocol=https;AccountName={account_name};==>REPLACED==>={account_key};EndpointSuffix=core.windows.net'
-    table_name = 'appointments'
-    table_client = TableClient.from_connection_string(connection_string, table_name)
+    STORAGE_ACCOUNT_CONNECTION_STRING = os.getenv('STORAGE_ACCOUNT_CONNECTION_STRING')
+    table_client = TableClient.from_connection_string(STORAGE_ACCOUNT_CONNECTION_STRING, 'appointments')
 
     for appointment in appointments:
         entity = TableEntity(**appointment)
