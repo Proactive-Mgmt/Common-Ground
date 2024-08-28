@@ -4,30 +4,11 @@ import storage as storage
 from rpa import run_rpa
 import message as message
 
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-)
-
-with open("config.json") as config_file:
-    config = json.load(config_file)
-    credentials = config["credentials"]
-    username = credentials["username"]
-    password = credentials["password"]
-    login_url = credentials["login_url"]
-
-
 def main():
-
-    logging.info("Initializing orchestrator")
-
-    # logging.info("Starting to process accounts...")
-
     appointments = json.loads(run_rpa())
 
-    # Filter Python objects with list comprehensions
-    logging.info("Pre filter", appointments)
+    logging.debug("Pre filter:\n%s", appointments)
+
     # Filter appointments
     filtered_appointments = [
         appointment
@@ -37,19 +18,23 @@ def main():
         and appointment["appointmentStatus"] == "Seen"
     ]
 
-    logging.info("Post Filter", filtered_appointments)
+    logging.debug("Post Filter:\n%s", filtered_appointments)
 
     storage.save_appointments(filtered_appointments)
 
     appointments = storage.get_appointments()
 
     processed_appointments = message.process_messages(appointments)
-    logging.info("processed_appointments ", processed_appointments)
     storage.save_processed_appointments(processed_appointments)
-    # save_appointments(appointments)
 
-    logging.info(f"Appointments: {appointments}")
+    logging.info('processed_appointments:\n%s', processed_appointments)
+    logging.info('appointments:\n%s', appointments)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    logging.getLogger('selenium').setLevel(logging.WARNING)
+    logging.getLogger('urllib3').setLevel(logging.WARNING)
+    logging.getLogger('azure').setLevel(logging.WARNING)
+
     main()

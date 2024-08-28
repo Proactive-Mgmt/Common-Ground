@@ -1,52 +1,45 @@
 from datetime import datetime
-import os
-import re
-import time
-from typing import LiteralString
-import requests
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
-import json
-import logging
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from typing import LiteralString
+import json
+import logging
 import pyotp
+import re
+import time
+
+# GLOBAL CONFIG
+with open("config.json") as config_file:
+    config = json.load(config_file)
+    credentials = config["credentials"]
+    username = credentials["username"]
+    password = credentials["password"]
+    login_url = credentials["login_url"]
 
 
 def initialize_driver():
-    now = datetime.now()
-    local_now = now.astimezone()
-    local_tz = local_now.tzinfo
-    local_tzname = local_tz.tzname(local_now)
-    logging.info("current time ", datetime.now(), " local_tz  ", local_tzname)
+    logging.info('initialize_driver')
 
-    logging.info("Initializing Selenium driver...")
-    # logging.info("Initializing Selenium driver...")
     options = Options()
-    selenium_options = config["selenium_options"]
+    selenium_options = config['selenium_options']
 
-    # # Set headless option based on config
-    if selenium_options["headless"]:
-        options.add_argument("--headless")
-
-    # Set window size
     options.add_argument(f'--window-size={selenium_options["window_size"]}')
-    # Additional necessary arguments for headless mode in Docker
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-gpu")
+    options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
 
-    options.add_argument(
-        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
-    )
+    # Set headless option based on config
+    if selenium_options['headless']:
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--disable-gpu')
 
-    # Test with profile
-    # options.add_argument("user-data-dir=" + os.path.join(os.getcwd(), "ChromeProfile"))
+    driver = webdriver.Chrome(options=options)
+    logging.info('Driver initialized successfully.')
 
-    logging.info("Driver initialized successfully.")
-
-    return webdriver.Chrome(options=options)
+    return driver
 
 def scrape_ch_mfa(driver):
     try:
@@ -106,32 +99,21 @@ def handle_mfa(driver):
 
 
 def login(driver, username, password, url):
-    try:
+    logging.info(f"Attempting login for user: {username}")
+    driver.get(url)
 
-        logging.info(f"Attempting login for user: {username}")
-        # logging.info(f"Attempting login for user: {username}")
-        driver.get(url)
+    username_field = driver.find_element(By.ID, "inputUsername")
+    username_field.clear()
+    username_field.send_keys(username)
 
-        username_field = driver.find_element(By.ID, "inputUsername")
-        username_field.clear()
-        username_field.send_keys(username)
+    password_field = driver.find_element(By.ID, "inputPswd")
+    password_field.send_keys(password)
+    login_button = driver.find_element(By.ID, "loginButton")
+    login_button.click()
 
-        password_field = driver.find_element(By.ID, "inputPswd")
-        password_field.send_keys(password)
-        login_button = driver.find_element(By.ID, "loginButton")
-        login_button.click()
-
-        # Handle MFA
-        if config.get("mfa"):
-            handle_mfa(driver)
-
-    except Exception as e:
-        logging.info(f"An exception occurred during login: {e}")
-
-        # logging.info(f"An exception occurred during login: {e}")
-        raise e
-
-    # def GetRecods(driver, record):
+    # Handle MFA
+    if config.get("mfa"):
+        handle_mfa(driver)
 
 
 def accept_alert(driver):
@@ -140,7 +122,7 @@ def accept_alert(driver):
         alert = driver.switch_to.alert
         alert.accept()
     except:
-        logging.info(" accept_alert ")
+        logging.info('accept_alert')
         pass
 
 
@@ -236,41 +218,13 @@ def get_appointments(driver):
     return json.dumps(appointments, indent=4)
 
 
-with open("config.json") as config_file:
-    config = json.load(config_file)
-    credentials = config["credentials"]
-    username = credentials["username"]
-    password = credentials["password"]
-    login_url = credentials["login_url"]
-
-
-def return_appointments():
-    try:
-        driver = initialize_driver()
-        if driver:
-            logging.info(" driver Succesfully Initialized...")
-
-        login(driver, username, password, login_url)
-        time.sleep(2)
-        # logging.info("Starting to process accounts...")
-        appointments = get_appointments(driver)
-
-        return appointments
-
-    except Exception as e:
-        raise e
-
-
 def run_rpa():
-    try:
-        logging.info("First attempt. Appointments: ")
-        return return_appointments()
-    except:
+    driver = initialize_driver()
+    login(driver, username, password, login_url)
+    time.sleep(2)
+    appointments = get_appointments(driver)
 
-        logging.info("Fist attempt failed. Waiting 60 second to second attempt... ")
-        time.sleep(60)
-        return return_appointments()
-
+    return appointments
 
 if __name__ == "__main__":
     run_rpa()

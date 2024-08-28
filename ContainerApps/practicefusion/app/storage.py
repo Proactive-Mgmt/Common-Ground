@@ -1,59 +1,44 @@
+from azure.core.exceptions import ResourceExistsError
+from azure.data.tables import TableClient, TableEntity
 import hashlib
 import json
-import traceback
 import uuid
-from azure.data.tables import TableClient, TableEntity
-
+import logging
 
 def save_appointments(appointments):
-    logging.info("This is save_appointments ")
+    logging.info('save_appointments')
 
-    with open("config.json") as config_file:
+    with open('config.json') as config_file:
         config = json.load(config_file)
-        credentials = config["connection_string"]
-        account_key = credentials["account_key"]
-        account_name = credentials["account_name"]
+        credentials = config['connection_string']
+        account_key = credentials['account_key']
+        account_name = credentials['account_name']
 
-    connection_string = f"DefaultEndpointsProtocol=https;AccountName={account_name};==>REPLACED==>={account_key};EndpointSuffix=core.windows.net"
-    logging.info(connection_string)
-    table_name = "appointments"
-    table_client: TableClient = TableClient.from_connection_string(
-        connection_string, table_name
-    )
-
-    # appointments_json = json.loads(appointments)
+    connection_string = f'DefaultEndpointsProtocol=https;AccountName={account_name};==>REPLACED==>={account_key};EndpointSuffix=core.windows.net'
+    table_name = 'appointments'
+    table_client: TableClient = TableClient.from_connection_string(connection_string, table_name)
 
     for appointment in appointments:
         #  compound key (dob+lastname+phonenumber)+
         row_key = generate_deterministic_uuid(
-            appointment["patientDOB"]
-            + appointment["patientName"].split()[1]
-            + appointment["patientPhone"]
+            appointment['patientDOB']
+            + appointment['patientName'].split()[1]
+            + appointment['patientPhone']
         )
-        # row_key = (
-        #     appointment["patientDOB"]
-        #     + appointment["patientName"].split()[1]
-        #     + appointment["patientPhone"]
-        # )
 
-        # logging.info("row_key ", row_key)
-        logging.info(f"row_key: {row_key}")
-        logging.info(f"row_key: {row_key[-1]}")
+        logging.info(f'row_key: {row_key}')
+        logging.info(f'row_key: {row_key[-1]}')
 
-        appointment["RowKey"] = row_key
-        appointment["PartitionKey"] = row_key[-1]
-        appointment["sentOn"] = ""
-        appointment["message_sid"] = ""
+        appointment['RowKey'] = row_key
+        appointment['PartitionKey'] = row_key[-1]
+        appointment['sentOn'] = ''
+        appointment['message_sid'] = ''
         entity = TableEntity(**appointment)
         try:
-            logging.info('create_entity here', entity)
+            logging.info('Creating entity:\n%s', entity)
             table_client.create_entity(entity)
-            #table_client.upsert_entity(entity, mode=UpdateMode.MERGE)
-        except Exception as e:
-            logging.info("An error occurred:", e)
-            traceback.print_exc()
-
-    logging.info("Data inserted successfully!")
+        except ResourceExistsError:
+            logging.warning('Entity already exists:\n%s', entity)
 
 
 def generate_deterministic_uuid(input_string):
@@ -66,22 +51,18 @@ def generate_deterministic_uuid(input_string):
     return str(deterministic_uuid)
 
 
-# Example usage
-
-
 def get_appointments() -> None:
-    logging.info("This is get_appointments ")
+    logging.info('This is get_appointments ')
 
-    with open("config.json") as config_file:
+    with open('config.json') as config_file:
         config = json.load(config_file)
-        credentials = config["connection_string"]
-        account_key = credentials["account_key"]
-        account_name = credentials["account_name"]
+        credentials = config['connection_string']
+        account_key = credentials['account_key']
+        account_name = credentials['account_name']
 
-    connection_string = f"DefaultEndpointsProtocol=https;AccountName={account_name};==>REPLACED==>={account_key};EndpointSuffix=core.windows.net"
-    logging.info(connection_string)
+    connection_string = f'DefaultEndpointsProtocol=https;AccountName={account_name};==>REPLACED==>={account_key};EndpointSuffix=core.windows.net'
 
-    table_name = "appointments"
+    table_name = 'appointments'
 
     table_client: TableClient = TableClient.from_connection_string(
         conn_str=connection_string, table_name=table_name
@@ -89,39 +70,23 @@ def get_appointments() -> None:
     my_filter = "appointmentStatus eq 'Seen' and provider eq 'BHUC COMMON GROUND' and type eq 'CLINICIAN' and sentOn eq ''"
     entities = table_client.query_entities(my_filter)
 
-    # for entity in entities:
-    #     for key in entity.keys():
-    #         logging.info(f"Key: {key}, Value: {entity[key]}")
     return list(entities)
 
 
 def save_processed_appointments(appointments):
-    logging.info("This is save_processed_appointments ")
+    logging.info('save_processed_appointments')
 
-    with open("config.json") as config_file:
+    with open('config.json') as config_file:
         config = json.load(config_file)
-        credentials = config["connection_string"]
-        account_key = credentials["account_key"]
-        account_name = credentials["account_name"]
+        credentials = config['connection_string']
+        account_key = credentials['account_key']
+        account_name = credentials['account_name']
 
-    connection_string = f"DefaultEndpointsProtocol=https;AccountName={account_name};==>REPLACED==>={account_key};EndpointSuffix=core.windows.net"
-    logging.info(connection_string)
-    table_name = "appointments"
+    connection_string = f'DefaultEndpointsProtocol=https;AccountName={account_name};==>REPLACED==>={account_key};EndpointSuffix=core.windows.net'
+    table_name = 'appointments'
     table_client = TableClient.from_connection_string(connection_string, table_name)
-
-    # appointments_json = json.loads(appointments)
 
     for appointment in appointments:
         entity = TableEntity(**appointment)
-        try:
-            logging.info('updated_entity here', entity)
-            table_client.update_entity(entity)
-            #table_client.upsert_entity(entity, mode=UpdateMode.MERGE)
-        except:
-            continue
-
-    logging.info("Data updated successfully!")
-
-
-if __name__ == "__main__":
-    get_appointments()
+        logging.info('Updating entity:\n%s', entity)
+        table_client.update_entity(entity)

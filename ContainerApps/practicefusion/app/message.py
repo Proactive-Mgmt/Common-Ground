@@ -1,9 +1,7 @@
-# Import the necessary libraries
 import json
-import os
 from twilio.rest import Client
-from azure.data.tables import TableClient
 from datetime import datetime, timezone
+import logging
 
 with open("config.json") as config_file:
     config = json.load(config_file)
@@ -22,8 +20,6 @@ def process_messages(appointments):
     # appointments = get_appointments()
 
     for appointment in appointments:
-        # for key in appointment.keys():
-        #     logging.info(f"Key: {key}, Value: {appointment[key]}")
         message_sid = sendMessage(
             client,
             appointment["patientPhone"],
@@ -70,7 +66,3 @@ def sendMessage(client, to_phone_number, rowKey, patientName):
     )
     logging.info(f"SMS sent with SID: {message.sid}")
     return message.sid
-
-
-if __name__ == "__main__":
-    process_messages(get_appointments())
