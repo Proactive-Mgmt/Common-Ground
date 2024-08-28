@@ -1,7 +1,6 @@
 {
   "selenium_options": {
     "headless": true,
-    "window_size": "1920,1080"
   },
   "mfa": true,
   "get_yestdays_records": false,

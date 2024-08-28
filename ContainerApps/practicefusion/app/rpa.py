@@ -23,7 +23,7 @@ def initialize_driver():
     options = Options()
     selenium_options = config['selenium_options']
 
-    options.add_argument(f'--window-size={selenium_options["window_size"]}')
+    options.add_argument(f'--window-size=1920,1080')
     options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
 
     # Set headless option based on config
