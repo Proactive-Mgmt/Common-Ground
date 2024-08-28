@@ -18,7 +18,7 @@ WORKDIR /app
 RUN pip install --upgrade pip && \
     pip install webdriver-manager selenium azure-data-tables twilio pyotp
 
-COPY . .
+COPY ./app .
 
 # RUN mkdir ChromeProfile
 
