@@ -19,10 +19,10 @@ def initialize_driver():
     local_now = now.astimezone()
     local_tz = local_now.tzinfo
     local_tzname = local_tz.tzname(local_now)
-    print("current time ", datetime.now(), " local_tz  ", local_tzname)
+    logging.info("current time ", datetime.now(), " local_tz  ", local_tzname)
 
-    print("Initializing Selenium driver...")
-    # print("Initializing Selenium driver...")
+    logging.info("Initializing Selenium driver...")
+    # logging.info("Initializing Selenium driver...")
     options = Options()
     selenium_options = config["selenium_options"]
 
@@ -44,7 +44,7 @@ def initialize_driver():
     # Test with profile
     # options.add_argument("user-data-dir=" + os.path.join(os.getcwd(), "ChromeProfile"))
 
-    print("Driver initialized successfully.")
+    logging.info("Driver initialized successfully.")
 
     return webdriver.Chrome(options=options)
 
@@ -77,12 +77,12 @@ def scrape_ch_mfa(driver):
         return match.group(1) if match else None
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logging.info(f"An error occurred: {e}")
         return None
 
 
 def handle_mfa(driver):
-    print("Handling MFA...")
+    logging.info("Handling MFA...")
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.ID, "sendCallButton"))
     )
@@ -102,14 +102,14 @@ def handle_mfa(driver):
 
     # Wait for the MFA process to complete and navigate to the next page
     WebDriverWait(driver, 20).until(EC.url_changes)
-    print("MFA handled successfully.")
+    logging.info("MFA handled successfully.")
 
 
 def login(driver, username, password, url):
     try:
 
-        print(f"Attempting login for user: {username}")
-        # print(f"Attempting login for user: {username}")
+        logging.info(f"Attempting login for user: {username}")
+        # logging.info(f"Attempting login for user: {username}")
         driver.get(url)
 
         username_field = driver.find_element(By.ID, "inputUsername")
@@ -126,9 +126,9 @@ def login(driver, username, password, url):
             handle_mfa(driver)
 
     except Exception as e:
-        print(f"An exception occurred during login: {e}")
+        logging.info(f"An exception occurred during login: {e}")
 
-        # print(f"An exception occurred during login: {e}")
+        # logging.info(f"An exception occurred during login: {e}")
         raise e
 
     # def GetRecods(driver, record):
@@ -140,7 +140,7 @@ def accept_alert(driver):
         alert = driver.switch_to.alert
         alert.accept()
     except:
-        print(" accept_alert ")
+        logging.info(" accept_alert ")
         pass
 
 
@@ -152,7 +152,7 @@ def get_appointments(driver):
     # Call this function before interacting with elements that might trigger alerts
     accept_alert(driver)
     time.sleep(10)
-    print(f"driver.current_url: {driver.current_url}")
+    logging.info(f"driver.current_url: {driver.current_url}")
 
     if config.get("get_yestdays_records"):
         decrementbutton = WebDriverWait(driver, 10).until(
@@ -162,9 +162,9 @@ def get_appointments(driver):
         )
         if decrementbutton:
             decrementbutton.click()
-            print("decrementbutton clicked ")
+            logging.info("decrementbutton clicked ")
         else:
-            print("decrementbutton not found ")
+            logging.info("decrementbutton not found ")
 
         time.sleep(10)
 
@@ -177,7 +177,7 @@ def get_appointments(driver):
             )
         )
     )
-    print("schedulebutton clicked ")
+    logging.info("schedulebutton clicked ")
     button.click()
 
     time.sleep(3)
@@ -248,11 +248,11 @@ def return_appointments():
     try:
         driver = initialize_driver()
         if driver:
-            print(" driver Succesfully Initialized...")
+            logging.info(" driver Succesfully Initialized...")
 
         login(driver, username, password, login_url)
         time.sleep(2)
-        # print("Starting to process accounts...")
+        # logging.info("Starting to process accounts...")
         appointments = get_appointments(driver)
 
         return appointments
@@ -263,11 +263,11 @@ def return_appointments():
 
 def run_rpa():
     try:
-        print("First attempt. Appointments: ")
+        logging.info("First attempt. Appointments: ")
         return return_appointments()
     except:
 
-        print("Fist attempt failed. Waiting 60 second to second attempt... ")
+        logging.info("Fist attempt failed. Waiting 60 second to second attempt... ")
         time.sleep(60)
         return return_appointments()
 

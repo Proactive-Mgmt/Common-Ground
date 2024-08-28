@@ -23,7 +23,7 @@ def process_messages(appointments):
 
     for appointment in appointments:
         # for key in appointment.keys():
-        #     print(f"Key: {key}, Value: {appointment[key]}")
+        #     logging.info(f"Key: {key}, Value: {appointment[key]}")
         message_sid = sendMessage(
             client,
             appointment["patientPhone"],
@@ -68,7 +68,7 @@ def sendMessage(client, to_phone_number, rowKey, patientName):
         to=to_phone_number,
         messaging_service_sid=campaign_sid,
     )
-    print(f"SMS sent with SID: {message.sid}")
+    logging.info(f"SMS sent with SID: {message.sid}")
     return message.sid
 
 

@@ -20,14 +20,14 @@ with open("config.json") as config_file:
 
 def main():
 
-    print("Initializing orchestrator")
+    logging.info("Initializing orchestrator")
 
-    # print("Starting to process accounts...")
+    # logging.info("Starting to process accounts...")
 
     appointments = json.loads(run_rpa())
 
     # Filter Python objects with list comprehensions
-    print("Pre filter", appointments)
+    logging.info("Pre filter", appointments)
     # Filter appointments
     filtered_appointments = [
         appointment
@@ -37,18 +37,18 @@ def main():
         and appointment["appointmentStatus"] == "Seen"
     ]
 
-    print("Post Filter", filtered_appointments)
+    logging.info("Post Filter", filtered_appointments)
 
     storage.save_appointments(filtered_appointments)
 
     appointments = storage.get_appointments()
 
     processed_appointments = message.process_messages(appointments)
-    print("processed_appointments ", processed_appointments)
+    logging.info("processed_appointments ", processed_appointments)
     storage.save_processed_appointments(processed_appointments)
     # save_appointments(appointments)
 
-    print(f"Appointments: {appointments}")
+    logging.info(f"Appointments: {appointments}")
 
 
 if __name__ == "__main__":
