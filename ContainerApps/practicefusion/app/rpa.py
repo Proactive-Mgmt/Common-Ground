@@ -105,9 +105,7 @@ def login(driver):
     login_button = driver.find_element(By.ID, 'loginButton')
     login_button.click()
 
-    # Handle MFA
-    if config.get('mfa'):
-        handle_mfa(driver)
+    handle_mfa(driver)
 
 
 def accept_alert(driver):

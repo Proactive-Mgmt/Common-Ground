@@ -1,5 +1,4 @@
 {
-  "mfa": true,
   "get_yestdays_records": false,
   "twilio_credentials": {
     "account_sid": "***REMOVED***",
