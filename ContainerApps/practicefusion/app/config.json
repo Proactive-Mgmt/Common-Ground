@@ -1,7 +1,4 @@
 {
-  "selenium_options": {
-    "headless": true,
-  },
   "mfa": true,
   "get_yestdays_records": false,
   "twilio_credentials": {

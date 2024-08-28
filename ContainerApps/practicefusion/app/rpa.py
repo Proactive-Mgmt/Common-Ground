@@ -20,21 +20,21 @@ with open("config.json") as config_file:
 def initialize_driver():
     logging.info('initialize_driver')
 
+    HEADLESS = os.getenv('HEADLESS')
+
     options = Options()
-    selenium_options = config['selenium_options']
 
     options.add_argument(f'--window-size=1920,1080')
     options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
 
     # Set headless option based on config
-    if selenium_options['headless']:
+    if HEADLESS == 'TRUE':
         options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument('--disable-gpu')
 
     driver = webdriver.Chrome(options=options)
-    logging.info('Driver initialized successfully.')
 
     return driver
 
