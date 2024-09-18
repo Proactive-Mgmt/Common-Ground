@@ -175,7 +175,15 @@ def get_appointments(driver):
 
     appointments = []
     for row in all_row_data:
-        phone_number = row[1].split("\n")[8].split("(, , )")[0].strip()
+        # Add error handling for phone number extraction
+        phone_number = ""
+        try:
+            phone_parts = row[1].split("\n")
+            if len(phone_parts) > 8:
+                phone_number = phone_parts[8].split("(, , )")[0].strip()
+        except IndexError:
+            print(f"Warning: Unable to extract phone number for appointment. Row data: {row}")
+        
         patientPhone = "".join(filter(str.isdigit, phone_number))
         time_object = datetime.strptime(row[2], "%I:%M %p").time()
         # # Create a dummy date (e.g., today's date)
@@ -183,9 +191,16 @@ def get_appointments(driver):
         # # Combine the time object with the dummy date
         appointmentTime = datetime.combine(dummy_date, time_object)
         patientDOBraw = row[1].split("\n")[3].strip()
-        # Convert the input date string to a datetime object
-        date_object: datetime = datetime.strptime(patientDOBraw, "%m/%d/%Y")
-        patientDOB = date_object.strftime("%Y-%m-%d")
+        # Remove any unexpected characters from the date string
+        patientDOBraw = re.sub(r'[^\d/]', '', patientDOBraw)
+        
+        try:
+            # Convert the input date string to a datetime object
+            date_object: datetime = datetime.strptime(patientDOBraw, "%m/%d/%Y")
+            patientDOB = date_object.strftime("%Y-%m-%d")
+        except ValueError:
+            print(f"Warning: Unable to parse date of birth. Raw value: {patientDOBraw}")
+            patientDOB = None
 
         appointment = {
             "patientName": row[1].split("\n")[0].strip(),
