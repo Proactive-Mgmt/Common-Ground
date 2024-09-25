@@ -13,7 +13,7 @@ def save_appointments(appointments):
 
     for appointment in appointments:
         # Generate row_key by hashing compound key (dob+lastname+phonenumber)
-        hash_input = appointment['patientDOB'] + appointment['patientName'].split()[1] + appointment['patientPhone']
+        hash_input = appointment['patientDOB'] + appointment['patientName'].split()[1] + appointment['patientPhone'] + appointment['appointmentTime']
         md5_hash = hashlib.md5(hash_input.encode()).hexdigest()
         row_key = str(uuid.UUID(md5_hash))
 
