@@ -44,6 +44,7 @@ def scrape_ch_mfa(driver):
     
     mfa_code = pyotp.TOTP("JINDQR33AJDPJXED").now()
     driver.find_element(By.NAME, "data[Login][passcode]").send_keys(mfa_code)
+    time.sleep(2)
     driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Submit"]').click()
     
     driver.get("https://control.callharbor.com/portal/messages")
