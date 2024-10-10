@@ -14,7 +14,7 @@ def process_messages(appointments):
 
     for appointment in appointments:
         link = f'{TWILIO_SURVEY_LINK}&id={appointment["RowKey"]}'
-        message_body = f'Hi {appointment["patientName"].title()}, thank you for visiting us! We hope your recent appointment was helpful. Please take a moment to share your feedback anonymously in our short survey. Your input helps us improve our services. Tap {link} to start. Thank you!'
+        message_body = f'Hi {appointment["patientName"].title()}, thank you for visiting us! We hope your recent appointment today with the BHUC clinic was helpful. Please take a moment to share your feedback anonymously in our short survey. Your input helps us improve our services. Tap {link} to start. Thank you!'
 
         message = client.messages.create(
             messaging_service_sid = TWILIO_CAMPAIGN_SID,
