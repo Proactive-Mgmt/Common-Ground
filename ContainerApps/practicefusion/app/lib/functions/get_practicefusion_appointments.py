@@ -50,7 +50,10 @@ def scrape_ch_mfa(driver):
     driver.get("https://control.callharbor.com/portal/messages")
     WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/messages"))
     
-    message_xpath = '/html/body/div[2]/div[5]/div[2]/div[2]/div[1]/table/tbody/tr[1]/td[4]/div'
+    # Update XPath to target the div with class conversation-recent-msg
+    message_xpath = "//div[contains(@class, 'conversation-recent-msg')]"
+    logging.info(f"Attempting to find element with XPath: {message_xpath}")
+    
     message_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, message_xpath)))
     
     message_text = message_element.text
@@ -105,11 +108,45 @@ def login(driver):
 
 
 def get_appointments(driver):
-    GET_YESTERDAYS_RECORDS = os.getenv('GET_YESTERDAYS_RECORDS')
+    # Get target date from environment variable, default to current date
+    target_date_str = os.getenv('TARGET_DATE')
+    current_date = datetime.now().date()
+    
+    if target_date_str:
+        try:
+            target_date = datetime.strptime(target_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            logging.warning(f"Invalid TARGET_DATE format: {target_date_str}. Using current date.")
+            target_date = current_date
+    else:
+        target_date = current_date
+
     schedule_url: LiteralString = (
         "https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
     )
     driver.get(schedule_url)
+
+    # Calculate days to go back
+    days_difference = (current_date - target_date).days
+    if days_difference > 0:
+        logging.info(f"Going back {days_difference} days from current date to reach {target_date}")
+        
+        # Wait for page to be fully loaded
+        time.sleep(5)
+        
+        # Click decrement button the calculated number of times
+        for _ in range(days_difference):
+            try:
+                decrement_button = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable(
+                        (By.XPATH, "//button[@class='btn-sm decrement-date']")
+                    )
+                )
+                decrement_button.click()
+                time.sleep(1)  # Small delay between clicks
+            except Exception as e:
+                logging.error(f"Error clicking decrement button: {str(e)}")
+                break
 
     # Call this function before interacting with elements that might trigger alerts
     try:
@@ -121,20 +158,6 @@ def get_appointments(driver):
 
     time.sleep(10)
     logging.info(f"driver.current_url: {driver.current_url}")
-
-    if GET_YESTERDAYS_RECORDS == 'TRUE':
-        decrementbutton = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//button[@class='btn-sm decrement-date']")
-            )
-        )
-        if decrementbutton:
-            decrementbutton.click()
-            logging.info("decrementbutton clicked ")
-        else:
-            logging.info("decrementbutton not found ")
-
-        time.sleep(10)
 
     # Wait until the button is clickable
     button = WebDriverWait(driver, 10).until(
@@ -187,10 +210,10 @@ def get_appointments(driver):
         
         patientPhone = "".join(filter(str.isdigit, phone_number))
         time_object = datetime.strptime(row[2], "%I:%M %p").time()
-        # # Create a dummy date (e.g., today's date)
-        dummy_date = datetime.today().date()
-        # # Combine the time object with the dummy date
-        appointmentTime = datetime.combine(dummy_date, time_object)
+        # Use the target date instead of today's date
+        appointment_date = target_date
+        # Combine the time object with the target date
+        appointmentTime = datetime.combine(appointment_date, time_object)
         patientDOBraw = row[1].split("\n")[3].strip()
         # Remove any unexpected characters from the date string
         patientDOBraw = re.sub(r'[^\d/]', '', patientDOBraw)
