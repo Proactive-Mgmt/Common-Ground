@@ -1,6 +1,6 @@
 CONTAINER_TYPE  = 'job'
 TRIGGER_TYPE    = 'Schedule'
-CRON_EXPRESSION = '0 * * * *'
+CRON_EXPRESSION = '0 0,8,16 * * *'
 
 SUBSCRIPTION_ID     = '95257f24-41c8-4dc2-8657-18f74be4cfcb'
 IMAGE               = 'practicefusion'
