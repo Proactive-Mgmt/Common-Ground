@@ -10,7 +10,9 @@ import pyotp
 import re
 import time
 import os
+
 from shared import ptmlog
+from models import PracticeFusionAppointment
 
 def initialize_driver():
     HEADLESS = os.getenv('HEADLESS', 'TRUE')
@@ -116,7 +118,7 @@ def login(driver):
 
 
 
-def get_appointments(target_date: date) -> list[dict]:
+def get_appointments(target_date: date) -> list[PracticeFusionAppointment]:
     logger = ptmlog.get_logger()
 
     driver = initialize_driver()
@@ -224,23 +226,20 @@ def get_appointments(target_date: date) -> list[dict]:
         
         try:
             # Convert the input date string to a datetime object
-            date_object: datetime = datetime.strptime(patientDOBraw, "%m/%d/%Y")
-            patientDOB = date_object.strftime("%Y-%m-%d")
+            patient_dob = datetime.strptime(patientDOBraw, r'%m/%d/%Y')
         except ValueError:
             logger.error('unable to parse date of birth', patientDOBraw=patientDOBraw)
-            patientDOB = None
             continue
 
-        appointment = {
-            "patientName"      : row[1].split("\n")[0].strip(),
-            "patientDOB"       : patientDOB,
-            "patientPhone"     : patientPhone,
-            "appointmentTime"  : appointmentTime.strftime("%Y-%m-%dT%H:%M"),
-            "appointmentStatus": row[0],
-            "provider"         : row[3],
-            "type"             : row[4],
-        }
-        appointments.append(appointment)
+        appointments.append(PracticeFusionAppointment(
+            patient_name       = row[1].split("\n")[0].strip(),
+            patient_dob        = patient_dob,
+            patient_phone      = patientPhone,
+            appointment_time   = appointmentTime,
+            appointment_status = row[0],
+            provider           = row[3],
+            type               = row[4],
+        ))
 
     return appointments
 

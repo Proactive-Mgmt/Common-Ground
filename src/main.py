@@ -33,16 +33,16 @@ def main():
 
     target_date = get_target_date()
     logger.info('getting appointments from practice fusion', target_date=target_date)
-    appointments = practice_fusion_utils.get_appointments(target_date)
+    pf_appointments = practice_fusion_utils.get_appointments(target_date)
 
     # Filter appointments
-    logger.debug('pre-filter', appointments=appointments)
+    logger.debug('pre-filter', appointments=pf_appointments)
     filtered_appointments = [
         appointment
-        for appointment in appointments
-        if appointment['provider'] == 'BHUC COMMON GROUND'
-        and appointment['type'] == 'CLINICIAN'
-        and appointment['appointmentStatus'] == 'Seen'
+        for appointment in pf_appointments
+        if appointment.provider == 'BHUC COMMON GROUND'
+        and appointment.type == 'CLINICIAN'
+        and appointment.appointment_status == 'Seen'
     ]
     logger.debug('post-filter', appointments=filtered_appointments)
 
@@ -50,15 +50,15 @@ def main():
     appointments_table_utils.save_appointments(filtered_appointments)
 
     logger.info('getting appointments that need surveys sent')
-    appointments = appointments_table_utils.get_appointments()
+    table_appointments = appointments_table_utils.get_appointments()
 
     logger.info('sending surveys')
-    processed_appointments = twilio_utils.process_messages(appointments)
+    processed_appointments = twilio_utils.process_messages(table_appointments)
 
     logger.info('updating appointments in azure table storage')
     appointments_table_utils.save_processed_appointments(processed_appointments)
 
-    logger.debug('after saving appointments', processed_appointments=processed_appointments, appointments=appointments)
+    logger.debug('after saving appointments', processed_appointments=processed_appointments, table_appointments=table_appointments)
 
 
 if __name__ == '__main__':
