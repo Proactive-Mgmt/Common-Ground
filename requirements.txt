@@ -4,3 +4,5 @@ azure-data-tables
 twilio
 pyotp
 structlog
+pydantic
+
