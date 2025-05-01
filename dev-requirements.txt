@@ -1,0 +1,2 @@
+git+https://github.com/jrobertson20/python-dotenvx.git@feature/initial-implementation
+ipykernel
