@@ -1,0 +1,25 @@
+{
+    "CRON_EXPRESSION": "0 0,8,16 * * *",
+    "RESOURCE_GROUP_NAME": "HopseScaleSurvey",
+    "IMAGE_NAME": "practicefusion",
+    "CONTAINER_APP_JOB_NAME": "practicefusion",
+    "REPLICA_TIMEOUT": "43200",
+    "ENV_VARS": {
+        "STORAGE_ACCOUNT_CONNECTION_STRING": "secretref:storage-account-connection-string",
+        "PRACTICEFUSION_USERNAME": "secretref:practicefusion-username",
+        "PRACTICEFUSION_PASSWORD": "secretref:practicefusion-password",
+        "TWILIO_ACCOUNT_SID": "secretref:twillio-account-sid",
+        "TWILIO_AUTH_TOKEN": "secretref:twillio-auth-token",
+        "TWILIO_CAMPAIGN_SID": "secretref:twillio-campaign-sid",
+        "TWILIO_SURVEY_LINK": "https://survey.cghelps.org/api/serve?code=***REMOVED***",
+        "HEADLESS": "TRUE"
+    },
+    "SECRETS": {
+        "storage-account-connection-string": "STORAGE_ACCOUNT_CONNECTION_STRING",
+        "practicefusion-username": "PRACTICEFUSION_USERNAME",
+        "practicefusion-password": "PRACTICEFUSION_PASSWORD",
+        "twillio-account-sid": "TWILLIO_ACCOUNT_SID",
+        "twillio-auth-token": "TWILLIO_AUTH_TOKEN",
+        "twillio-campaign-sid": "TWILLIO_CAMPAIGN_SID"
+    }
+}
