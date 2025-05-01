@@ -1,6 +1,6 @@
-from practice_fusion import get_practicefusion_appointments
-from twilio import process_messages
-from appointments_table import get_appointments, save_appointments, save_processed_appointments
+from practice_fusion_utils import get_practicefusion_appointments
+from twilio_utils import process_messages
+from appointments_table_utils import get_appointments, save_appointments, save_processed_appointments
 from shared import ptmlog
 
 @ptmlog.procedure('cg_hope_scale_survey_automation')
