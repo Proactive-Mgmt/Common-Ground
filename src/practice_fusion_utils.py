@@ -1,20 +1,23 @@
 from datetime import datetime, date
+import time
+import os
+import re
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from typing import LiteralString
-import re
-import time
-import os
+from bs4 import BeautifulSoup
 
 from shared import ptmlog
 from models import PracticeFusionAppointment
 import callharbor_utils
 
+
 SCHEDULE_PAGE_URL = "https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
 LOGIN_PAGE_URL = 'https://static.practicefusion.com/apps/ehr/index.html#/login'
+
 
 def initialize_driver():
     HEADLESS = os.getenv('HEADLESS', 'TRUE')
@@ -141,8 +144,67 @@ def get_schedule_page_content(driver: webdriver.Chrome, target_date: date) -> st
     time.sleep(3)
     return driver.page_source
 
+
 def parse_schedule_page_content(page_content: str) -> list[PracticeFusionAppointment]:
-    return []
+    soup = BeautifulSoup(page_content, 'html.parser')
+
+    # Get the date from the page
+    h3_elements = soup.find_all('h3')
+    header_date_string = None
+    for h3 in h3_elements:
+        if h3.text.startswith("Schedule Standard view - "):
+            header_date_string = h3.text.split("Schedule Standard view - ")[1].strip()
+            break
+    if header_date_string is None:
+        raise ValueError("Could not find the date in the header")
+    else:
+        schedule_date = datetime.strptime(header_date_string, '%A, %B %d, %Y').date()
+
+    # Get all the rows in the table
+    table = soup.find('table', {'data-element': 'table-agenda-print'})
+    rows = table.find_all('tr')  # type: ignore
+
+    # Iterate through the rows (skipping the header row) and extract the data
+    appointments: list[PracticeFusionAppointment] = []
+    for row in rows[1:]:
+        # get column values
+        status_column_text   = row.find('td', {'class': 'status-column'}).text   # type: ignore
+        patient_column_text  = row.find('td', {'class': 'patient-column'}).text  # type: ignore
+        time_column_text     = row.find('td', {'class': 'time-column'}).text     # type: ignore
+        provider_column_text = row.find('td', {'class': 'provider-column'}).text # type: ignore
+        type_column_text     = row.find('td', {'class': 'type-column'}).text     # type: ignore
+
+        # Parse simple values from the columns
+        appointment_status   = status_column_text.strip()
+        appointment_provider = provider_column_text.strip()
+        appointment_type     = type_column_text.strip()
+
+        # Parse the patient column
+        patient_column_split = re.split(r'\s*\n\s*', patient_column_text.strip())
+        patient_name_raw  = patient_column_split[0]
+        patient_dob_raw   = patient_column_split[1]
+        patient_phone_raw = patient_column_split[3]
+
+        patient_name  = patient_name_raw.strip()
+        patient_dob   = datetime.strptime(patient_dob_raw.strip(), '%m/%d/%Y').date()
+        patient_phone = re.sub(r'\D', '', patient_phone_raw.strip())
+
+        # Parse the time column
+        appointment_time = datetime.strptime(time_column_text.strip(), "%I:%M %p").time()
+        appointment_time = datetime.combine(schedule_date, appointment_time)
+
+        appointments.append(PracticeFusionAppointment(
+            patient_name       = patient_name,
+            appointment_status = appointment_status,
+            patient_dob        = patient_dob,
+            patient_phone      = patient_phone,
+            provider           = appointment_provider,
+            type               = appointment_type,
+            appointment_time   = appointment_time,
+        ))
+
+    return appointments
+
 
 def get_appointments(target_dates: list[date]) -> list[PracticeFusionAppointment]:
     driver = initialize_driver()
