@@ -70,6 +70,8 @@ def login(driver: webdriver.Chrome):
 
     # Wait for the MFA process to complete and navigate to the next page
     WebDriverWait(driver, 20).until(EC.url_changes)  # type: ignore
+    time.sleep(2)
+
 
 def go_back_one_day(driver: webdriver.Chrome):
     logger = ptmlog.get_logger()
@@ -115,12 +117,8 @@ def set_schedule_page_to_date(driver: webdriver.Chrome, target_date: date):
             go_back_one_day(driver)
 
 
-def get_appointments(target_date: date) -> list[PracticeFusionAppointment]:
+def get_schedule_page_content(driver: webdriver.Chrome, target_date: date) -> str:
     logger = ptmlog.get_logger()
-
-    driver = initialize_driver()
-    login(driver)
-    time.sleep(2)
 
     set_schedule_page_to_date(driver, target_date)
 
@@ -141,74 +139,29 @@ def get_appointments(target_date: date) -> list[PracticeFusionAppointment]:
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, schedule_button_xpath))).click()
 
     time.sleep(3)
-    # Find the HTML element representing the table
-    table = driver.find_element(
-        By.CSS_SELECTOR, 'table[data-element="table-agenda-print"]'
-    )
+    return driver.page_source
 
-    # Get all the rows in the table
-    rows = table.find_elements(By.TAG_NAME, "tr")
+def parse_schedule_page_content(page_content: str) -> list[PracticeFusionAppointment]:
+    return []
 
-    # Iterate through the rows (skipping the header row) and extract the data
-    all_row_data = []
-    for row in rows[1:]:
-        cols = row.find_elements(By.TAG_NAME, "td")
-        row_data = []
-        for col in cols:
-            cell_text = col.get_attribute("textContent").strip()
-            contact_details = col.find_elements(By.CSS_SELECTOR, "div.contact-details")
-            if contact_details:
-                details = [
-                    detail.text.strip()
-                    for detail in contact_details[0].find_elements(By.TAG_NAME, "div")
-                ]
-                cell_text += f" ({', '.join(details)})"
-            row_data.append(cell_text)
-        all_row_data.append(row_data)
+def get_appointments(target_dates: list[date]) -> list[PracticeFusionAppointment]:
+    driver = initialize_driver()
+    login(driver)
 
-    appointments = []
-    for row in all_row_data:
-        # Add error handling for phone number extraction
-        phone_number = ""
-        try:
-            phone_parts = row[1].split("\n")
-            if len(phone_parts) > 8:
-                phone_number = phone_parts[8].split("(, , )")[0].strip()
-        except IndexError:
-            logger.error('unable to extract phone number for appointment', row=row)
-            continue
-        
-        patientPhone = "".join(filter(str.isdigit, phone_number))
-        time_object = datetime.strptime(row[2], "%I:%M %p").time()
-        # Use the target date instead of today's date
-        appointment_date = target_date
-        # Combine the time object with the target date
-        appointmentTime = datetime.combine(appointment_date, time_object)
-        patientDOBraw = row[1].split("\n")[3].strip()
-        # Remove any unexpected characters from the date string
-        patientDOBraw = re.sub(r'[^\d/]', '', patientDOBraw)
-        
-        try:
-            # Convert the input date string to a datetime object
-            patient_dob = datetime.strptime(patientDOBraw, r'%m/%d/%Y')
-        except ValueError:
-            logger.error('unable to parse date of birth', patientDOBraw=patientDOBraw)
-            continue
-
-        appointments.append(PracticeFusionAppointment(
-            patient_name       = row[1].split("\n")[0].strip(),
-            patient_dob        = patient_dob,
-            patient_phone      = patientPhone,
-            appointment_time   = appointmentTime,
-            appointment_status = row[0],
-            provider           = row[3],
-            type               = row[4],
-        ))
-
+    # Get the schedule page content for each target date
+    schedule_pages: list[str] = []
+    for target_date in target_dates:
+        schedule_pages.append(get_schedule_page_content(driver, target_date))
     driver.quit()
+
+    # Parse the schedule page content for each target date
+    appointments: list[PracticeFusionAppointment] = []
+    for schedule_page_content in schedule_pages:
+        appointments.extend(parse_schedule_page_content(schedule_page_content))
+    
     return appointments
 
 
 if __name__ == "__main__":
     target_date = datetime.now().date()
-    get_appointments(target_date)
+    get_appointments([target_date])
