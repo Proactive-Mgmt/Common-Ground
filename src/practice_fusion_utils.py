@@ -13,6 +13,7 @@ import os
 
 from shared import ptmlog
 from models import PracticeFusionAppointment
+from callharbor_utils import scrape_ch_mfa
 
 def initialize_driver():
     HEADLESS = os.getenv('HEADLESS', 'TRUE')
@@ -32,42 +33,6 @@ def initialize_driver():
     driver = webdriver.Chrome(options=options)
 
     return driver
-
-def scrape_ch_mfa(driver):
-    logger = ptmlog.get_logger()
-    CALLHARBOR_USERNAME   = os.environ['CALLHARBOR_USERNAME']
-    CALLHARBOR_PASSWORD   = os.environ['CALLHARBOR_PASSWORD']
-    CALLHARBOR_MFA_SECRET = os.environ['CALLHARBOR_MFA_SECRET']
-
-    driver.execute_script("window.open('https://control.callharbor.com/portal/messages', '_blank');")
-    driver.switch_to.window(driver.window_handles[-1])
-    driver.find_element(By.NAME, "data[Login][username]").send_keys(CALLHARBOR_USERNAME)
-    driver.find_element(By.NAME, "data[Login][password]").send_keys(CALLHARBOR_PASSWORD)
-    driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Log In"]').click()
-    
-    WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/login/mfa/1"))
-    
-    mfa_code = pyotp.TOTP(CALLHARBOR_MFA_SECRET).now()
-    driver.find_element(By.NAME, "data[Login][passcode]").send_keys(mfa_code)
-    time.sleep(2)
-    driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Submit"]').click()
-    
-    driver.get("https://control.callharbor.com/portal/messages")
-    WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/messages"))
-    
-    # Update XPath to target the div with class conversation-recent-msg
-    message_xpath = "//div[contains(@class, 'conversation-recent-msg')]"
-    logger.info(f"getting most recent message")
-    
-    message_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, message_xpath)))
-    
-    message_text = message_element.text
-    match = re.search(r"Your code is: (\d+)", message_text)
-    
-    driver.close()
-    driver.switch_to.window(driver.window_handles[0])
-    
-    return match.group(1) if match else None
 
 
 def login(driver):
@@ -97,7 +62,7 @@ def login(driver):
     send_call_button = driver.find_element(By.ID, 'sendCallButton')
     send_call_button.click()
     time.sleep(5)
-    code = scrape_ch_mfa(driver)
+    code = scrape_ch_mfa()
     if not code:
         raise Exception('MFA code not retrieved.')
 
