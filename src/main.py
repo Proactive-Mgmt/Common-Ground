@@ -77,7 +77,7 @@ def main():
             )
         except:
             logger.exception('error sending survey', patient_name=table_appointment.patient_name)
-            continue
+            continue  # This should not end the process
 
         logger.info('updating table appointment', patient_name=table_appointment.patient_name)
         try:
@@ -89,7 +89,7 @@ def main():
             )
         except:
             logger.exception('error updating table appointment', patient_name=table_appointment.patient_name)
-            continue
+            continue  # This should not end the process
 
 
 if __name__ == '__main__':
