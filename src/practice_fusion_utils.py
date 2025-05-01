@@ -13,7 +13,7 @@ import os
 
 from shared import ptmlog
 from models import PracticeFusionAppointment
-from callharbor_utils import scrape_ch_mfa
+import callharbor_utils
 
 def initialize_driver():
     HEADLESS = os.getenv('HEADLESS', 'TRUE')
@@ -35,7 +35,7 @@ def initialize_driver():
     return driver
 
 
-def login(driver):
+def login(driver: webdriver.Chrome):
     logger = ptmlog.get_logger()
 
     PRACTICEFUSION_USERNAME = os.environ['PRACTICEFUSION_USERNAME']
@@ -45,36 +45,30 @@ def login(driver):
 
     driver.get('https://static.practicefusion.com/apps/ehr/index.html#/login')
 
+    # USERNAME
     username_field = driver.find_element(By.ID, 'inputUsername')
     username_field.clear()
     username_field.send_keys(PRACTICEFUSION_USERNAME)
 
-    password_field = driver.find_element(By.ID, 'inputPswd')
-    password_field.send_keys(PRACTICEFUSION_PASSWORD)
-    login_button = driver.find_element(By.ID, 'loginButton')
-    login_button.click()
+    # PASSWORD
+    driver.find_element(By.ID, 'inputPswd').send_keys(PRACTICEFUSION_PASSWORD)
 
+    # SUBMIT
+    driver.find_element(By.ID, 'loginButton').click()
+
+    # MFA
     logger.info('handling mfa')
-    WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.ID, 'sendCallButton'))
-    )
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, 'sendCallButton'))) # Wait for the MFA page to load
+    driver.find_element(By.ID, 'sendCallButton').click()    # Click the "Send Call" button
 
-    send_call_button = driver.find_element(By.ID, 'sendCallButton')
-    send_call_button.click()
     time.sleep(5)
-    code = scrape_ch_mfa()
-    if not code:
-        raise Exception('MFA code not retrieved.')
+    mfa_code = callharbor_utils.get_latest_mfa_code()       # Get the latest MFA code from CallHarbor
 
-    code_field = driver.find_element(By.ID, 'code')
-    code_field.send_keys(code)
-
-    send_code_button = driver.find_element(By.ID, 'sendCodeButton')
-    send_code_button.click()
+    driver.find_element(By.ID, 'code').send_keys(mfa_code)  # Enter the MFA code
+    driver.find_element(By.ID, 'sendCodeButton').click()    # Click submit
 
     # Wait for the MFA process to complete and navigate to the next page
-    WebDriverWait(driver, 20).until(EC.url_changes)
-
+    WebDriverWait(driver, 20).until(EC.url_changes)  # type: ignore
 
 
 def get_appointments(target_date: date) -> list[PracticeFusionAppointment]:
