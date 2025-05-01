@@ -54,7 +54,11 @@ def main():
 
     logger.info('sending surveys')
     for table_appointment in table_appointments:
-        message_sid = twilio_utils.process_message(table_appointment)
+        message_sid = twilio_utils.send_survey(
+            id            = table_appointment['RowKey'],
+            patient_name  = table_appointment['patientName'],
+            patient_phone = table_appointment['patientPhone']
+        )
         appointments_table_utils.save_processed_appointment(
             row_key       = table_appointment['RowKey'],
             partition_key = table_appointment['PartitionKey'],
