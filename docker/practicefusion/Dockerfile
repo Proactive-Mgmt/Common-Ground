@@ -23,4 +23,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./src ./
 
-CMD ["dotenvx", "run", "--", "python", "/app/src/app.py"]
+CMD ["dotenvx", "run", "--", "python", "/app/src/main.py"]
