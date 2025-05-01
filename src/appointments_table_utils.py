@@ -4,7 +4,7 @@ import hashlib
 import uuid
 import os
 
-from models import PracticeFusionAppointment, TableAppointment
+from models import TableAppointment
 from shared import ptmlog
 
 def calculate_row_key(patient_dob: date, patient_name: str, patient_phone: str, appointment_time: datetime) -> str:

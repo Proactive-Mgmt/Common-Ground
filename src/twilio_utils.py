@@ -1,8 +1,6 @@
 from twilio.rest import Client
-from datetime import datetime, timezone
 import os
 from shared import ptmlog
-from models import TableAppointment
 
 def send_survey(id: str, patient_name: str, patient_phone: str) -> str:
     """
