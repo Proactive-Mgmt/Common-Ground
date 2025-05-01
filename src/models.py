@@ -9,3 +9,9 @@ class PracticeFusionAppointment(BaseModel):
     appointment_status : str
     provider           : str
     type               : str
+
+class TableAppointment(BaseModel): 
+    row_key       : str
+    partition_key : str
+    patient_name  : str
+    patient_phone : str
