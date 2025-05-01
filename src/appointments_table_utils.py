@@ -49,6 +49,9 @@ def create_new_appointment(
     ))
 
 def get_appointments() -> list[TableAppointment]:
+    """
+    Returns filtered list of appointments.
+    """
     STORAGE_ACCOUNT_CONNECTION_STRING = os.environ['STORAGE_ACCOUNT_CONNECTION_STRING']
     table_client = TableClient.from_connection_string(STORAGE_ACCOUNT_CONNECTION_STRING, 'appointments')
 
