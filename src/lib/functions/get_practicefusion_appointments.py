@@ -34,15 +34,19 @@ def initialize_driver():
     return driver
 
 def scrape_ch_mfa(driver):
+    CALLHARBOR_USERNAME   = os.environ['CALLHARBOR_USERNAME']
+    CALLHARBOR_PASSWORD   = os.environ['CALLHARBOR_PASSWORD']
+    CALLHARBOR_MFA_SECRET = os.environ['CALLHARBOR_MFA_SECRET']
+
     driver.execute_script("window.open('https://control.callharbor.com/portal/messages', '_blank');")
     driver.switch_to.window(driver.window_handles[-1])
-    driver.find_element(By.NAME, "data[Login][username]").send_keys("sms@proactivemgmt")
-    driver.find_element(By.NAME, "data[Login][password]").send_keys("kB8zaXGbDD4-xdk0")
+    driver.find_element(By.NAME, "data[Login][username]").send_keys(CALLHARBOR_USERNAME)
+    driver.find_element(By.NAME, "data[Login][password]").send_keys(CALLHARBOR_PASSWORD)
     driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Log In"]').click()
     
     WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/login/mfa/1"))
     
-    mfa_code = pyotp.TOTP("JINDQR33AJDPJXED").now()
+    mfa_code = pyotp.TOTP(CALLHARBOR_MFA_SECRET).now()
     driver.find_element(By.NAME, "data[Login][passcode]").send_keys(mfa_code)
     time.sleep(2)
     driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Submit"]').click()

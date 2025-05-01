@@ -12,6 +12,9 @@
         "TWILIO_AUTH_TOKEN": "secretref:twillio-auth-token",
         "TWILIO_CAMPAIGN_SID": "secretref:twillio-campaign-sid",
         "TWILIO_SURVEY_LINK": "https://survey.cghelps.org/api/serve?code=***REMOVED***",
+        "CALLHARBOR_USERNAME": "secretref:callharbor-username",
+        "CALLHARBOR_PASSWORD": "secretref:callharbor-password",
+        "CALLHARBOR_MFA_SECRET": "secretref:callharbor-mfa-secret",
         "HEADLESS": "TRUE"
     },
     "SECRETS": {
@@ -20,6 +23,9 @@
         "practicefusion-password": "PRACTICEFUSION_PASSWORD",
         "twillio-account-sid": "TWILLIO_ACCOUNT_SID",
         "twillio-auth-token": "TWILLIO_AUTH_TOKEN",
-        "twillio-campaign-sid": "TWILLIO_CAMPAIGN_SID"
+        "twillio-campaign-sid": "TWILLIO_CAMPAIGN_SID",
+        "callharbor-username": "CALLHARBOR_USERNAME",
+        "callharbor-password": "CALLHARBOR_PASSWORD",
+        "callharbor-mfa-secret": "CALLHARBOR_MFA_SECRET"
     }
 }
