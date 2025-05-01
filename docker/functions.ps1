@@ -29,7 +29,6 @@ function BuildImage {
     )
 
     if ((IsPendingChanges) -and (-not $Force.IsPresent)) {
-        Write-HOst "hey"
         Write-Error "Uncommitted changes detected. Please commit or stash your changes before deploying."
         exit 1
     }
