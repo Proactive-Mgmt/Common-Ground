@@ -3,3 +3,4 @@ selenium
 azure-data-tables
 twilio
 pyotp
+structlog
