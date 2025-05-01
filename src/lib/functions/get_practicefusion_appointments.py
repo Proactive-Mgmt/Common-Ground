@@ -96,8 +96,8 @@ def handle_mfa(driver):
 def login(driver):
     logger = ptmlog.get_logger()
 
-    PRACTICEFUSION_USERNAME = os.getenv('PRACTICEFUSION_USERNAME')
-    PRACTICEFUSION_PASSWORD = os.getenv('PRACTICEFUSION_PASSWORD')
+    PRACTICEFUSION_USERNAME = os.environ['PRACTICEFUSION_USERNAME']
+    PRACTICEFUSION_PASSWORD = os.environ['PRACTICEFUSION_PASSWORD']
 
     logger.info('logging into practice fusion', username=PRACTICEFUSION_USERNAME)
 

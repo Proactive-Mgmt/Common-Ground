@@ -5,7 +5,7 @@ from shared import ptmlog
 def save_processed_appointments(appointments):
     logger = ptmlog.get_logger()
 
-    STORAGE_ACCOUNT_CONNECTION_STRING = os.getenv('STORAGE_ACCOUNT_CONNECTION_STRING')
+    STORAGE_ACCOUNT_CONNECTION_STRING = os.environ['STORAGE_ACCOUNT_CONNECTION_STRING']
     table_client = TableClient.from_connection_string(STORAGE_ACCOUNT_CONNECTION_STRING, 'appointments')
 
     for appointment in appointments:

@@ -6,10 +6,10 @@ from shared import ptmlog
 def process_messages(appointments):
     logger = ptmlog.get_logger()
 
-    TWILIO_ACCOUNT_SID  = os.getenv('TWILIO_ACCOUNT_SID')
-    TWILIO_AUTH_TOKEN   = os.getenv('TWILIO_AUTH_TOKEN')
-    TWILIO_CAMPAIGN_SID = os.getenv('TWILIO_CAMPAIGN_SID')
-    TWILIO_SURVEY_LINK  = os.getenv('TWILIO_SURVEY_LINK')
+    TWILIO_ACCOUNT_SID  = os.environ['TWILIO_ACCOUNT_SID']
+    TWILIO_AUTH_TOKEN   = os.environ['TWILIO_AUTH_TOKEN']
+    TWILIO_CAMPAIGN_SID = os.environ['TWILIO_CAMPAIGN_SID']
+    TWILIO_SURVEY_LINK  = os.environ['TWILIO_SURVEY_LINK']
 
     client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
@@ -19,8 +19,8 @@ def process_messages(appointments):
 
         message = client.messages.create(
             messaging_service_sid = TWILIO_CAMPAIGN_SID,
-            to                    = appointment["patientPhone"],
-            body                  = message_body,
+            to = appointment["patientPhone"],
+            body = message_body,
         )
 
         logger.info('sms sent', sid=message.sid)
