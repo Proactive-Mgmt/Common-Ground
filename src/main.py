@@ -52,21 +52,29 @@ def main():
     logger.info('getting appointments that need surveys sent')
     table_appointments = appointments_table_utils.get_appointments()
 
-    logger.info('sending surveys')
     for table_appointment in table_appointments:
-        message_sid = twilio_utils.send_survey(
-            id            = table_appointment.row_key,
-            patient_name  = table_appointment.patient_name,
-            patient_phone = table_appointment.patient_phone,
-        )
-        appointments_table_utils.update_appointment(
-            row_key       = table_appointment.row_key,
-            partition_key = table_appointment.partition_key,
-            sent_on       = datetime.now(UTC),
-            message_sid   = message_sid,
-        )
+        logger.info('sending survery', patient_name=table_appointment.patient_name)
+        try:
+            message_sid = twilio_utils.send_survey(
+                id            = table_appointment.row_key,
+                patient_name  = table_appointment.patient_name,
+                patient_phone = table_appointment.patient_phone,
+            )
+        except:
+            logger.exception('error sending survey', patient_name=table_appointment.patient_name)
+            continue
 
-    logger.debug('after saving appointments', processed_appointments=processed_appointments, table_appointments=table_appointments)
+        logger.info('updating table appointment', patient_name=table_appointment.patient_name)
+        try:
+            appointments_table_utils.update_appointment(
+                row_key       = table_appointment.row_key,
+                partition_key = table_appointment.partition_key,
+                sent_on       = datetime.now(UTC),
+                message_sid   = message_sid,
+            )
+        except:
+            logger.exception('error updating table appointment', patient_name=table_appointment.patient_name)
+            continue
 
 
 if __name__ == '__main__':
