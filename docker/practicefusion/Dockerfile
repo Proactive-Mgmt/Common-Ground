@@ -21,6 +21,6 @@ WORKDIR /app
 COPY ./requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./app ./.env ./
+COPY ./src ./
 
-CMD ["dotenvx", "run", "--", "python", "app.py"]
+CMD ["dotenvx", "run", "--", "python", "/app/src/app.py"]
