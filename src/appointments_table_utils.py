@@ -5,7 +5,7 @@ import hashlib
 import uuid
 import os
 
-from models import PracticeFusionAppointment
+from models import PracticeFusionAppointment, TableAppointment
 from shared import ptmlog
 
 def save_appointments(appointments: list[PracticeFusionAppointment]):
@@ -39,14 +39,23 @@ def save_appointments(appointments: list[PracticeFusionAppointment]):
         except ResourceExistsError:
             logger.warning('table_entity already exists', table_entity=table_entity)
 
-def get_appointments():
+def get_appointments() -> list[TableAppointment]:
     STORAGE_ACCOUNT_CONNECTION_STRING = os.environ['STORAGE_ACCOUNT_CONNECTION_STRING']
     table_client = TableClient.from_connection_string(STORAGE_ACCOUNT_CONNECTION_STRING, 'appointments')
 
     my_filter = "appointmentStatus eq 'Seen' and provider eq 'BHUC COMMON GROUND' and type eq 'CLINICIAN' and sentOn eq ''"
     entities = table_client.query_entities(my_filter)
 
-    return list(entities)
+    table_appointments = []
+    for entity in entities:
+        table_appointments.append(TableAppointment(
+            row_key       = entity['RowKey'],
+            partition_key = entity['PartitionKey'],
+            patient_name  = entity['patientName'],
+            patient_phone = entity['patientPhone'],
+        ))
+
+    return table_appointments
 
 def update_appointment(row_key: str, partition_key: str, sent_on: datetime, message_sid: str):
     logger = ptmlog.get_logger()

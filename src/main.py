@@ -55,13 +55,13 @@ def main():
     logger.info('sending surveys')
     for table_appointment in table_appointments:
         message_sid = twilio_utils.send_survey(
-            id            = table_appointment['RowKey'],
-            patient_name  = table_appointment['patientName'],
-            patient_phone = table_appointment['patientPhone']
+            id            = table_appointment.row_key,
+            patient_name  = table_appointment.patient_name,
+            patient_phone = table_appointment.patient_phone,
         )
         appointments_table_utils.update_appointment(
-            row_key       = table_appointment['RowKey'],
-            partition_key = table_appointment['PartitionKey'],
+            row_key       = table_appointment.row_key,
+            partition_key = table_appointment.partition_key,
             sent_on       = datetime.now(UTC),
             message_sid   = message_sid,
         )
