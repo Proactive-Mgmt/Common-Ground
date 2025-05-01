@@ -194,6 +194,7 @@ def get_appointments(target_date: date) -> list[PracticeFusionAppointment]:
             type               = row[4],
         ))
 
+    driver.quit()
     return appointments
 
 

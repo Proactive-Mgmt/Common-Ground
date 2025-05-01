@@ -60,7 +60,7 @@ def get_latest_mfa_code() -> str:
     message_xpath = "//div[contains(@class, 'conversation-recent-msg')]"
     message_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, message_xpath)))
     message_text = message_element.text
-    driver.close()
+    driver.quit()
 
     # Extract code from message text
     match = re.search(r"Your code is: (\d+)", message_text)
