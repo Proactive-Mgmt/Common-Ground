@@ -32,7 +32,7 @@ def initialize_driver():
     return driver
 
 
-def scrape_ch_mfa():
+def get_latest_mfa_code() -> str:
     logger = ptmlog.get_logger()
 
     CALLHARBOR_USERNAME   = os.environ['CALLHARBOR_USERNAME']
@@ -59,10 +59,13 @@ def scrape_ch_mfa():
     logger.info("getting most recent message")
     message_xpath = "//div[contains(@class, 'conversation-recent-msg')]"
     message_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, message_xpath)))
-    
     message_text = message_element.text
-    match = re.search(r"Your code is: (\d+)", message_text)
-    
     driver.close()
-    
-    return match.group(1) if match else None
+
+    # Extract code from message text
+    match = re.search(r"Your code is: (\d+)", message_text)
+    if not match:
+        logger.exception('no mfa code found in call harbor message')
+        raise Exception('no mfa code found in call harbor message')
+    else:
+        return match.group(1)
