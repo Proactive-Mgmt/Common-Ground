@@ -6,15 +6,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from typing import LiteralString, List
 import json
-import logging
 import pyotp
 import re
 import time
 import os
+from shared import ptmlog
 
 def initialize_driver():
-    logging.info('initialize_driver')
-
     HEADLESS = os.getenv('HEADLESS')
 
     options = Options()
@@ -34,6 +32,7 @@ def initialize_driver():
     return driver
 
 def scrape_ch_mfa(driver):
+    logger = ptmlog.get_logger()
     CALLHARBOR_USERNAME   = os.environ['CALLHARBOR_USERNAME']
     CALLHARBOR_PASSWORD   = os.environ['CALLHARBOR_PASSWORD']
     CALLHARBOR_MFA_SECRET = os.environ['CALLHARBOR_MFA_SECRET']
@@ -56,7 +55,7 @@ def scrape_ch_mfa(driver):
     
     # Update XPath to target the div with class conversation-recent-msg
     message_xpath = "//div[contains(@class, 'conversation-recent-msg')]"
-    logging.info(f"Attempting to find element with XPath: {message_xpath}")
+    logger.info(f"getting most recent message")
     
     message_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, message_xpath)))
     
@@ -70,7 +69,9 @@ def scrape_ch_mfa(driver):
 
 
 def handle_mfa(driver):
-    logging.info('handle_mfa')
+    logger = ptmlog.get_logger()
+    logger.info('handling mfa')
+
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.ID, 'sendCallButton'))
     )
@@ -93,10 +94,13 @@ def handle_mfa(driver):
 
 
 def login(driver):
+    logger = ptmlog.get_logger()
+
     PRACTICEFUSION_USERNAME = os.getenv('PRACTICEFUSION_USERNAME')
     PRACTICEFUSION_PASSWORD = os.getenv('PRACTICEFUSION_PASSWORD')
 
-    logging.info('Attempting login for user: %s', PRACTICEFUSION_USERNAME)
+    logger.info('logging into practice fusion', username=PRACTICEFUSION_USERNAME)
+
     driver.get('https://static.practicefusion.com/apps/ehr/index.html#/login')
 
     username_field = driver.find_element(By.ID, 'inputUsername')
@@ -122,7 +126,8 @@ def get_target_date():
         try:
             target_date = datetime.strptime(target_date_str, '%Y-%m-%d').date()
         except ValueError:
-            logging.warning(f"Invalid TARGET_DATE format: {target_date_str}. Using current date.")
+            logger = ptmlog.get_logger()
+            logger.warning("invalid TARGET_DATE format, using current date", target_date_str=target_date_str)
             target_date = current_date
     else:
         target_date = current_date
@@ -131,6 +136,8 @@ def get_target_date():
 
 
 def get_appointments(driver, target_date: date) -> list[dict]:
+    logger = ptmlog.get_logger()
+
     current_date = datetime.now().date()
 
     schedule_url: LiteralString = (
@@ -141,7 +148,7 @@ def get_appointments(driver, target_date: date) -> list[dict]:
     # Calculate days to go back
     days_difference = (current_date - target_date).days
     if days_difference > 0:
-        logging.info(f"Going back {days_difference} days from current date to reach {target_date}")
+        logger.info(f"going back {days_difference} days from current date to reach {target_date}")
         
         # Wait for page to be fully loaded
         time.sleep(5)
@@ -156,20 +163,20 @@ def get_appointments(driver, target_date: date) -> list[dict]:
                 )
                 decrement_button.click()
                 time.sleep(1)  # Small delay between clicks
-            except Exception as e:
-                logging.error(f"Error clicking decrement button: {str(e)}")
-                break
+            except:
+                logger.exception('error clicking decrement button')
+                raise
 
     # Call this function before interacting with elements that might trigger alerts
     try:
+        logger.info('accepting alert')
         WebDriverWait(driver, 10).until(EC.alert_is_present())
         alert = driver.switch_to.alert
         alert.accept()
     except:
-        logging.info('accept_alert')
+        logger.info('no alert to accept')
 
     time.sleep(10)
-    logging.info(f"driver.current_url: {driver.current_url}")
 
     # Wait until the button is clickable
     button = WebDriverWait(driver, 10).until(
@@ -180,7 +187,7 @@ def get_appointments(driver, target_date: date) -> list[dict]:
             )
         )
     )
-    logging.info("schedulebutton clicked ")
+    logger.info("clicking schedule button")
     button.click()
 
     time.sleep(3)
@@ -218,7 +225,8 @@ def get_appointments(driver, target_date: date) -> list[dict]:
             if len(phone_parts) > 8:
                 phone_number = phone_parts[8].split("(, , )")[0].strip()
         except IndexError:
-            print(f"Warning: Unable to extract phone number for appointment. Row data: {row}")
+            logger.error('unable to extract phone number for appointment', row=row)
+            continue
         
         patientPhone = "".join(filter(str.isdigit, phone_number))
         time_object = datetime.strptime(row[2], "%I:%M %p").time()
@@ -235,17 +243,18 @@ def get_appointments(driver, target_date: date) -> list[dict]:
             date_object: datetime = datetime.strptime(patientDOBraw, "%m/%d/%Y")
             patientDOB = date_object.strftime("%Y-%m-%d")
         except ValueError:
-            print(f"Warning: Unable to parse date of birth. Raw value: {patientDOBraw}")
+            logger.error('unable to parse date of birth', patientDOBraw=patientDOBraw)
             patientDOB = None
+            continue
 
         appointment = {
-            "patientName": row[1].split("\n")[0].strip(),
-            "patientDOB": patientDOB,
-            "patientPhone": patientPhone,
-            "appointmentTime": appointmentTime.strftime("%Y-%m-%dT%H:%M"),
+            "patientName"      : row[1].split("\n")[0].strip(),
+            "patientDOB"       : patientDOB,
+            "patientPhone"     : patientPhone,
+            "appointmentTime"  : appointmentTime.strftime("%Y-%m-%dT%H:%M"),
             "appointmentStatus": row[0],
-            "provider": row[3],
-            "type": row[4],
+            "provider"         : row[3],
+            "type"             : row[4],
         }
         appointments.append(appointment)
 

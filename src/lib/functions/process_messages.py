@@ -1,10 +1,11 @@
 from twilio.rest import Client
 from datetime import datetime, timezone
-import logging
 import os
+from shared import ptmlog
 
 def process_messages(appointments):
-    logging.info('process_messages')
+    logger = ptmlog.get_logger()
+
     TWILIO_ACCOUNT_SID  = os.getenv('TWILIO_ACCOUNT_SID')
     TWILIO_AUTH_TOKEN   = os.getenv('TWILIO_AUTH_TOKEN')
     TWILIO_CAMPAIGN_SID = os.getenv('TWILIO_CAMPAIGN_SID')
@@ -22,7 +23,7 @@ def process_messages(appointments):
             body                  = message_body,
         )
 
-        logging.info(f'SMS sent with SID: {message.sid}')
+        logger.info('sms sent', sid=message.sid)
 
         appointment["sentOn"] = datetime.now(timezone.utc)
         appointment["message_sid"] = message.sid

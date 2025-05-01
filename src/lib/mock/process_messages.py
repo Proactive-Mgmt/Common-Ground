@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
-import logging
 import uuid
+from shared import ptmlog
 
 def process_messages(appointments):
-    logging.info('process_messages')
+    logger = ptmlog.get_logger()
     
     for appointment in appointments:
         # Simulate creating a survey link
@@ -15,9 +15,7 @@ def process_messages(appointments):
         # Simulate sending a message
         mock_message_sid = str(uuid.uuid4())  # Generate a random UUID as a mock message SID
         
-        logging.info(f'Mock SMS sent with SID: {mock_message_sid}')
-        logging.info(f'Mock message body: {message_body}')
-        logging.info(f'Mock message recipient: {appointment["patientPhone"]}')
+        logger.info('mock sms sent', sid=mock_message_sid, message_body=message_body, recipient=appointment["patientPhone"])
 
         # Update appointment with mock data
         appointment["sentOn"] = datetime.now(timezone.utc)
