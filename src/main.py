@@ -59,10 +59,10 @@ def main():
             patient_name  = table_appointment['patientName'],
             patient_phone = table_appointment['patientPhone']
         )
-        appointments_table_utils.save_processed_appointment(
+        appointments_table_utils.update_appointment(
             row_key       = table_appointment['RowKey'],
             partition_key = table_appointment['PartitionKey'],
-            sent_on       = datetime.now(UTC).strftime(r'%Y-%m-%dT%H:%M'),
+            sent_on       = datetime.now(UTC),
             message_sid   = message_sid,
         )
 

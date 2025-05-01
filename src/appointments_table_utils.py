@@ -1,5 +1,6 @@
 from azure.core.exceptions import ResourceExistsError
 from azure.data.tables import TableClient, TableEntity
+from datetime import datetime
 import hashlib
 import uuid
 import os
@@ -47,17 +48,16 @@ def get_appointments():
 
     return list(entities)
 
-def save_processed_appointment(row_key, partition_key, sent_on, message_sid):
+def update_appointment(row_key: str, partition_key: str, sent_on: datetime, message_sid: str):
     logger = ptmlog.get_logger()
 
     STORAGE_ACCOUNT_CONNECTION_STRING = os.environ['STORAGE_ACCOUNT_CONNECTION_STRING']
     table_client = TableClient.from_connection_string(STORAGE_ACCOUNT_CONNECTION_STRING, 'appointments')
 
-    entity = TableEntity(
-        RowKey            = row_key,
-        PartitionKey      = partition_key,
-        sentOn            = sent_on,
-        message_sid       = message_sid,
-    )
-    logger.info('updating entity', entity=entity)
-    table_client.update_entity(entity)
+    logger.info('updating entity', row_key=row_key, partition_key=partition_key, sent_on=sent_on, message_sid=message_sid)
+    table_client.update_entity(TableEntity(
+        PartitionKey = partition_key,
+        RowKey       = row_key,
+        sentOn       = sent_on,
+        message_sid  = message_sid,
+    ))
