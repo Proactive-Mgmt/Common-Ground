@@ -47,13 +47,17 @@ def get_appointments():
 
     return list(entities)
 
-def save_processed_appointments(appointments):
+def save_processed_appointment(row_key, partition_key, sent_on, message_sid):
     logger = ptmlog.get_logger()
 
     STORAGE_ACCOUNT_CONNECTION_STRING = os.environ['STORAGE_ACCOUNT_CONNECTION_STRING']
     table_client = TableClient.from_connection_string(STORAGE_ACCOUNT_CONNECTION_STRING, 'appointments')
 
-    for appointment in appointments:
-        entity = TableEntity(**appointment)
-        logger.info('updating entity', entity=entity)
-        table_client.update_entity(entity)
+    entity = TableEntity(
+        RowKey            = row_key,
+        PartitionKey      = partition_key,
+        sentOn            = sent_on,
+        message_sid       = message_sid,
+    )
+    logger.info('updating entity', entity=entity)
+    table_client.update_entity(entity)

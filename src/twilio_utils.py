@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import os
 from shared import ptmlog
 
-def process_messages(appointments):
+def process_message(appointment):
     logger = ptmlog.get_logger()
 
     TWILIO_ACCOUNT_SID  = os.environ['TWILIO_ACCOUNT_SID']
@@ -13,19 +13,15 @@ def process_messages(appointments):
 
     client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-    for appointment in appointments:
-        link = f'{TWILIO_SURVEY_LINK}&id={appointment["RowKey"]}'
-        message_body = f'Hi {appointment["patientName"].title()}, thank you for visiting us! We hope your recent appointment today with the BHUC clinic was helpful. Please take a moment to share your feedback anonymously in our short survey. Your input helps us improve our services. Tap {link} to start. Thank you!'
+    link = f'{TWILIO_SURVEY_LINK}&id={appointment["RowKey"]}'
+    message_body = f'Hi {appointment["patientName"].title()}, thank you for visiting us! We hope your recent appointment today with the BHUC clinic was helpful. Please take a moment to share your feedback anonymously in our short survey. Your input helps us improve our services. Tap {link} to start. Thank you!'
 
-        message = client.messages.create(
-            messaging_service_sid = TWILIO_CAMPAIGN_SID,
-            to = appointment["patientPhone"],
-            body = message_body,
-        )
+    message = client.messages.create(
+        messaging_service_sid = TWILIO_CAMPAIGN_SID,
+        to = appointment["patientPhone"],
+        body = message_body,
+    )
 
-        logger.info('sms sent', sid=message.sid)
+    logger.info('sms sent', sid=message.sid)
 
-        appointment["sentOn"] = datetime.now(timezone.utc)
-        appointment["message_sid"] = message.sid
-
-    return appointments
+    return message.sid

@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, UTC
 
 import practice_fusion_utils
 import twilio_utils
@@ -53,10 +53,14 @@ def main():
     table_appointments = appointments_table_utils.get_appointments()
 
     logger.info('sending surveys')
-    processed_appointments = twilio_utils.process_messages(table_appointments)
-
-    logger.info('updating appointments in azure table storage')
-    appointments_table_utils.save_processed_appointments(processed_appointments)
+    for table_appointment in table_appointments:
+        message_sid = twilio_utils.process_message(table_appointment)
+        appointments_table_utils.save_processed_appointment(
+            row_key       = table_appointment['RowKey'],
+            partition_key = table_appointment['PartitionKey'],
+            sent_on       = datetime.now(UTC).strftime(r'%Y-%m-%dT%H:%M'),
+            message_sid   = message_sid,
+        )
 
     logger.debug('after saving appointments', processed_appointments=processed_appointments, table_appointments=table_appointments)
 
