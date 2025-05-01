@@ -28,3 +28,23 @@ def save_appointments(appointments):
             table_client.create_entity(entity)
         except ResourceExistsError:
             logger.warning('entity already exists', entity=entity)
+
+def get_appointments():
+    STORAGE_ACCOUNT_CONNECTION_STRING = os.environ['STORAGE_ACCOUNT_CONNECTION_STRING']
+    table_client = TableClient.from_connection_string(STORAGE_ACCOUNT_CONNECTION_STRING, 'appointments')
+
+    my_filter = "appointmentStatus eq 'Seen' and provider eq 'BHUC COMMON GROUND' and type eq 'CLINICIAN' and sentOn eq ''"
+    entities = table_client.query_entities(my_filter)
+
+    return list(entities)
+
+def save_processed_appointments(appointments):
+    logger = ptmlog.get_logger()
+
+    STORAGE_ACCOUNT_CONNECTION_STRING = os.environ['STORAGE_ACCOUNT_CONNECTION_STRING']
+    table_client = TableClient.from_connection_string(STORAGE_ACCOUNT_CONNECTION_STRING, 'appointments')
+
+    for appointment in appointments:
+        entity = TableEntity(**appointment)
+        logger.info('updating entity', entity=entity)
+        table_client.update_entity(entity)
