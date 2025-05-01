@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -107,8 +107,10 @@ def login(driver):
     handle_mfa(driver)
 
 
-def get_appointments(driver):
-    # Get target date from environment variable, default to current date
+def get_target_date():
+    """
+    Get target date from environment variable, default to current date.
+    """
     target_date_str = os.getenv('TARGET_DATE')
     current_date = datetime.now().date()
     
@@ -120,6 +122,12 @@ def get_appointments(driver):
             target_date = current_date
     else:
         target_date = current_date
+
+    return target_date
+
+
+def get_appointments(driver, target_date: date) -> list[dict]:
+    current_date = datetime.now().date()
 
     schedule_url: LiteralString = (
         "https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
@@ -244,7 +252,8 @@ def get_practicefusion_appointments() -> List[dict]:
     driver = initialize_driver()
     login(driver)
     time.sleep(2)
-    appointments = get_appointments(driver)
+    target_date = get_target_date()
+    appointments = get_appointments(driver, target_date)
 
     return appointments
 
