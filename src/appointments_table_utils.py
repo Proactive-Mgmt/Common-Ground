@@ -1,12 +1,21 @@
 from azure.core.exceptions import ResourceExistsError
 from azure.data.tables import TableClient, TableEntity
-from datetime import datetime
+from datetime import datetime, date
 import hashlib
 import uuid
 import os
 
 from models import PracticeFusionAppointment, TableAppointment
 from shared import ptmlog
+
+def calculate_row_key(patient_dob: date, patient_name: str, patient_phone: str, appointment_time: datetime) -> str:
+    """
+    Calculate the row key for the appointment entity based on the patient's details and appointment time.
+    """
+    hash_input = patient_dob.strftime(r'%Y-%m-%d') + patient_name.split()[1] + patient_phone + appointment_time.strftime(r'%Y-%m-%dT%H:%M')
+    md5_hash = hashlib.md5(hash_input.encode()).hexdigest()
+    row_key = str(uuid.UUID(md5_hash))
+    return row_key
 
 def save_appointments(appointments: list[PracticeFusionAppointment]):
     logger = ptmlog.get_logger()
@@ -16,9 +25,12 @@ def save_appointments(appointments: list[PracticeFusionAppointment]):
 
     for appointment in appointments:
         # Generate row_key by hashing compound key (dob+lastname+phonenumber)
-        hash_input = appointment.patient_dob.strftime(r'%Y-%m-%d') + appointment.patient_name.split()[1] + appointment.patient_phone + appointment.appointment_time.strftime(r'%Y-%m-%dT%H:%M')
-        md5_hash = hashlib.md5(hash_input.encode()).hexdigest()
-        row_key = str(uuid.UUID(md5_hash))
+        row_key = calculate_row_key(
+            patient_dob      = appointment.patient_dob,
+            patient_name     = appointment.patient_name,
+            patient_phone    = appointment.patient_phone,
+            appointment_time = appointment.appointment_time,
+        )
 
         table_entity = TableEntity(
             RowKey            = row_key,
