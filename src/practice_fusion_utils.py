@@ -115,30 +115,13 @@ def login(driver):
     handle_mfa(driver)
 
 
-def get_target_date():
-    """
-    Get target date from environment variable, default to current date.
-    """
-    target_date_str = os.getenv('TARGET_DATE')
-    current_date = datetime.now().date()
-    
-    if target_date_str:
-        try:
-            target_date = datetime.strptime(target_date_str, '%Y-%m-%d').date()
-        except ValueError:
-            logger = ptmlog.get_logger()
-            logger.warning("invalid TARGET_DATE format, using current date", target_date_str=target_date_str)
-            target_date = current_date
-    else:
-        target_date = current_date
 
-    return target_date
-
-
-def get_appointments(driver, target_date: date) -> list[dict]:
+def get_appointments(target_date: date) -> list[dict]:
     logger = ptmlog.get_logger()
 
-    current_date = datetime.now().date()
+    driver = initialize_driver()
+    login(driver)
+    time.sleep(2)
 
     schedule_url: LiteralString = (
         "https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
@@ -146,6 +129,7 @@ def get_appointments(driver, target_date: date) -> list[dict]:
     driver.get(schedule_url)
 
     # Calculate days to go back
+    current_date = datetime.now().date()
     days_difference = (current_date - target_date).days
     if days_difference > 0:
         logger.info(f"going back {days_difference} days from current date to reach {target_date}")
@@ -261,14 +245,6 @@ def get_appointments(driver, target_date: date) -> list[dict]:
     return appointments
 
 
-def get_practicefusion_appointments() -> List[dict]:
-    driver = initialize_driver()
-    login(driver)
-    time.sleep(2)
-    target_date = get_target_date()
-    appointments = get_appointments(driver, target_date)
-
-    return appointments
-
 if __name__ == "__main__":
-    get_practicefusion_appointments()
+    target_date = datetime.now().date()
+    get_appointments(target_date)
