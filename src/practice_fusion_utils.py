@@ -13,6 +13,9 @@ from shared import ptmlog
 from models import PracticeFusionAppointment
 import callharbor_utils
 
+SCHEDULE_PAGE_URL = "https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
+LOGIN_PAGE_URL = 'https://static.practicefusion.com/apps/ehr/index.html#/login'
+
 def initialize_driver():
     HEADLESS = os.getenv('HEADLESS', 'TRUE')
 
@@ -41,7 +44,7 @@ def login(driver: webdriver.Chrome):
 
     logger.info('logging into practice fusion', username=PRACTICEFUSION_USERNAME)
 
-    driver.get('https://static.practicefusion.com/apps/ehr/index.html#/login')
+    driver.get(LOGIN_PAGE_URL)
 
     # USERNAME
     username_field = driver.find_element(By.ID, 'inputUsername')
@@ -68,6 +71,49 @@ def login(driver: webdriver.Chrome):
     # Wait for the MFA process to complete and navigate to the next page
     WebDriverWait(driver, 20).until(EC.url_changes)  # type: ignore
 
+def go_back_one_day(driver: webdriver.Chrome):
+    logger = ptmlog.get_logger()
+
+    try:
+        decrement_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[@class='btn-sm decrement-date']")
+            )
+        )
+        decrement_button.click()
+        time.sleep(1)  # Small delay between clicks
+    except:
+        logger.exception('error clicking decrement button')
+        raise
+
+
+def set_schedule_page_to_date(driver: webdriver.Chrome, target_date: date):
+    """
+    Set the schedule page to the specified date by going back the calculated number of days.
+    Expects a driver that has already logged into Practice Fusion.
+    """
+    logger = ptmlog.get_logger()
+
+    # Reset the schedule page to the default state by navigating away and then back
+    logger.info('resetting schedule page to default state')
+    driver.get('https://google.com/')
+    time.sleep(2)
+    driver.get(SCHEDULE_PAGE_URL)
+
+    # Calculate days to go back
+    current_date = datetime.now().date()
+    days_difference = (current_date - target_date).days
+
+    # Click decrement button the calculated number of times
+    if days_difference > 0:
+        logger.info(f'going back {days_difference} days from current date to reach {target_date}')
+        
+        # Wait for page to be fully loaded
+        time.sleep(5)
+        
+        for _ in range(days_difference):
+            go_back_one_day(driver)
+
 
 def get_appointments(target_date: date) -> list[PracticeFusionAppointment]:
     logger = ptmlog.get_logger()
@@ -76,33 +122,7 @@ def get_appointments(target_date: date) -> list[PracticeFusionAppointment]:
     login(driver)
     time.sleep(2)
 
-    schedule_url: LiteralString = (
-        "https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
-    )
-    driver.get(schedule_url)
-
-    # Calculate days to go back
-    current_date = datetime.now().date()
-    days_difference = (current_date - target_date).days
-    if days_difference > 0:
-        logger.info(f"going back {days_difference} days from current date to reach {target_date}")
-        
-        # Wait for page to be fully loaded
-        time.sleep(5)
-        
-        # Click decrement button the calculated number of times
-        for _ in range(days_difference):
-            try:
-                decrement_button = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable(
-                        (By.XPATH, "//button[@class='btn-sm decrement-date']")
-                    )
-                )
-                decrement_button.click()
-                time.sleep(1)  # Small delay between clicks
-            except:
-                logger.exception('error clicking decrement button')
-                raise
+    set_schedule_page_to_date(driver, target_date)
 
     # Call this function before interacting with elements that might trigger alerts
     try:
@@ -115,7 +135,7 @@ def get_appointments(target_date: date) -> list[PracticeFusionAppointment]:
 
     time.sleep(10)
 
-    # Wait until the button is clickable
+    # Wait until the schedule button is clickable
     button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable(
             (
