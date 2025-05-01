@@ -27,11 +27,11 @@ def main():
 
     appointments = get_appointments()
 
-    # processed_appointments = process_messages(appointments)
-    # save_processed_appointments(processed_appointments)
+    processed_appointments = process_messages(appointments)
+    save_processed_appointments(processed_appointments)
 
-    # logging.info('processed_appointments:\n%s', processed_appointments)
-    # logging.info('appointments:\n%s', appointments)
+    logging.info('processed_appointments:\n%s', processed_appointments)
+    logging.info('appointments:\n%s', appointments)
 
 
 if __name__ == "__main__":
