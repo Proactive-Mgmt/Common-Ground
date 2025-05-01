@@ -48,7 +48,7 @@ def main():
     ]
     logger.debug('post-filter', appointments=filtered_appointments)
 
-    for appointment in pf_appointments:
+    for appointment in filtered_appointments:
         try:
             logger.info('creating appointment in azure table', appointment=appointment)
             appointments_table_utils.create_new_appointment(
