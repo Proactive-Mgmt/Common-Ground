@@ -1,6 +1,8 @@
 import os
 from datetime import datetime, UTC
 
+from azure.core.exceptions import ResourceExistsError
+
 import practice_fusion_utils
 import twilio_utils
 import appointments_table_utils
@@ -46,8 +48,21 @@ def main():
     ]
     logger.debug('post-filter', appointments=filtered_appointments)
 
-    logger.info('saving filtered appointments to azure table storage')
-    appointments_table_utils.save_appointments(filtered_appointments)
+    for appointment in pf_appointments:
+        try:
+            logger.info('creating appointment in azure table', appointment=appointment)
+            appointments_table_utils.create_new_appointment(
+                patient_name       = appointment.patient_name,
+                patient_dob        = appointment.patient_dob,
+                patient_phone      = appointment.patient_phone,
+                appointment_time   = appointment.appointment_time,
+                appointment_status = appointment.appointment_status,
+                provider           = appointment.provider,
+                type               = appointment.type,
+            )
+        except ResourceExistsError:
+            logger.exception('appointment already exists in azure table', appointment=appointment)
+            continue  # This should not end the process
 
     logger.info('getting appointments that need surveys sent')
     table_appointments = appointments_table_utils.get_appointments()

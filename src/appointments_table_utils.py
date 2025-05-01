@@ -1,4 +1,3 @@
-from azure.core.exceptions import ResourceExistsError
 from azure.data.tables import TableClient, TableEntity
 from datetime import datetime, date
 import hashlib
@@ -48,24 +47,6 @@ def create_new_appointment(
         provider          = provider,
         type              = type,
     ))
-
-def save_appointments(appointments: list[PracticeFusionAppointment]):
-    logger = ptmlog.get_logger()
-
-    for appointment in appointments:
-        try:
-            logger.info('creating table_entity', appointment=appointment)
-            create_new_appointment(
-                patient_name      = appointment.patient_name,
-                patient_dob       = appointment.patient_dob,
-                patient_phone     = appointment.patient_phone,
-                appointment_time  = appointment.appointment_time,
-                appointment_status= appointment.appointment_status,
-                provider          = appointment.provider,
-                type              = appointment.type,
-            )
-        except ResourceExistsError:
-            logger.warning('table_entity already exists', appointment=appointment)
 
 def get_appointments() -> list[TableAppointment]:
     STORAGE_ACCOUNT_CONNECTION_STRING = os.environ['STORAGE_ACCOUNT_CONNECTION_STRING']
