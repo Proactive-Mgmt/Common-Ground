@@ -70,31 +70,6 @@ def scrape_ch_mfa(driver):
     return match.group(1) if match else None
 
 
-def handle_mfa(driver):
-    logger = ptmlog.get_logger()
-    logger.info('handling mfa')
-
-    WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.ID, 'sendCallButton'))
-    )
-
-    send_call_button = driver.find_element(By.ID, 'sendCallButton')
-    send_call_button.click()
-    time.sleep(5)
-    code = scrape_ch_mfa(driver)
-    if not code:
-        raise Exception('MFA code not retrieved.')
-
-    code_field = driver.find_element(By.ID, 'code')
-    code_field.send_keys(code)
-
-    send_code_button = driver.find_element(By.ID, 'sendCodeButton')
-    send_code_button.click()
-
-    # Wait for the MFA process to complete and navigate to the next page
-    WebDriverWait(driver, 20).until(EC.url_changes)
-
-
 def login(driver):
     logger = ptmlog.get_logger()
 
@@ -114,7 +89,26 @@ def login(driver):
     login_button = driver.find_element(By.ID, 'loginButton')
     login_button.click()
 
-    handle_mfa(driver)
+    logger.info('handling mfa')
+    WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.ID, 'sendCallButton'))
+    )
+
+    send_call_button = driver.find_element(By.ID, 'sendCallButton')
+    send_call_button.click()
+    time.sleep(5)
+    code = scrape_ch_mfa(driver)
+    if not code:
+        raise Exception('MFA code not retrieved.')
+
+    code_field = driver.find_element(By.ID, 'code')
+    code_field.send_keys(code)
+
+    send_code_button = driver.find_element(By.ID, 'sendCodeButton')
+    send_code_button.click()
+
+    # Wait for the MFA process to complete and navigate to the next page
+    WebDriverWait(driver, 20).until(EC.url_changes)
 
 
 
