@@ -136,16 +136,9 @@ def get_appointments(target_date: date) -> list[PracticeFusionAppointment]:
     time.sleep(10)
 
     # Wait until the schedule button is clickable
-    button = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable(
-            (
-                By.XPATH,
-                "//button[@class='btn--default' and @data-element='btn-schedule-print']",
-            )
-        )
-    )
     logger.info("clicking schedule button")
-    button.click()
+    schedule_button_xpath = "//button[@class='btn--default' and @data-element='btn-schedule-print']"
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, schedule_button_xpath))).click()
 
     time.sleep(3)
     # Find the HTML element representing the table
