@@ -2,6 +2,7 @@ import asyncio
 import re
 import os
 from datetime import datetime, date
+from zoneinfo import ZoneInfo
 
 from bs4 import BeautifulSoup
 from playwright.async_api import (
@@ -14,6 +15,8 @@ import callharbor_utils
 from models import PracticeFusionAppointment
 from shared import ptmlog
 from storage_state_persistence_utils import save_playwright_storage_state, get_playwright_storage_state
+
+EASTERN_TZ = ZoneInfo('America/New_York')
 
 BASE_URL      = 'https://static.practicefusion.com/apps/ehr/index.html'
 LOGIN_URL     = 'https://static.practicefusion.com/apps/ehr/index.html#/login'
@@ -72,7 +75,7 @@ async def set_schedule_page_to_date(page: Page, target_date: date) -> None:
     await page.goto(SCHEDULE_URL)
 
     # Calculate days to go back
-    current_date = datetime.now().date()
+    current_date = datetime.now(EASTERN_TZ).date()
     days_difference = (current_date - target_date).days
 
     # Click decrement button the calculated number of times
@@ -192,5 +195,5 @@ async def get_appointments(target_dates: list[date]) -> list[PracticeFusionAppoi
 
 
 if __name__ == "__main__":
-    target_date = datetime.now().date()
+    target_date = datetime.now(EASTERN_TZ).date()
     asyncio.run(get_appointments([date(2025, 5, 1), date(2025, 5, 2)]))

@@ -1,5 +1,6 @@
 import os
-from datetime import datetime, UTC
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 from azure.core.exceptions import ResourceExistsError
 
@@ -8,13 +9,14 @@ import twilio_utils
 import appointments_table_utils
 from shared import ptmlog
 
+EASTERN_TZ = ZoneInfo('America/New_York')
 
 def get_target_date():
     """
     Get target date from environment variable, default to current date.
     """
     target_date_str = os.getenv('TARGET_DATE')
-    current_date = datetime.now().date()
+    current_date = datetime.now(EASTERN_TZ).date()
     
     if target_date_str:
         try:
@@ -84,7 +86,7 @@ async def main():
             appointments_table_utils.update_appointment(
                 row_key       = table_appointment.row_key,
                 partition_key = table_appointment.partition_key,
-                sent_on       = datetime.now(UTC),
+                sent_on       = datetime.now(timezone.utc),
                 message_sid   = message_sid,
             )
         except:

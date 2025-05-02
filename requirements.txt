@@ -5,3 +5,4 @@ structlog
 pydantic
 bs4
 playwright
+tzdata
