@@ -85,7 +85,7 @@ async def get_latest_mfa_code() -> str:
             save_playwright_storage_state('callharbor', await context.storage_state())
         
         for message in all_recent_messages:
-            match = re.search(r'^Your code is: (\d{5}). Thank you.$', message)
+            match = re.search(r'^Your code is: (\d{5,}). Thank you.$', message)
             if match:
                 return match.group(1)
         
