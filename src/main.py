@@ -44,7 +44,7 @@ def sync_appointments():
     pf_appointments = asyncio.run(practice_fusion_utils.get_appointments(target_dates=[target_date]))
 
     # Filter appointments
-    logger.debug('pre-filter', appointments=pf_appointments)
+    logger.debug('pre-filter', patients=[p.patient_name for p in pf_appointments if p])
     filtered_appointments = [
         appointment
         for appointment in pf_appointments
@@ -52,11 +52,11 @@ def sync_appointments():
         and appointment.type == 'CLINICIAN'
         and appointment.appointment_status == 'Seen'
     ]
-    logger.debug('post-filter', appointments=filtered_appointments)
+    logger.debug('post-filter', patients=[p.patient_name for p in pf_appointments if p])
 
     for appointment in filtered_appointments:
         try:
-            logger.info('creating appointment in azure table', appointment=appointment)
+            logger.info('creating appointment in azure table', patient_name=appointment.patient_name)
             appointments_table_utils.create_new_appointment(
                 patient_name       = appointment.patient_name,
                 patient_dob        = appointment.patient_dob,
@@ -67,7 +67,7 @@ def sync_appointments():
                 type               = appointment.type,
             )
         except ResourceExistsError:
-            logger.exception('appointment already exists in azure table', appointment=appointment)
+            logger.exception('appointment already exists in azure table', patient_name=appointment.patient_name)
             continue  # This should not end the process
 
 @ptmlog.procedure('cg_hope_scale_send_surveys')
