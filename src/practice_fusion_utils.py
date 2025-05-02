@@ -50,7 +50,7 @@ async def login(page: Page) -> None:
     # Wait for the URL to change to the main page or the MFA page
     await page.wait_for_url(re.compile(r'(#\/login\/securitycheck|#\/PF\/home\/main)$'))
     if page.url.endswith('#/login/securitycheck'):
-        logger.info('mfa page detected, handling mfa')
+        logger.info('practice fusion mfa page detected, handling mfa')
         await handle_mfa(page)
 
     # If we are still not on the main page, something has gone wrong
@@ -60,7 +60,7 @@ async def login(page: Page) -> None:
         logger.exception('timed out waiting for main page after login', actual_url=page.url)
         raise
 
-    logger.info('successfully logged in to Practice Fusion')
+    logger.info('successfully logged in to practice fusion')
 
 
 async def set_schedule_page_to_date(page: Page, target_date: date) -> None:
