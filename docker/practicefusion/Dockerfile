@@ -4,12 +4,7 @@ WORKDIR /app
 ENV PYTHONPATH=/app/src
 
 # Install Selenium dependencies and timezone data
-RUN apk add --no-cache \
-    chromium \
-    chromium-chromedriver \
-    tzdata \
-    curl \
-    ca-certificates
+RUN apk add --no-cache tzdata
 
 # Set the time zone to America/New_York (USA ET)
 ENV TZ=America/New_York
