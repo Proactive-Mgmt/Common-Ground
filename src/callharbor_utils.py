@@ -30,6 +30,22 @@ async def handle_mfa(page: Page) -> None:
     await page.locator('input[name="data[Login][passcode]"]').fill(mfa_code)
     await page.get_by_role('button', name='Submit').click()
 
+    # Check if authentication failed banner appears. If so, retry.
+    if await page.get_by_text('Authentication failed').is_visible():
+        logger.warning('mfa failed, authentication failed message visible, waiting 10 seconds and trying again')
+        await page.wait_for_timeout(10_000)
+
+        mfa_code = pyotp.TOTP(CALLHARBOR_MFA_SECRET).now()
+        await page.locator('input[name="data[Login][passcode]"]').fill(mfa_code)
+        await page.get_by_role('button', name='Submit').click()
+
+        if await page.get_by_text('Authentication failed').is_visible():
+            raise Exception('mfa failed after 2 attempts, authentication failed message visible')
+
+
+
+
+
     try:
         await page.wait_for_url(MAIN_PAGE)
     except PlaywrightTimeoutError:
