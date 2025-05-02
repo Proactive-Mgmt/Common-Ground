@@ -27,6 +27,7 @@ SCHEDULE_URL  = 'https://static.practicefusion.com/apps/ehr/index.html#/PF/sched
 
 async def handle_mfa(page: Page):
     await page.locator('#sendCallButton').click()
+    await page.wait_for_timeout(30_000)  # Wait for the MFA code to be sent
     mfa_code = await callharbor_utils.get_latest_mfa_code()
     await page.locator('#code').fill(mfa_code)
     await page.click('#sendCodeButton')
@@ -56,7 +57,7 @@ async def login(page: Page) -> None:
     try:
         await page.wait_for_url(MAIN_PAGE_URL)
     except PlaywrightTimeoutError:
-        logger.exception('timed out waiting for main page after login')
+        logger.exception('timed out waiting for main page after login', actual_url=page.url)
         raise
 
     logger.info('successfully logged in to Practice Fusion')
