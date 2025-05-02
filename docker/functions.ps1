@@ -90,13 +90,15 @@ function BuildImage {
     $Config = GetConfig $ContainerPath
     $IMAGE_NAME = $Config.IMAGE_NAME 
     $CommitHash = GetCommitHash
+    $TaggedImageName = "$($IMAGE_NAME):$($CommitHash)"
 
     # Build and push image
     LoginToDocker
-    docker build --platform linux/amd64 -f $DockerFile -t "$($IMAGE_NAME):$($CommitHash)" $ProjectRoot.FullName
+    docker build --platform linux/amd64 -f $DockerFile -t $TaggedImageName $ProjectRoot.FullName
     if ($Push.IsPresent) {
         $ACR_NAME = $env:ACR_NAME
-        docker tag "$($IMAGE_NAME):$($CommitHash)" "$($ACR_NAME)/$($IMAGE_NAME):$($CommitHash)"
+        $FullImageName = "$($ACR_NAME)/$($IMAGE_NAME):$($CommitHash)"
+        docker tag $TaggedImageName $FullImageName
         docker push $FullImageName
     }
 }
