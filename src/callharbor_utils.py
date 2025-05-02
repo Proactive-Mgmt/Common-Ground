@@ -1,73 +1,91 @@
-import os
-import time
 import re
+import os
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
+from playwright.sync_api import (
+    sync_playwright,
+    Page,
+    TimeoutError as PlaywrightTimeoutError,
+)
 import pyotp
 
 from shared import ptmlog
+from storage_state_persistence_utils import save_playwright_storage_state, get_playwright_storage_state
 
+LOGIN_URL    = 'https://control.callharbor.com/portal/login/index'
+MFA_URL      = 'https://control.callharbor.com/portal/login/mfa/1'
+MAIN_PAGE    = 'https://control.callharbor.com/portal/home'
 MESSAGES_URL = 'https://control.callharbor.com/portal/messages'
-MFA_URL = 'https://control.callharbor.com/portal/login/mfa/1'
 
-def initialize_driver():
-    HEADLESS = os.getenv('HEADLESS', 'TRUE')
+def handle_mfa(page: Page) -> None:
+    logger = ptmlog.get_logger()
 
-    options = Options()
+    if page.url != MFA_URL:
+        logger.error('not on mfa page, cannot handle mfa')
+        raise Exception('not on mfa page, cannot handle mfa')
+    
+    CALLHARBOR_MFA_SECRET = os.environ['CALLHARBOR_MFA_SECRET']
 
-    options.add_argument(f'--window-size=1920,1080')
-    options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+    mfa_code = pyotp.TOTP(CALLHARBOR_MFA_SECRET).now()
+    page.locator('input[name="data[Login][passcode]"]').fill(mfa_code)
+    page.get_by_role('button', name='Submit').click()
 
-    # Set headless option based on config
-    if HEADLESS != 'FALSE':
-        options.add_argument('--headless')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--disable-gpu')
+    try:
+        page.wait_for_url(MAIN_PAGE)
+    except PlaywrightTimeoutError:
+        logger.error('mfa failed, not on main page')
+        raise Exception('mfa failed, not on main page')
 
-    driver = webdriver.Chrome(options=options)
+def login(page: Page) -> None:
+    logger = ptmlog.get_logger()
+    logger.info('logging into callharbor')
 
-    return driver
+    CALLHARBOR_USERNAME   = os.environ['CALLHARBOR_USERNAME']
+    CALLHARBOR_PASSWORD   = os.environ['CALLHARBOR_PASSWORD']
+
+    page.locator('input[name="data[Login][username]"]').fill(CALLHARBOR_USERNAME)
+    page.locator('input[name="data[Login][password]"]').fill(CALLHARBOR_PASSWORD)
+    page.get_by_role('button', name='Log In').click()
+
+    if page.url.startswith(MFA_URL):
+        logger.info('callharbor mfa page detected, handling mfa')
+        handle_mfa(page)
+    
+    try:
+        page.wait_for_url(MAIN_PAGE)
+    except PlaywrightTimeoutError:
+        logger.error('login failed, not on main page')
+        raise Exception('login failed, not on main page')
 
 
 def get_latest_mfa_code() -> str:
     logger = ptmlog.get_logger()
+    logger.info('getting latest mfa code from call harbor')
 
-    CALLHARBOR_USERNAME   = os.environ['CALLHARBOR_USERNAME']
-    CALLHARBOR_PASSWORD   = os.environ['CALLHARBOR_PASSWORD']
-    CALLHARBOR_MFA_SECRET = os.environ['CALLHARBOR_MFA_SECRET']
+    HEADLESS: bool = os.getenv('HEADLESS', 'TRUE') == 'TRUE'
 
-    driver = initialize_driver()
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch(headless=HEADLESS)
+        context = browser.new_context(storage_state=get_playwright_storage_state('callharbor'))
+        page = context.new_page()
+        try:
+            page.goto(MESSAGES_URL)
+            if page.url.startswith(LOGIN_URL):
+                logger.info('not logged in, logging in')
+                login(page)
+                page.goto(MESSAGES_URL)
+            all_recent_messages = page.locator(".conversation-recent-msg").all_text_contents()
+        finally:
+            save_playwright_storage_state('callharbor', context.storage_state())
+        
+        for message in all_recent_messages:
+            match = re.search(r'^Your code is: (\d{5}). Thank you.$', message)
+            if match:
+                return match.group(1)
+        
+        # If we make it here, we didn't find a code
+        logger.error('no mfa code found in call harbor messages')
+        raise Exception('no mfa code found in call harbor messages')
 
-    driver.get(MESSAGES_URL)
-    driver.find_element(By.NAME, "data[Login][username]").send_keys(CALLHARBOR_USERNAME)
-    driver.find_element(By.NAME, "data[Login][password]").send_keys(CALLHARBOR_PASSWORD)
-    driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Log In"]').click()
-    
-    WebDriverWait(driver, 10).until(EC.url_contains(MFA_URL))
-    
-    mfa_code = pyotp.TOTP(CALLHARBOR_MFA_SECRET).now()
-    driver.find_element(By.NAME, "data[Login][passcode]").send_keys(mfa_code)
-    time.sleep(2)
-    driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Submit"]').click()
 
-    driver.get(MESSAGES_URL)
-    WebDriverWait(driver, 10).until(EC.url_contains(MESSAGES_URL))
-    
-    logger.info("getting most recent message")
-    message_xpath = "//div[contains(@class, 'conversation-recent-msg')]"
-    message_element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, message_xpath)))
-    message_text = message_element.text
-    driver.quit()
-
-    # Extract code from message text
-    match = re.search(r"Your code is: (\d+)", message_text)
-    if not match:
-        logger.exception('no mfa code found in call harbor message')
-        raise Exception('no mfa code found in call harbor message')
-    else:
-        return match.group(1)
+if __name__ == '__main__':
+    print(get_latest_mfa_code())
