@@ -11,6 +11,54 @@ function GetCommitHash {
     return (git rev-parse --short HEAD)
 }
 
+function GetConfig {
+    param (
+        [Parameter(Mandatory=$true)] # Make the parameter mandatory
+        [ValidateScript({
+            # This script block runs to validate the parameter value ($_)
+            if (Test-Path -Path $_ -PathType Container) {
+                return $true # Validation succeeded
+            } else {
+                # Throw an error if validation fails
+                throw "The path '$_' does not exist or is not a valid directory."
+            }
+        })]
+        [string]$ContainerPath
+    )
+
+    $ConfigFile = Join-Path $ContainerPath "config.json"
+    return Get-Content $ConfigFile | ConvertFrom-Json -AsHashtable
+}
+
+function GetFullImageName {
+    param (
+        [Parameter(Mandatory=$true)] # Make the parameter mandatory
+        [ValidateScript({
+            # This script block runs to validate the parameter value ($_)
+            if (Test-Path -Path $_ -PathType Container) {
+                return $true # Validation succeeded
+            } else {
+                # Throw an error if validation fails
+                throw "The path '$_' does not exist or is not a valid directory."
+            }
+        })]
+        [string]$ContainerPath
+    )
+
+    $Config = GetConfig $ContainerPath
+    $IMAGE_NAME   = $Config.IMAGE_NAME
+    $IMAGE_TAG    = GetCommitHash
+
+    return "$($ACR_NAME)/$($IMAGE_NAME):$($IMAGE_TAG)"
+}
+
+function LoginToDocker {
+    $ACR_NAME     = $env:ACR_NAME
+    $ACR_USERNAME = $env:ACR_USERNAME
+    $ACR_PASSWORD = $env:ACR_PASSWORD
+    $ACR_PASSWORD | docker login $ACR_NAME -u $ACR_USERNAME --password-stdin
+}
+
 function BuildImage {
     param (
         [Parameter(Mandatory=$true)] # Make the parameter mandatory
@@ -25,6 +73,8 @@ function BuildImage {
         })]
         [string]$ContainerPath,
 
+        [switch]$Push,
+
         [switch]$Force
     )
 
@@ -33,30 +83,22 @@ function BuildImage {
         exit 1
     }
 
-    $IMAGE_TAG = GetCommitHash
-    
     $ContainerDirectoryInfo = Get-Item -Path $ContainerPath # Use the validated parameter
     $ProjectRoot = $ContainerDirectoryInfo.Parent.Parent
-    $ConfigFile = Join-Path $ContainerPath "config.json"
     $DockerFile = Join-Path $ContainerPath "Dockerfile"
 
-    # From Environment
-    $ACR_NAME              = $env:ACR_NAME
-    $ACR_USERNAME          = $env:ACR_USERNAME
-    $ACR_PASSWORD          = $env:ACR_PASSWORD
-
-    # Config
-    $Config = Get-Content $ConfigFile | ConvertFrom-Json -AsHashtable
-    $IMAGE_NAME = $Config.IMAGE_NAME
-
-    # Calculated
-    $FULL_IMAGE_NAME = "$($ACR_NAME)/$($IMAGE_NAME):$($IMAGE_TAG)"
-
+    $Config = GetConfig $ContainerPath
+    $IMAGE_NAME = $Config.IMAGE_NAME 
+    $CommitHash = GetCommitHash
 
     # Build and push image
-    $ACR_PASSWORD | docker login $ACR_NAME -u $ACR_USERNAME --password-stdin
-    docker build --platform linux/amd64 -f $DockerFile -t $FULL_IMAGE_NAME $ProjectRoot.FullName
-    docker push $FULL_IMAGE_NAME
+    LoginToDocker
+    docker build --platform linux/amd64 -f $DockerFile -t "$($IMAGE_NAME):$($CommitHash)" $ProjectRoot.FullName
+    if ($Push.IsPresent) {
+        $ACR_NAME = $env:ACR_NAME
+        docker tag "$($IMAGE_NAME):$($CommitHash)" "$($ACR_NAME)/$($IMAGE_NAME):$($CommitHash)"
+        docker push $FullImageName
+    }
 }
 
 function UpdateContainerAppJob {
