@@ -32,13 +32,16 @@ def get_target_date():
     return target_date
 
 
-@ptmlog.procedure('cg_hope_scale_survey_automation')
-async def main():
+@ptmlog.procedure('cg_hope_scale_sync_appointments')
+def sync_appointments():
+    """
+    Retrieve appointments from Practice Fusion and store them in Azure Table Storage.
+    """
     logger = ptmlog.get_logger()
 
     target_date = get_target_date()
     logger.info('getting appointments from practice fusion', target_date=target_date)
-    pf_appointments = await practice_fusion_utils.get_appointments(target_dates=[target_date])
+    pf_appointments = asyncio.run(practice_fusion_utils.get_appointments(target_dates=[target_date]))
 
     # Filter appointments
     logger.debug('pre-filter', appointments=pf_appointments)
@@ -67,6 +70,13 @@ async def main():
             logger.exception('appointment already exists in azure table', appointment=appointment)
             continue  # This should not end the process
 
+@ptmlog.procedure('cg_hope_scale_send_surveys')
+def send_surveys():
+    """
+    Check for appointments that need surveys sent and send them.
+    """
+    logger = ptmlog.get_logger()
+
     logger.info('getting appointments that need surveys sent')
     table_appointments = appointments_table_utils.get_appointments()
 
@@ -94,6 +104,21 @@ async def main():
             logger.exception('error updating table appointment', patient_name=table_appointment.patient_name)
             continue  # This should not end the process
 
+def main():
+    logger = ptmlog.get_logger()
+
+    try:
+        sync_appointments()
+    except:
+        logger.exception('error syncing appointments')
+    
+    try:
+        send_surveys()
+    except:
+        logger.exception('error sending surveys')
+        
+
+
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()
