@@ -1,109 +1,74 @@
-from datetime import datetime, date
-import time
-import os
 import re
+import os
+from datetime import datetime, date
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 from bs4 import BeautifulSoup
+from playwright.sync_api import (
+    sync_playwright,
+    Page,
+    TimeoutError as PlaywrightTimeoutError,
+)
 
-from shared import ptmlog
-from models import PracticeFusionAppointment
 import callharbor_utils
+from models import PracticeFusionAppointment
+from shared import ptmlog
+from storage_state_persistence_utils import save_playwright_storage_state, get_playwright_storage_state
+
+BASE_URL      = 'https://static.practicefusion.com/apps/ehr/index.html'
+LOGIN_URL     = 'https://static.practicefusion.com/apps/ehr/index.html#/login'
+MAIN_PAGE_URL = 'https://static.practicefusion.com/apps/ehr/index.html#/PF/home/main'
+LOGIN_URL     = 'https://static.practicefusion.com/apps/ehr/index.html#/login/securitycheck'
+SCHEDULE_URL  = 'https://static.practicefusion.com/apps/ehr/index.html#/PF/schedule/scheduler/agenda'
 
 
-SCHEDULE_PAGE_URL = 'https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda'
-LOGIN_PAGE_URL = 'https://static.practicefusion.com/apps/ehr/index.html#/login'
+def handle_mfa(page: Page):
+    page.locator('#sendCallButton').click()
+    mfa_code = callharbor_utils.get_latest_mfa_code()
+    page.locator('#code').fill(mfa_code)
+    page.click('#sendCodeButton')
 
 
-def initialize_driver():
-    HEADLESS = os.getenv('HEADLESS', 'TRUE')
-
-    options = Options()
-
-    options.add_argument(f'--window-size=1920,1080')
-    options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
-
-    # Set headless option based on config
-    if HEADLESS != 'FALSE':
-        options.add_argument('--headless')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--disable-gpu')
-
-    driver = webdriver.Chrome(options=options)
-
-    return driver
-
-
-def login(driver: webdriver.Chrome):
+def login(page: Page) -> None:
     logger = ptmlog.get_logger()
+    logger.info('logging into practice fusion')
 
-    PRACTICEFUSION_USERNAME = os.environ['PRACTICEFUSION_USERNAME']
-    PRACTICEFUSION_PASSWORD = os.environ['PRACTICEFUSION_PASSWORD']
+    PRACTICE_FUSION_USERNAME = os.environ['PRACTICE_FUSION_USERNAME']
+    PRACTICE_FUSION_PASSWORD = os.environ['PRACTICE_FUSION_PASSWORD']
 
-    logger.info('logging into practice fusion', username=PRACTICEFUSION_USERNAME)
+    page.goto(LOGIN_URL)
 
-    driver.get(LOGIN_PAGE_URL)
+    # Fill out credentials and click login button
+    page.locator('#inputUsername').fill(PRACTICE_FUSION_USERNAME)
+    page.locator('#inputPswd').fill(PRACTICE_FUSION_PASSWORD)
+    page.locator('#loginButton').click()
 
-    # USERNAME
-    username_field = driver.find_element(By.ID, 'inputUsername')
-    username_field.clear()
-    username_field.send_keys(PRACTICEFUSION_USERNAME)
+    # Wait for the URL to change to the main page or the MFA page
+    page.wait_for_url(re.compile(r'(#\/login\/securitycheck|#\/PF\/home\/main)$'))
+    if page.url.endswith('#/login/securitycheck'):
+        logger.info('mfa page detected, handling mfa')
+        handle_mfa(page)
 
-    # PASSWORD
-    driver.find_element(By.ID, 'inputPswd').send_keys(PRACTICEFUSION_PASSWORD)
-
-    # SUBMIT
-    driver.find_element(By.ID, 'loginButton').click()
-
-    # MFA
-    logger.info('handling mfa')
-    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, 'sendCallButton'))) # Wait for the MFA page to load
-    driver.find_element(By.ID, 'sendCallButton').click()    # Click the "Send Call" button
-
-    time.sleep(5)
-    mfa_code = callharbor_utils.get_latest_mfa_code()       # Get the latest MFA code from CallHarbor
-
-    driver.find_element(By.ID, 'code').send_keys(mfa_code)  # Enter the MFA code
-    driver.find_element(By.ID, 'sendCodeButton').click()    # Click submit
-
-    # Wait for the MFA process to complete and navigate to the next page
-    WebDriverWait(driver, 20).until(EC.url_changes)  # type: ignore
-    time.sleep(2)
-
-
-def go_back_one_day(driver: webdriver.Chrome):
-    logger = ptmlog.get_logger()
-
+    # If we are still not on the main page, something has gone wrong
     try:
-        decrement_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//button[@class='btn-sm decrement-date']")
-            )
-        )
-        decrement_button.click()
-        time.sleep(1)  # Small delay between clicks
-    except:
-        logger.exception('error clicking decrement button')
+        page.wait_for_url(MAIN_PAGE_URL)
+    except PlaywrightTimeoutError:
+        logger.exception('timed out waiting for main page after login')
         raise
 
+    logger.info('successfully logged in to Practice Fusion')
 
-def set_schedule_page_to_date(driver: webdriver.Chrome, target_date: date):
+
+def set_schedule_page_to_date(page: Page, target_date: date) -> None:
     """
     Set the schedule page to the specified date by going back the calculated number of days.
-    Expects a driver that has already logged into Practice Fusion.
+    Expects a playwright page that has already logged into Practice Fusion.
     """
     logger = ptmlog.get_logger()
 
     # Reset the schedule page to the default state by navigating away and then back
-    logger.info('resetting schedule page to default state')
-    driver.get('https://google.com/')
-    time.sleep(2)
-    driver.get(SCHEDULE_PAGE_URL)
+    logger.info('setting schedule page to default state')
+    page.goto(BASE_URL)
+    page.goto(SCHEDULE_URL)
 
     # Calculate days to go back
     current_date = datetime.now().date()
@@ -112,41 +77,46 @@ def set_schedule_page_to_date(driver: webdriver.Chrome, target_date: date):
     # Click decrement button the calculated number of times
     if days_difference > 0:
         logger.info(f'going back {days_difference} days from current date to reach {target_date}')
-        
-        # Wait for page to be fully loaded
-        time.sleep(5)
-        
         for _ in range(days_difference):
-            go_back_one_day(driver)
+            page.locator('.decrement-date').click()
 
 
-def get_schedule_page_content(driver: webdriver.Chrome, target_date: date) -> str:
+def get_schedule_page(page: Page, target_date: date) -> str:
     logger = ptmlog.get_logger()
+    logger.info('getting schedule page content', target_date=target_date)
 
-    set_schedule_page_to_date(driver, target_date)
+    # Set the schedule page to the target date
+    set_schedule_page_to_date(page, target_date)
+    
+    # Open the print view
+    page.get_by_text('Print').click()
+    content = page.content()
+    logger.info('successfully retrieved schedule page content', target_date=target_date)
 
-    # Call this function before interacting with elements that might trigger alerts
-    try:
-        logger.info('accepting alert')
-        WebDriverWait(driver, 10).until(EC.alert_is_present())
-        alert = driver.switch_to.alert
-        alert.accept()
-    except:
-        logger.info('no alert to accept')
-
-    time.sleep(10)
-
-    # Wait until the schedule button is clickable
-    logger.info('clicking schedule button')
-    schedule_button_xpath = "//button[@class='btn--default' and @data-element='btn-schedule-print']"
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, schedule_button_xpath))).click()
-
-    time.sleep(3)
-    return driver.page_source
+    return content
 
 
-def parse_schedule_page_content(page_content: str) -> list[PracticeFusionAppointment]:
-    soup = BeautifulSoup(page_content, 'html.parser')
+def get_schedule_pages(target_dates: list[date]) -> list[str]:
+    HEADLESS: bool = os.getenv('HEADLESS', 'TRUE') == 'TRUE'
+    
+    schedule_pages: list[str] = []
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch(headless=HEADLESS)
+        context = browser.new_context(storage_state=get_playwright_storage_state())
+        try:
+            page = context.new_page()
+
+            login(page)
+            for target_date in target_dates:
+                schedule_pages.append(get_schedule_page(page, target_date))
+        finally:
+            save_playwright_storage_state(context.storage_state())
+    
+    return schedule_pages
+    
+
+def parse_schedule_page(schedule_page: str) -> list[PracticeFusionAppointment]:
+    soup = BeautifulSoup(schedule_page, 'html.parser')
 
     # Get the date from the page
     h3_elements = soup.find_all('h3')
@@ -206,24 +176,21 @@ def parse_schedule_page_content(page_content: str) -> list[PracticeFusionAppoint
     return appointments
 
 
-def get_appointments(target_dates: list[date]) -> list[PracticeFusionAppointment]:
-    driver = initialize_driver()
-    login(driver)
-
-    # Get the schedule page content for each target date
-    schedule_pages: list[str] = []
-    for target_date in target_dates:
-        schedule_pages.append(get_schedule_page_content(driver, target_date))
-    driver.quit()
-
-    # Parse the schedule page content for each target date
+def parse_schedule_pages(schedule_pages: list[str]) -> list[PracticeFusionAppointment]:
     appointments: list[PracticeFusionAppointment] = []
-    for schedule_page_content in schedule_pages:
-        appointments.extend(parse_schedule_page_content(schedule_page_content))
+    for page_content in schedule_pages:
+        appointments.extend(parse_schedule_page(page_content))
+    
+    return appointments
+
+
+def get_appointments(target_dates: list[date]) -> list[PracticeFusionAppointment]:
+    schedule_pages = get_schedule_pages(target_dates)
+    appointments = parse_schedule_pages(schedule_pages)
     
     return appointments
 
 
 if __name__ == "__main__":
     target_date = datetime.now().date()
-    get_appointments([target_date])
+    get_appointments([date(2025, 5, 1), date(2025, 5, 2)])
