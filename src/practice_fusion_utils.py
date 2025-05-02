@@ -32,14 +32,14 @@ def login(page: Page) -> None:
     logger = ptmlog.get_logger()
     logger.info('logging into practice fusion')
 
-    PRACTICE_FUSION_USERNAME = os.environ['PRACTICE_FUSION_USERNAME']
-    PRACTICE_FUSION_PASSWORD = os.environ['PRACTICE_FUSION_PASSWORD']
+    PRACTICEFUSION_USERNAME = os.environ['PRACTICEFUSION_USERNAME']
+    PRACTICEFUSION_PASSWORD = os.environ['PRACTICEFUSION_PASSWORD']
 
     page.goto(LOGIN_URL)
 
     # Fill out credentials and click login button
-    page.locator('#inputUsername').fill(PRACTICE_FUSION_USERNAME)
-    page.locator('#inputPswd').fill(PRACTICE_FUSION_PASSWORD)
+    page.locator('#inputUsername').fill(PRACTICEFUSION_USERNAME)
+    page.locator('#inputPswd').fill(PRACTICEFUSION_PASSWORD)
     page.locator('#loginButton').click()
 
     # Wait for the URL to change to the main page or the MFA page
@@ -102,7 +102,7 @@ def get_schedule_pages(target_dates: list[date]) -> list[str]:
     schedule_pages: list[str] = []
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=HEADLESS)
-        context = browser.new_context(storage_state=get_playwright_storage_state())
+        context = browser.new_context(storage_state=get_playwright_storage_state('practicefusion'))
         try:
             page = context.new_page()
 
@@ -110,7 +110,7 @@ def get_schedule_pages(target_dates: list[date]) -> list[str]:
             for target_date in target_dates:
                 schedule_pages.append(get_schedule_page(page, target_date))
         finally:
-            save_playwright_storage_state(context.storage_state())
+            save_playwright_storage_state('practicefusion', context.storage_state())
     
     return schedule_pages
     
