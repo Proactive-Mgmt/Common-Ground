@@ -54,6 +54,7 @@ async def login(page: Page) -> None:
     try:
         await page.wait_for_url(MAIN_PAGE)
     except PlaywrightTimeoutError:
+        await page.screenshot(path='./screenshots/login_failed.png')
         logger.error('login failed, not on main page')
         raise Exception('login failed, not on main page')
 
@@ -77,6 +78,7 @@ async def get_latest_mfa_code() -> str:
             if page.url.startswith(LOGIN_URL):
                 logger.info('not logged in, logging in')
                 await login(page)
+                logger.info('navigating to the messages page')
                 await page.goto(MESSAGES_URL)
             all_recent_messages = await page.locator(".conversation-recent-msg").all_text_contents()
         finally:
@@ -88,7 +90,8 @@ async def get_latest_mfa_code() -> str:
                 return match.group(1)
         
         # If we make it here, we didn't find a code
-        logger.error('no mfa code found in call harbor messages')
+        await page.screenshot(path='./screenshots/no_mfa_code_found_in_call_harbor_messages.png')
+        logger.error('no mfa code found in call harbor messages', all_recent_messages=all_recent_messages)
         raise Exception('no mfa code found in call harbor messages')
 
 
