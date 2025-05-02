@@ -33,6 +33,7 @@ async def handle_mfa(page: Page) -> None:
     try:
         await page.wait_for_url(MAIN_PAGE)
     except PlaywrightTimeoutError:
+        await page.screenshot(path='./screenshots/mfa_failed.png')
         logger.error('mfa failed, not on main page', actual_url=page.url)
         raise Exception('mfa failed, not on main page')
 
@@ -55,7 +56,7 @@ async def login(page: Page) -> None:
         await page.wait_for_url(MAIN_PAGE)
     except PlaywrightTimeoutError:
         await page.screenshot(path='./screenshots/login_failed.png')
-        logger.error('login failed, not on main page')
+        logger.error('login failed, not on main page', actual_url=page.url)
         raise Exception('login failed, not on main page')
 
 
