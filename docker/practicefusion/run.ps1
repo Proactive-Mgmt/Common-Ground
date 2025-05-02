@@ -4,7 +4,7 @@ BuildImage $PSScriptRoot -Force
 $Config = GetConfig $PSScriptRoot
 $Tag = GetCommitHash
 $ImageName = "$($Config.IMAGE_NAME):$($Tag)"
-docker run --rm -it --name practicefusion `
+docker run --rm -it --name practicefusion -v "$PSScriptRoot/screenshots:/app/screenshots" `
     -e "STORAGE_ACCOUNT_CONNECTION_STRING=$($env:STORAGE_ACCOUNT_CONNECTION_STRING)" `
     -e "PRACTICEFUSION_USERNAME=$($env:PRACTICEFUSION_USERNAME)" `
     -e "PRACTICEFUSION_PASSWORD=$($env:PRACTICEFUSION_PASSWORD)" `
