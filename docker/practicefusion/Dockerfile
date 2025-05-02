@@ -15,8 +15,14 @@ RUN apk add --no-cache \
 ENV TZ=America/New_York
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Install uv and python packages
+# Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Install playwright and its dependencies
+RUN uv pip install --system playwright
+RUN playwright install --with-deps chromium
+
+# Install the rest of the python packages
 COPY ./requirements.txt /app/
 RUN uv pip install --system -r requirements.txt
 
