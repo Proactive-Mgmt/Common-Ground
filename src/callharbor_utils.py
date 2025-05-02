@@ -11,6 +11,8 @@ import pyotp
 
 from shared import ptmlog
 
+MESSAGES_URL = 'https://control.callharbor.com/portal/messages'
+MFA_URL = 'https://control.callharbor.com/portal/login/mfa/1'
 
 def initialize_driver():
     HEADLESS = os.getenv('HEADLESS', 'TRUE')
@@ -41,20 +43,20 @@ def get_latest_mfa_code() -> str:
 
     driver = initialize_driver()
 
-    driver.get('https://control.callharbor.com/portal/messages')
+    driver.get(MESSAGES_URL)
     driver.find_element(By.NAME, "data[Login][username]").send_keys(CALLHARBOR_USERNAME)
     driver.find_element(By.NAME, "data[Login][password]").send_keys(CALLHARBOR_PASSWORD)
     driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Log In"]').click()
     
-    WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/login/mfa/1"))
+    WebDriverWait(driver, 10).until(EC.url_contains(MFA_URL))
     
     mfa_code = pyotp.TOTP(CALLHARBOR_MFA_SECRET).now()
     driver.find_element(By.NAME, "data[Login][passcode]").send_keys(mfa_code)
     time.sleep(2)
     driver.find_element(By.XPATH, '//input[@class="btn btn-large color-primary" and @type="submit" and @value="Submit"]').click()
 
-    driver.get("https://control.callharbor.com/portal/messages")
-    WebDriverWait(driver, 10).until(EC.url_contains("https://control.callharbor.com/portal/messages"))
+    driver.get(MESSAGES_URL)
+    WebDriverWait(driver, 10).until(EC.url_contains(MESSAGES_URL))
     
     logger.info("getting most recent message")
     message_xpath = "//div[contains(@class, 'conversation-recent-msg')]"
