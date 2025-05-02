@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 from azure.storage.blob import BlobClient
+from azure.core.exceptions import ResourceNotFoundError
 import os
 
 STORAGE_ACCOUNT_CONNECTION_STRING = os.environ['STORAGE_ACCOUNT_CONNECTION_STRING']
@@ -11,16 +12,20 @@ def get_playwright_storage_state(id: str):
     client = BlobClient.from_connection_string(
         conn_str       = STORAGE_ACCOUNT_CONNECTION_STRING,
         container_name = 'playwright-storage-state',
-        blob_name      = 'test',
+        blob_name      = id,
     )
-    return json.load(client.download_blob())
+    try:
+        return json.load(client.download_blob())
+    except ResourceNotFoundError:
+        return None
+    
 
 def save_playwright_storage_state(id: str, storage_state) -> None:
     os.environ['STORAGE_ACCOUNT_CONNECTION_STRING'] = STORAGE_ACCOUNT_CONNECTION_STRING
     client = BlobClient.from_connection_string(
         conn_str       = STORAGE_ACCOUNT_CONNECTION_STRING,
         container_name = 'playwright-storage-state',
-        blob_name      = 'test',
+        blob_name      = id,
     )
     client.upload_blob(
         data = json.dumps(storage_state),
