@@ -112,6 +112,9 @@ async def get_schedule_pages(target_dates: list[date]) -> list[str]:
             await login(page)
             for target_date in target_dates:
                 schedule_pages.append(await get_schedule_page(page, target_date))
+        except:
+            await page.screenshot(path='./screenshots/error_screenshot.png')
+            raise
         finally:
             save_playwright_storage_state('practicefusion', await context.storage_state())
     
