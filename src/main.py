@@ -30,12 +30,12 @@ def get_target_date():
 
 
 @ptmlog.procedure('cg_hope_scale_survey_automation')
-def main():
+async def main():
     logger = ptmlog.get_logger()
 
     target_date = get_target_date()
     logger.info('getting appointments from practice fusion', target_date=target_date)
-    pf_appointments = practice_fusion_utils.get_appointments(target_dates=[target_date])
+    pf_appointments = await practice_fusion_utils.get_appointments(target_dates=[target_date])
 
     # Filter appointments
     logger.debug('pre-filter', appointments=pf_appointments)

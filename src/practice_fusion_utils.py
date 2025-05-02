@@ -1,10 +1,11 @@
+import asyncio
 import re
 import os
 from datetime import datetime, date
 
 from bs4 import BeautifulSoup
-from playwright.sync_api import (
-    sync_playwright,
+from playwright.async_api import (
+    async_playwright,
     Page,
     TimeoutError as PlaywrightTimeoutError,
 )
@@ -21,36 +22,36 @@ LOGIN_URL     = 'https://static.practicefusion.com/apps/ehr/index.html#/login/se
 SCHEDULE_URL  = 'https://static.practicefusion.com/apps/ehr/index.html#/PF/schedule/scheduler/agenda'
 
 
-def handle_mfa(page: Page):
-    page.locator('#sendCallButton').click()
-    mfa_code = callharbor_utils.get_latest_mfa_code()
-    page.locator('#code').fill(mfa_code)
-    page.click('#sendCodeButton')
+async def handle_mfa(page: Page):
+    await page.locator('#sendCallButton').click()
+    mfa_code = await callharbor_utils.get_latest_mfa_code()
+    await page.locator('#code').fill(mfa_code)
+    await page.click('#sendCodeButton')
 
 
-def login(page: Page) -> None:
+async def login(page: Page) -> None:
     logger = ptmlog.get_logger()
     logger.info('logging into practice fusion')
 
     PRACTICEFUSION_USERNAME = os.environ['PRACTICEFUSION_USERNAME']
     PRACTICEFUSION_PASSWORD = os.environ['PRACTICEFUSION_PASSWORD']
 
-    page.goto(LOGIN_URL)
+    await page.goto(LOGIN_URL)
 
     # Fill out credentials and click login button
-    page.locator('#inputUsername').fill(PRACTICEFUSION_USERNAME)
-    page.locator('#inputPswd').fill(PRACTICEFUSION_PASSWORD)
-    page.locator('#loginButton').click()
+    await page.locator('#inputUsername').fill(PRACTICEFUSION_USERNAME)
+    await page.locator('#inputPswd').fill(PRACTICEFUSION_PASSWORD)
+    await page.locator('#loginButton').click()
 
     # Wait for the URL to change to the main page or the MFA page
-    page.wait_for_url(re.compile(r'(#\/login\/securitycheck|#\/PF\/home\/main)$'))
+    await page.wait_for_url(re.compile(r'(#\/login\/securitycheck|#\/PF\/home\/main)$'))
     if page.url.endswith('#/login/securitycheck'):
         logger.info('mfa page detected, handling mfa')
-        handle_mfa(page)
+        await handle_mfa(page)
 
     # If we are still not on the main page, something has gone wrong
     try:
-        page.wait_for_url(MAIN_PAGE_URL)
+        await page.wait_for_url(MAIN_PAGE_URL)
     except PlaywrightTimeoutError:
         logger.exception('timed out waiting for main page after login')
         raise
@@ -58,7 +59,7 @@ def login(page: Page) -> None:
     logger.info('successfully logged in to Practice Fusion')
 
 
-def set_schedule_page_to_date(page: Page, target_date: date) -> None:
+async def set_schedule_page_to_date(page: Page, target_date: date) -> None:
     """
     Set the schedule page to the specified date by going back the calculated number of days.
     Expects a playwright page that has already logged into Practice Fusion.
@@ -67,8 +68,8 @@ def set_schedule_page_to_date(page: Page, target_date: date) -> None:
 
     # Reset the schedule page to the default state by navigating away and then back
     logger.info('setting schedule page to default state')
-    page.goto(BASE_URL)
-    page.goto(SCHEDULE_URL)
+    await page.goto(BASE_URL)
+    await page.goto(SCHEDULE_URL)
 
     # Calculate days to go back
     current_date = datetime.now().date()
@@ -78,39 +79,38 @@ def set_schedule_page_to_date(page: Page, target_date: date) -> None:
     if days_difference > 0:
         logger.info(f'going back {days_difference} days from current date to reach {target_date}')
         for _ in range(days_difference):
-            page.locator('.decrement-date').click()
+            await page.locator('.decrement-date').click()
 
 
-def get_schedule_page(page: Page, target_date: date) -> str:
+async def get_schedule_page(page: Page, target_date: date) -> str:
     logger = ptmlog.get_logger()
     logger.info('getting schedule page content', target_date=target_date)
 
     # Set the schedule page to the target date
-    set_schedule_page_to_date(page, target_date)
+    await set_schedule_page_to_date(page, target_date)
     
     # Open the print view
-    page.get_by_text('Print').click()
-    content = page.content()
+    await page.get_by_text('Print').click()
+    content = await page.content()
     logger.info('successfully retrieved schedule page content', target_date=target_date)
 
     return content
 
 
-def get_schedule_pages(target_dates: list[date]) -> list[str]:
+async def get_schedule_pages(target_dates: list[date]) -> list[str]:
     HEADLESS: bool = os.getenv('HEADLESS', 'TRUE') == 'TRUE'
     
     schedule_pages: list[str] = []
-    with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=HEADLESS)
-        context = browser.new_context(storage_state=get_playwright_storage_state('practicefusion'))
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch(headless=HEADLESS)
+        context = await browser.new_context(storage_state=get_playwright_storage_state('practicefusion'))
+        page    = await context.new_page()
         try:
-            page = context.new_page()
-
-            login(page)
+            await login(page)
             for target_date in target_dates:
-                schedule_pages.append(get_schedule_page(page, target_date))
+                schedule_pages.append(await get_schedule_page(page, target_date))
         finally:
-            save_playwright_storage_state('practicefusion', context.storage_state())
+            save_playwright_storage_state('practicefusion', await context.storage_state())
     
     return schedule_pages
     
@@ -184,8 +184,8 @@ def parse_schedule_pages(schedule_pages: list[str]) -> list[PracticeFusionAppoin
     return appointments
 
 
-def get_appointments(target_dates: list[date]) -> list[PracticeFusionAppointment]:
-    schedule_pages = get_schedule_pages(target_dates)
+async def get_appointments(target_dates: list[date]) -> list[PracticeFusionAppointment]:
+    schedule_pages = await get_schedule_pages(target_dates)
     appointments = parse_schedule_pages(schedule_pages)
     
     return appointments
@@ -193,4 +193,4 @@ def get_appointments(target_dates: list[date]) -> list[PracticeFusionAppointment
 
 if __name__ == "__main__":
     target_date = datetime.now().date()
-    get_appointments([date(2025, 5, 1), date(2025, 5, 2)])
+    asyncio.run(get_appointments([date(2025, 5, 1), date(2025, 5, 2)]))
