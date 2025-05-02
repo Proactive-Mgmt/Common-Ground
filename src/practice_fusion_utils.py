@@ -15,7 +15,7 @@ from models import PracticeFusionAppointment
 import callharbor_utils
 
 
-SCHEDULE_PAGE_URL = "https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda"
+SCHEDULE_PAGE_URL = 'https://static.practicefusion.com/apps/ehr/index.html?utm_source=exacttarget&utm_medium=email&utm_campaign=InitialSetupWelcomeAddedUser#/PF/schedule/scheduler/agenda'
 LOGIN_PAGE_URL = 'https://static.practicefusion.com/apps/ehr/index.html#/login'
 
 
@@ -137,7 +137,7 @@ def get_schedule_page_content(driver: webdriver.Chrome, target_date: date) -> st
     time.sleep(10)
 
     # Wait until the schedule button is clickable
-    logger.info("clicking schedule button")
+    logger.info('clicking schedule button')
     schedule_button_xpath = "//button[@class='btn--default' and @data-element='btn-schedule-print']"
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, schedule_button_xpath))).click()
 
@@ -152,11 +152,11 @@ def parse_schedule_page_content(page_content: str) -> list[PracticeFusionAppoint
     h3_elements = soup.find_all('h3')
     header_date_string = None
     for h3 in h3_elements:
-        if h3.text.startswith("Schedule Standard view - "):
-            header_date_string = h3.text.split("Schedule Standard view - ")[1].strip()
+        if h3.text.startswith('Schedule Standard view - '):
+            header_date_string = h3.text.split('Schedule Standard view - ')[1].strip()
             break
     if header_date_string is None:
-        raise ValueError("Could not find the date in the header")
+        raise ValueError('Could not find the date in the header')
     else:
         schedule_date = datetime.strptime(header_date_string, '%A, %B %d, %Y').date()
 
@@ -190,7 +190,7 @@ def parse_schedule_page_content(page_content: str) -> list[PracticeFusionAppoint
         patient_phone = re.sub(r'\D', '', patient_phone_raw.strip())
 
         # Parse the time column
-        appointment_time = datetime.strptime(time_column_text.strip(), "%I:%M %p").time()
+        appointment_time = datetime.strptime(time_column_text.strip(), '%I:%M %p').time()
         appointment_time = datetime.combine(schedule_date, appointment_time)
 
         appointments.append(PracticeFusionAppointment(
