@@ -81,7 +81,7 @@ def send_surveys():
     table_appointments = appointments_table_utils.get_appointments()
 
     for table_appointment in table_appointments:
-        logger.info('sending survery', patient_name=table_appointment.patient_name)
+        logger.info('sending survey', patient_name=table_appointment.patient_name)
         try:
             message_sid = twilio_utils.send_survey(
                 id            = table_appointment.row_key,
