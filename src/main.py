@@ -45,6 +45,17 @@ def sync_appointments():
 
     # Filter appointments
     logger.debug('pre-filter', patients=[p.patient_name for p in pf_appointments if p])
+    
+    # Log detailed appointment data for diagnosis
+    for i, appointment in enumerate(pf_appointments):
+        if appointment:
+            logger.debug(f'appointment_{i}_details', 
+                patient_name=appointment.patient_name,
+                provider=appointment.provider,
+                type=appointment.type,
+                appointment_status=appointment.appointment_status
+            )
+    
     filtered_appointments = [
         appointment
         for appointment in pf_appointments
@@ -52,7 +63,13 @@ def sync_appointments():
         and appointment.type == 'CLINICIAN'
         and appointment.appointment_status == 'Seen'
     ]
-    logger.debug('post-filter', patients=[p.patient_name for p in pf_appointments if p])
+    
+    # Fixed: Log filtered appointments, not original appointments
+    logger.debug('post-filter', patients=[p.patient_name for p in filtered_appointments if p])
+    logger.info('filter_results', 
+        total_retrieved=len(pf_appointments),
+        after_filtering=len(filtered_appointments)
+    )
 
     for appointment in filtered_appointments:
         try:
