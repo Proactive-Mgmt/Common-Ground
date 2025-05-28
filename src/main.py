@@ -59,8 +59,7 @@ def sync_appointments():
     filtered_appointments = [
         appointment
         for appointment in pf_appointments
-        if appointment.provider == 'BHUC COMMON GROUND'
-        and appointment.type == 'CLINICIAN'
+        if appointment.type == 'CLINICIAN'
         and appointment.appointment_status == 'Seen'
     ]
     
