@@ -14,7 +14,8 @@
         "TWILIO_SURVEY_LINK": "https://survey.cghelps.org/api/serve?code=***REMOVED***",
         "CALLHARBOR_USERNAME": "secretref:callharbor-username",
         "CALLHARBOR_PASSWORD": "secretref:callharbor-password",
-        "CALLHARBOR_MFA_SECRET": "secretref:callharbor-mfa-secret"
+        "CALLHARBOR_MFA_SECRET": "secretref:callharbor-mfa-secret",
+        "HEADLESS": "TRUE"
     },
     "SECRETS": {
         "storage-account-connection-string": "STORAGE_ACCOUNT_CONNECTION_STRING",
