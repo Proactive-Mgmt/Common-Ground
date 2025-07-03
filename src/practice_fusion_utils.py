@@ -93,10 +93,30 @@ async def get_schedule_page(page: Page, target_date: date) -> str:
     # Set the schedule page to the target date
     await set_schedule_page_to_date(page, target_date)
     
-    # Open the print view
-    await page.get_by_text('Print').click()
-    content = await page.content()
-    logger.info('successfully retrieved schedule page content', target_date=target_date)
+    try:
+        # Wait for a specific element that indicates the schedule is loaded
+        await page.wait_for_selector('.agenda-container', timeout=30000)
+        logger.info('schedule container loaded')
+
+        # Open the print view with retries
+        for attempt in range(3):
+            try:
+                await page.get_by_text('Print').click()
+                logger.info('successfully clicked print button')
+                break
+            except PlaywrightTimeoutError:
+                logger.warning(f'attempt {attempt + 1} to click print button failed. Retrying...')
+                await page.wait_for_timeout(5000)
+        else:
+            logger.error('failed to click print button after multiple attempts.')
+            raise
+            
+        content = await page.content()
+        logger.info('successfully retrieved schedule page content', target_date=target_date)
+
+    except PlaywrightTimeoutError:
+        logger.error(f"Timeout waiting for schedule page elements. Current URL: {page.url}, Title: {await page.title()}")
+        raise
 
     return content
 
