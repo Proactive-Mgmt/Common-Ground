@@ -82,8 +82,14 @@ async def set_schedule_page_to_date(page: Page, target_date: date) -> None:
     # Click decrement button the calculated number of times
     if days_difference > 0:
         logger.info(f'going back {days_difference} days from current date to reach {target_date}')
-        for _ in range(days_difference):
-            await page.locator('.decrement-date').click()
+        try:
+            await page.wait_for_selector('button.rotate-180', timeout=30000)
+            for _ in range(days_difference):
+                await page.locator('button.rotate-180').click()
+                await page.wait_for_timeout(1000)
+        except PlaywrightTimeoutError:
+            logger.error("Timeout waiting for .decrement-date button to appear on schedule page")
+            raise
 
 
 async def get_schedule_page(page: Page, target_date: date) -> str:
@@ -95,8 +101,8 @@ async def get_schedule_page(page: Page, target_date: date) -> str:
     
     try:
         # Wait for a specific element that indicates the schedule is loaded
-        await page.wait_for_selector('.agenda-container', timeout=30000)
-        logger.info('schedule container loaded')
+        await page.wait_for_selector('div[data-element="appointments-table"]', timeout=30000)
+        logger.info('appointments table loaded')
 
         # Open the print view with retries
         for attempt in range(3):
@@ -155,7 +161,7 @@ def parse_schedule_page(schedule_page: str) -> list[PracticeFusionAppointment]:
     if header_date_string is None:
         raise ValueError('Could not find the date in the header')
     else:
-        schedule_date = datetime.strptime(header_date_string, '%A, %B %d, %Y').date()
+        schedule_date = datetime.strptime(header_date_string, '%A, %B, %d, %Y').date()
 
     # Get all the rows in the table
     table = soup.find('table', {'data-element': 'table-agenda-print'})
@@ -164,12 +170,22 @@ def parse_schedule_page(schedule_page: str) -> list[PracticeFusionAppointment]:
     # Iterate through the rows (skipping the header row) and extract the data
     appointments: list[PracticeFusionAppointment] = []
     for row in rows[1:]:
-        # get column values
-        status_column_text   = row.find('td', {'class': 'status-column'}).text   # type: ignore
-        patient_column_text  = row.find('td', {'class': 'patient-column'}).text  # type: ignore
-        time_column_text     = row.find('td', {'class': 'time-column'}).text     # type: ignore
-        provider_column_text = row.find('td', {'class': 'provider-column'}).text # type: ignore
-        type_column_text     = row.find('td', {'class': 'type-column'}).text     # type: ignore
+        # get column values using data-element attributes from print view
+        status_td   = row.find('td', {'data-element': 'td-intake-status'})
+        patient_td  = row.find('td', {'data-element': 'td-patient-name'})
+        time_td     = row.find('td', {'data-element': 'td-start-at'})
+        provider_td = row.find('td', {'data-element': 'td-provider-name'})
+        type_td     = row.find('td', {'data-element': 'td-appointment-type'})
+
+        # Defensive: skip rows that are missing any required cell
+        if not all([status_td, patient_td, time_td, provider_td, type_td]):
+            continue
+
+        status_column_text   = status_td.text
+        patient_column_text  = patient_td.text
+        time_column_text     = time_td.text
+        provider_column_text = provider_td.text
+        type_column_text     = type_td.text
 
         # Parse simple values from the columns
         appointment_status   = status_column_text.strip()
@@ -180,7 +196,7 @@ def parse_schedule_page(schedule_page: str) -> list[PracticeFusionAppointment]:
         patient_column_split = re.split(r'\s*\n\s*', patient_column_text.strip())
         patient_name_raw  = patient_column_split[0]
         patient_dob_raw   = patient_column_split[1]
-        patient_phone_raw = patient_column_split[3]
+        patient_phone_raw = patient_column_split[2] if len(patient_column_split) > 2 else ""
 
         patient_name  = patient_name_raw.strip()
         patient_dob   = datetime.strptime(patient_dob_raw.strip(), '%m/%d/%Y').date()
