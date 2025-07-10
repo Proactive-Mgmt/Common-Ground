@@ -90,8 +90,8 @@ foreach ($row in $rows) {
     $ExperienceOfSchedulingAnAppointment = Escape-SingleQuote $row.ExperienceOfSchedulingAnAppointment    
     $FindResourcesToHelpMeBefore = Escape-SingleQuote $row.FindResourcesToHelpMe_before    
     $FindResourcesToHelpMeAfter = Escape-SingleQuote $row.FindResourcesToHelpMe_after  
-    $HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportantToMeBefore = Escape-SingleQuote $row.HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportantToMe_before
-    $HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportantToMeAfter = Escape-SingleQuote $row.HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportantToMe_after
+    $HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportantToMeBefore = Escape-SingleQuote $row.HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_before
+    $HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportantToMeAfter = Escape-SingleQuote $row.HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_after
     $InformationClearly = Escape-SingleQuote $row.InformationClearly  
     $IfYouDidNotReceiveHelpThatYouExpectedWhatCouldWeHaveDoneBetter = Escape-SingleQuote $row.IfYouDidNotReceiveHelpThatYouExpectedWhatCouldWeHaveDoneBetter
     $IfYouDidNotFeelMoreHopeWhenYouLeft = Escape-SingleQuote $row.IfYouDidNotFeelMoreHopeWhenYouLeft
@@ -108,7 +108,7 @@ foreach ($row in $rows) {
     $ReasonAppropriatelyAddressed = Escape-SingleQuote $row.ReasonAppropriatelyAddressed    
     $SurveyCompletedOn = Parse-DateTime $row.surveyCompletedOn    
 
-    # NEW: Add the new survey question mapping, truncated to 255 characters
+    # Truncate free-text fields to 255 characters to prevent SQL truncation errors
     function Truncate-String255($value) {
         if ($null -eq $value) { return $null }
         if ($value -is [string] -and $value.Length -gt 255) {
@@ -116,7 +116,15 @@ foreach ($row in $rows) {
         }
         return $value
     }
+
     $HowDidYouHearAboutBHUC = Escape-SingleQuote (Truncate-String255 $row.HowDidYouHearAboutBHUC)
+    $AreThereAnyOtherCommentsYouWouldLikeToMake = Escape-SingleQuote (Truncate-String255 $row.AreThereAnyOtherCommentsYouWouldLikeToMake)
+    $IfYouDidNotReceiveHelpThatYouExpectedWhatCouldWeHaveDoneBetter = Escape-SingleQuote (Truncate-String255 $row.IfYouDidNotReceiveHelpThatYouExpectedWhatCouldWeHaveDoneBetter)
+    $IfYouDidNotFeelMoreHopeWhenYouLeft = Escape-SingleQuote (Truncate-String255 $row.IfYouDidNotFeelMoreHopeWhenYouLeft)
+    $ExperienceOfSchedulingAnAppointment = Escape-SingleQuote (Truncate-String255 $row.ExperienceOfSchedulingAnAppointment)
+    $PatientName = Escape-SingleQuote (Truncate-String255 $row.patientName)
+    $Provider = Escape-SingleQuote (Truncate-String255 $row.provider)
+
     Write-Output ("DEBUG: RowKey = '{0}', HowDidYouHearAboutBHUC = '{1}'" -f $rowKey, $HowDidYouHearAboutBHUC)
 
     # SQL command
@@ -142,8 +150,8 @@ BEGIN
       ,[ExperienceOfSchedulingAnAppointment]
       ,[FindResourcesToHelpMe_before]
       ,[FindResourcesToHelpMe_after]
-      ,[HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportantToMe_before]
-      ,[HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportantToMe_after]
+      ,[HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_before]
+      ,[HaveTheAbilityToIdentifyTheThingsInLifeThatAreImportanToMe_after]
       ,[InformationClearly]
       ,[IfYouDidNotReceiveHelpThatYouExpectedWhatCouldWeHaveDoneBetter]
       ,[IfYouDidNotFeelMoreHopeWhenYouLeft]
