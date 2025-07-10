@@ -17,6 +17,10 @@ if ($Row -eq 2) {
             StatusCode  = [System.Net.HttpStatusCode]::OK
             ContentType = "text/html"
             Body        = $htmlContent
+            Headers     = @{
+                "Cache-Control" = "no-store, no-cache, must-revalidate, max-age=0"
+                "Pragma"        = "no-cache"
+            }
         })
 }
 else {
@@ -27,6 +31,10 @@ else {
             StatusCode  = [System.Net.HttpStatusCode]::OK
             ContentType = "text/html"
             Body        = $htmlContent
+            Headers     = @{
+                "Cache-Control" = "no-store, no-cache, must-revalidate, max-age=0"
+                "Pragma"        = "no-cache"
+            }
         })
 
 }
