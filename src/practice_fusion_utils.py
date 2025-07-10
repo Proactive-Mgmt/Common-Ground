@@ -104,10 +104,12 @@ async def get_schedule_page(page: Page, target_date: date) -> str:
         await page.wait_for_selector('div[data-element="appointments-table"]', timeout=30000)
         logger.info('appointments table loaded')
 
-        # Open the print view with retries
+        # Open the print view with retries and explicit wait for visibility
         for attempt in range(3):
             try:
-                await page.get_by_text('Print').click()
+                print_button = page.get_by_text('Print')
+                await print_button.wait_for(state='visible', timeout=10000)
+                await print_button.click()
                 logger.info('successfully clicked print button')
                 break
             except PlaywrightTimeoutError:
