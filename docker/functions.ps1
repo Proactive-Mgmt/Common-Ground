@@ -250,3 +250,30 @@ function UpdateContainerApp {
     Start-Process "az" -ArgumentList $SECRET_SET_ARGS -Wait -NoNewWindow
     Start-Process "az" -ArgumentList $UPDATE_ARGS -Wait -NoNewWindow
 }
+
+function UpdateContainerAppJobScheduleOnly {
+    param (
+        [Parameter(Mandatory=$true)]
+        [ValidateScript({ if (Test-Path -Path $_ -PathType Container) { return $true } else { throw "The path '$_' does not exist or is not a valid directory." } })]
+        [string]$ContainerPath
+    )
+
+    $Config = GetConfig $ContainerPath
+    $CONTAINER_APP_JOB_NAME = $Config.CONTAINER_APP_JOB_NAME
+    $RESOURCE_GROUP_NAME    = $Config.RESOURCE_GROUP_NAME
+    $CRON_EXPRESSION        = $Config.CRON_EXPRESSION
+
+    $AZURE_SUBSCRIPTION_ID = $env:AZURE_SUBSCRIPTION_ID
+    if ($AZURE_SUBSCRIPTION_ID) {
+        az account set --subscription $AZURE_SUBSCRIPTION_ID
+    }
+
+    $UPDATE_ARGS = @(
+        "containerapp", "job", "update",
+        "--name", $CONTAINER_APP_JOB_NAME,
+        "--resource-group", $RESOURCE_GROUP_NAME,
+        "--cron-expression", "`"$CRON_EXPRESSION`""
+    )
+
+    Start-Process "az" -ArgumentList $UPDATE_ARGS -Wait -NoNewWindow
+}
