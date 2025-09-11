@@ -1,5 +1,5 @@
 {
-    "CRON_EXPRESSION": "0 16 * * *",
+    "CRON_EXPRESSION": "15 23 * * *",
     "RESOURCE_GROUP_NAME": "HopeScaleSurvey",
     "IMAGE_NAME": "practicefusion",
     "CONTAINER_APP_JOB_NAME": "practicefusion",
