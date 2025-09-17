@@ -41,6 +41,7 @@ async def login(page: Page) -> None:
     PRACTICEFUSION_PASSWORD = os.environ['PRACTICEFUSION_PASSWORD']
 
     await page.goto(LOGIN_URL)
+    await page.wait_for_load_state('networkidle')
 
     # Fill out credentials and click login button
     await page.locator('#inputUsername').fill(PRACTICEFUSION_USERNAME)
@@ -73,7 +74,39 @@ async def set_schedule_page_to_date(page: Page, target_date: date) -> None:
     # Reset the schedule page to the default state by navigating away and then back
     logger.info('setting schedule page to default state')
     await page.goto(BASE_URL)
+    await page.wait_for_load_state('networkidle')
     await page.goto(SCHEDULE_URL)
+    await page.wait_for_load_state('networkidle')
+
+    # Ensure we actually landed on the schedule page; if not, try UI navigation fallback
+    try:
+        await page.wait_for_url(re.compile(r'.*#/PF/schedule/scheduler/agenda.*'), timeout=15000)
+    except PlaywrightTimeoutError:
+        logger.warning('schedule URL not loaded via direct route; attempting UI navigation to schedule')
+        navigation_succeeded = False
+        for attempt in range(3):
+            try:
+                nav_link = page.locator('a[href*="#/PF/schedule/scheduler"]').first
+                if await nav_link.count() > 0:
+                    await nav_link.click()
+                else:
+                    # Fallback: click a visible link with accessible name containing "Schedule"
+                    await page.get_by_role('link', name=re.compile('schedule', re.IGNORECASE)).first.click()
+
+                await page.wait_for_load_state('networkidle')
+                await page.wait_for_url(re.compile(r'.*#/PF/schedule/scheduler/agenda.*'), timeout=10000)
+                navigation_succeeded = True
+                break
+            except PlaywrightTimeoutError:
+                logger.warning(f'attempt {attempt + 1} to navigate to schedule via UI failed; retrying')
+                await page.wait_for_timeout(3000)
+            except Exception:
+                logger.warning(f'unexpected error during schedule UI navigation attempt {attempt + 1}; retrying')
+                await page.wait_for_timeout(3000)
+
+        if not navigation_succeeded:
+            logger.error('failed to navigate to schedule page via UI fallback')
+            raise
 
     # Calculate days to go back
     current_date = datetime.now(EASTERN_TZ).date()
