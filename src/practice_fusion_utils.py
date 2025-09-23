@@ -40,8 +40,7 @@ async def login(page: Page) -> None:
     PRACTICEFUSION_USERNAME = os.environ['PRACTICEFUSION_USERNAME']
     PRACTICEFUSION_PASSWORD = os.environ['PRACTICEFUSION_PASSWORD']
 
-    await page.goto(LOGIN_URL)
-    await page.wait_for_load_state('networkidle')
+    await page.goto(LOGIN_URL, wait_until="domcontentloaded")
 
     # Fill out credentials and click login button
     await page.locator('#inputUsername').fill(PRACTICEFUSION_USERNAME)
@@ -71,12 +70,9 @@ async def set_schedule_page_to_date(page: Page, target_date: date) -> None:
     """
     logger = ptmlog.get_logger()
 
-    # Reset the schedule page to the default state by navigating away and then back
+    # Navigate directly to the schedule view; SPA may never reach reliable network idle
     logger.info('setting schedule page to default state')
-    await page.goto(BASE_URL)
-    await page.wait_for_load_state('networkidle')
-    await page.goto(SCHEDULE_URL)
-    await page.wait_for_load_state('networkidle')
+    await page.goto(SCHEDULE_URL, wait_until="domcontentloaded")
 
     # Ensure we actually landed on the schedule page; if not, try UI navigation fallback
     try:
@@ -93,8 +89,8 @@ async def set_schedule_page_to_date(page: Page, target_date: date) -> None:
                     # Fallback: click a visible link with accessible name containing "Schedule"
                     await page.get_by_role('link', name=re.compile('schedule', re.IGNORECASE)).first.click()
 
-                await page.wait_for_load_state('networkidle')
-                await page.wait_for_url(re.compile(r'.*#/PF/schedule/scheduler/agenda.*'), timeout=10000)
+                await page.wait_for_load_state('domcontentloaded')
+                await page.wait_for_url(re.compile(r'.*#/PF/schedule/scheduler/agenda.*'), timeout=20000)
                 navigation_succeeded = True
                 break
             except PlaywrightTimeoutError:
@@ -134,7 +130,7 @@ async def get_schedule_page(page: Page, target_date: date) -> str:
     
     try:
         # Wait for a specific element that indicates the schedule is loaded
-        await page.wait_for_selector('div[data-element="appointments-table"]', timeout=30000)
+        await page.wait_for_selector('div[data-element="appointments-table"]', state='visible', timeout=45000)
         logger.info('appointments table loaded')
 
         # Open the print view with retries and explicit wait for visibility
