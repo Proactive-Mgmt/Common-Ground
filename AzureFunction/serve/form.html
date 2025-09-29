@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Common Ground Hope Scale</title>
+    <title>Common Ground Customer Satisfaction Survey</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom styles removed in favor of Tailwind utility classes -->
 </head>
@@ -13,32 +13,32 @@
     <div class="flex justify-center pt-6 sm:pt-10 px-1 sm:px-0">
         <form id="hopeScaleForm" action="/api/submit" method="get"
             class="w-full max-w-4xl bg-white rounded-lg shadow-xl p-3 sm:p-6" aria-labelledby="formTitle">
-            <h1 id="formTitle" class="text-3xl font-bold mb-4 text-red-900 text-center">Common Ground Hope Scale</h1>
-            <p class="mb-6 text-base sm:text-lg text-center">Our goal is to better understand how we can help you move from crisis to hope. Your input is important to help us achieve that goal.</p>
+            <h1 id="formTitle" class="text-3xl font-bold mb-4 text-red-900 text-center">Common Ground Customer Satisfaction Survey</h1>
+            <p class="mb-6 text-base sm:text-lg text-center">Your feedback matters! We would appreciate it if you took a moment to complete this short survey - your input helps us improve and serve you better.</p>
             <section class="mb-6 p-4 border rounded-lg bg-white form-section flex flex-col gap-8">
                 <!-- 1. Satisfaction with service at BHUC today -->
                 <fieldset class="flex flex-col gap-2" aria-labelledby="serviceSatisfactionLegend">
                     <legend id="serviceSatisfactionLegend" class="font-semibold mb-1">How would you rate your satisfaction with the service you received at BHUC today?</legend>
-                    <div class="flex flex-row justify-between items-center gap-2 sm:gap-4">
-                        <label class="flex flex-col items-center flex-1" for="serviceSat1">
-                            <span class="mb-1 font-medium" aria-hidden="true">😞</span>
-                            <input id="serviceSat1" type="radio" name="SatisfactionWithService" value="Very Unsatisfied" aria-label="Very Unsatisfied" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                    <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-stretch sm:items-center gap-3 sm:gap-4">
+                        <label class="flex flex-col items-center sm:flex-1 w-full cursor-pointer" for="serviceSat1">
+                            <input id="serviceSat1" type="radio" name="SatisfactionWithService" value="Very Unsatisfied" aria-label="Very Unsatisfied" class="peer sr-only">
+                            <span class="mb-2 select-none text-6xl sm:text-7xl transition-transform duration-150 peer-checked:scale-110" aria-hidden="true">😞</span>
                         </label>
-                        <label class="flex flex-col items-center flex-1" for="serviceSat2">
-                            <span class="mb-1 font-medium" aria-hidden="true">🙁</span>
-                            <input id="serviceSat2" type="radio" name="SatisfactionWithService" value="Unsatisfied" aria-label="Unsatisfied" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                        <label class="flex flex-col items-center sm:flex-1 w-full cursor-pointer" for="serviceSat2">
+                            <input id="serviceSat2" type="radio" name="SatisfactionWithService" value="Unsatisfied" aria-label="Unsatisfied" class="peer sr-only">
+                            <span class="mb-2 select-none text-6xl sm:text-7xl transition-transform duration-150 peer-checked:scale-110" aria-hidden="true">🙁</span>
                         </label>
-                        <label class="flex flex-col items-center flex-1" for="serviceSat3">
-                            <span class="mb-1 font-medium" aria-hidden="true">😐</span>
-                            <input id="serviceSat3" type="radio" name="SatisfactionWithService" value="Neutral" aria-label="Neutral" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                        <label class="flex flex-col items-center sm:flex-1 w-full cursor-pointer" for="serviceSat3">
+                            <input id="serviceSat3" type="radio" name="SatisfactionWithService" value="Neutral" aria-label="Neutral" class="peer sr-only">
+                            <span class="mb-2 select-none text-6xl sm:text-7xl transition-transform duration-150 peer-checked:scale-110" aria-hidden="true">😐</span>
                         </label>
-                        <label class="flex flex-col items-center flex-1" for="serviceSat4">
-                            <span class="mb-1 font-medium" aria-hidden="true">🙂</span>
-                            <input id="serviceSat4" type="radio" name="SatisfactionWithService" value="Satisfied" aria-label="Satisfied" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                        <label class="flex flex-col items-center sm:flex-1 w-full cursor-pointer" for="serviceSat4">
+                            <input id="serviceSat4" type="radio" name="SatisfactionWithService" value="Satisfied" aria-label="Satisfied" class="peer sr-only">
+                            <span class="mb-2 select-none text-6xl sm:text-7xl transition-transform duration-150 peer-checked:scale-110" aria-hidden="true">🙂</span>
                         </label>
-                        <label class="flex flex-col items-center flex-1" for="serviceSat5">
-                            <span class="mb-1 font-medium" aria-hidden="true">😄</span>
-                            <input id="serviceSat5" type="radio" name="SatisfactionWithService" value="Very Satisfied" aria-label="Very Satisfied" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                        <label class="flex flex-col items-center sm:flex-1 w-full cursor-pointer" for="serviceSat5">
+                            <input id="serviceSat5" type="radio" name="SatisfactionWithService" value="Very Satisfied" aria-label="Very Satisfied" class="peer sr-only">
+                            <span class="mb-2 select-none text-6xl sm:text-7xl transition-transform duration-150 peer-checked:scale-110" aria-hidden="true">😄</span>
                         </label>
                     </div>
                 </fieldset>
@@ -46,24 +46,24 @@
                 <!-- 2. Likelihood to recommend BHUC -->
                 <fieldset class="flex flex-col gap-2" aria-labelledby="recommendLegend">
                     <legend id="recommendLegend" class="font-semibold mb-1">How likely would you be to recommend BHUC to a friend in a similar need?</legend>
-                    <div class="flex flex-row justify-between items-center gap-2 sm:gap-4">
-                        <label class="flex flex-col items-center flex-1" for="rec1">
+                    <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-stretch sm:items-center gap-3 sm:gap-4">
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="rec1">
                             <span class="mb-1 font-medium">Very Unlikely</span>
                             <input id="rec1" type="radio" name="LikelihoodToRecommendBHUC" value="Very Unlikely" aria-label="Very Unlikely" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                         </label>
-                        <label class="flex flex-col items-center flex-1" for="rec2">
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="rec2">
                             <span class="mb-1 font-medium">Unlikely</span>
                             <input id="rec2" type="radio" name="LikelihoodToRecommendBHUC" value="Unlikely" aria-label="Unlikely" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                         </label>
-                        <label class="flex flex-col items-center flex-1" for="rec3">
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="rec3">
                             <span class="mb-1 font-medium">Neutral</span>
                             <input id="rec3" type="radio" name="LikelihoodToRecommendBHUC" value="Neutral" aria-label="Neutral" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                         </label>
-                        <label class="flex flex-col items-center flex-1" for="rec4">
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="rec4">
                             <span class="mb-1 font-medium">Likely</span>
                             <input id="rec4" type="radio" name="LikelihoodToRecommendBHUC" value="Likely" aria-label="Likely" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                         </label>
-                        <label class="flex flex-col items-center flex-1" for="rec5">
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="rec5">
                             <span class="mb-1 font-medium">Very Likely</span>
                             <input id="rec5" type="radio" name="LikelihoodToRecommendBHUC" value="Very Likely" aria-label="Very Likely" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                         </label>
@@ -73,13 +73,12 @@
                 <!-- Gate: Would you mind answering a few more questions? -->
                 <fieldset class="flex flex-col gap-2" aria-labelledby="continueLegend">
                     <legend id="continueLegend" class="font-semibold mb-1">Thank you for your responses! Would you mind answering a few more questions?</legend>
-                    <div class="text-sm font-normal mb-1">Failure to continue does not invalidate the previous responses.</div>
-                    <div class="flex flex-row justify-between items-center gap-2 sm:gap-4">
-                        <label class="flex flex-col items-center flex-1" for="continueYes">
+                    <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-stretch sm:items-center gap-3 sm:gap-4">
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="continueYes">
                             <span class="mb-1 font-medium">Yes</span>
                             <input id="continueYes" type="radio" name="ProceedWithMoreQuestions" value="Yes" aria-label="Yes" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                         </label>
-                        <label class="flex flex-col items-center flex-1" for="continueNo">
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="continueNo">
                             <span class="mb-1 font-medium">No</span>
                             <input id="continueNo" type="radio" name="ProceedWithMoreQuestions" value="No" aria-label="No" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                         </label>
@@ -91,12 +90,12 @@
                     <!-- 3. Providers courteous and welcoming -->
                     <fieldset class="flex flex-col gap-2" aria-labelledby="courteousLegend">
                         <legend id="courteousLegend" class="font-semibold mb-1">Were the providers courteous and welcoming?</legend>
-                        <div class="flex flex-row justify-between items-center gap-2 sm:gap-4">
-                            <label class="flex flex-col items-center flex-1" for="staffYes">
+                        <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-stretch sm:items-center gap-3 sm:gap-4">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="staffYes">
                                 <span class="mb-1 font-medium">Yes</span>
                                 <input id="staffYes" type="radio" name="StaffFriendlyAndWelcoming" value="Yes" aria-label="Yes" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
-                            <label class="flex flex-col items-center flex-1" for="staffNo">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="staffNo">
                                 <span class="mb-1 font-medium">No</span>
                                 <input id="staffNo" type="radio" name="StaffFriendlyAndWelcoming" value="No" aria-label="No" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
@@ -106,12 +105,12 @@
                     <!-- 4. Reason for visit addressed -->
                     <fieldset class="flex flex-col gap-2" aria-labelledby="reasonLegend">
                         <legend id="reasonLegend" class="font-semibold mb-1">Was the reason for your visit addressed?</legend>
-                        <div class="flex flex-row justify-between items-center gap-2 sm:gap-4">
-                            <label class="flex flex-col items-center flex-1" for="reasonYes">
+                        <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-stretch sm:items-center gap-3 sm:gap-4">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="reasonYes">
                                 <span class="mb-1 font-medium">Yes</span>
                                 <input id="reasonYes" type="radio" name="reasonAppropriatelyAddressed" value="Yes" aria-label="Yes" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
-                            <label class="flex flex-col items-center flex-1" for="reasonNo">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="reasonNo">
                                 <span class="mb-1 font-medium">No</span>
                                 <input id="reasonNo" type="radio" name="reasonAppropriatelyAddressed" value="No" aria-label="No" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
@@ -121,24 +120,24 @@
                     <!-- 5. Ease of scheduling appointment -->
                     <fieldset class="flex flex-col gap-2" aria-labelledby="schedExpLegend">
                         <legend id="schedExpLegend" class="font-semibold mb-1">How easy did you find it to schedule your appointment?</legend>
-                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-5 sm:gap-4">
-                            <label class="flex flex-col items-center flex-1" for="schedExp1">
+                        <div class="flex flex-col sm:grid sm:grid-cols-5 gap-3 sm:gap-4">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="schedExp1">
                                 <span class="mb-1 font-medium text-center text-sm">Very difficult</span>
                                 <input id="schedExp1" type="radio" name="ExperienceOfSchedulingAnAppointment" value="Very difficult" aria-label="Very difficult" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
-                            <label class="flex flex-col items-center flex-1" for="schedExp2">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="schedExp2">
                                 <span class="mb-1 font-medium text-center text-sm">Difficult</span>
                                 <input id="schedExp2" type="radio" name="ExperienceOfSchedulingAnAppointment" value="Difficult" aria-label="Difficult" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
-                            <label class="flex flex-col items-center flex-1" for="schedExp3">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="schedExp3">
                                 <span class="mb-1 font-medium text-center text-sm">Neutral</span>
                                 <input id="schedExp3" type="radio" name="ExperienceOfSchedulingAnAppointment" value="Neutral" aria-label="Neutral" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
-                            <label class="flex flex-col items-center flex-1" for="schedExp4">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="schedExp4">
                                 <span class="mb-1 font-medium text-center text-sm">Easy</span>
                                 <input id="schedExp4" type="radio" name="ExperienceOfSchedulingAnAppointment" value="Easy" aria-label="Easy" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
-                            <label class="flex flex-col items-center flex-1" for="schedExp5">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="schedExp5">
                                 <span class="mb-1 font-medium text-center text-sm">Very Easy</span>
                                 <input id="schedExp5" type="radio" name="ExperienceOfSchedulingAnAppointment" value="Very Easy" aria-label="Very Easy" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
@@ -148,16 +147,16 @@
                     <!-- 7. Waiting room time perception -->
                     <fieldset class="flex flex-col gap-2" aria-labelledby="waitTimeLegend">
                         <legend id="waitTimeLegend" class="font-semibold mb-1">How did you feel about the amount of time you spent in the waiting room before being seen?</legend>
-                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-                            <label class="flex flex-col items-center flex-1" for="wait1">
+                        <div class="flex flex-col sm:grid sm:grid-cols-3 gap-3 sm:gap-4">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="wait1">
                                 <span class="mb-1 font-medium text-center text-sm">Not long at all</span>
                                 <input id="wait1" type="radio" name="WaitingRoomTimeExperience" value="Not long at all" aria-label="Not long at all" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
-                            <label class="flex flex-col items-center flex-1" for="wait2">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="wait2">
                                 <span class="mb-1 font-medium text-center text-sm">An acceptable amount of time</span>
                                 <input id="wait2" type="radio" name="WaitingRoomTimeExperience" value="An acceptable amount of time" aria-label="An acceptable amount of time" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
-                            <label class="flex flex-col items-center flex-1" for="wait3">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="wait3">
                                 <span class="mb-1 font-medium text-center text-sm">Too long</span>
                                 <input id="wait3" type="radio" name="WaitingRoomTimeExperience" value="Too long" aria-label="Too long" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
                             </label>
@@ -226,6 +225,28 @@
             if (bhucSelect) {
                 bhucSelect.addEventListener('change', toggleOther);
                 toggleOther();
+            }
+
+            var form = document.getElementById('hopeScaleForm');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    var proceedAnswered = (yes && yes.checked) || (no && no.checked);
+                    if (!proceedAnswered) {
+                        var wantsMore = window.confirm('Would you like to answer a few optional follow-up questions before submitting?');
+                        if (wantsMore) {
+                            if (yes) yes.checked = true;
+                            toggleMore();
+                            e.preventDefault();
+                            if (section && section.scrollIntoView) {
+                                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        } else {
+                            if (no) no.checked = true;
+                            // Do not submit yet; require explicit second click with a selected choice
+                            e.preventDefault();
+                        }
+                    }
+                });
             }
         })();
     </script>
