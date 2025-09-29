@@ -15,4 +15,5 @@ docker run --rm -it --name practicefusion -v "$PSScriptRoot/screenshots:/app/scr
     -e "CALLHARBOR_USERNAME=$($env:CALLHARBOR_USERNAME)" `
     -e "CALLHARBOR_PASSWORD=$($env:CALLHARBOR_PASSWORD)" `
     -e "CALLHARBOR_MFA_SECRET=$($env:CALLHARBOR_MFA_SECRET)" `
+    -e "ALLOWED_PROVIDERS=$($env:ALLOWED_PROVIDERS)" `
     $ImageName

@@ -17,7 +17,12 @@ def send_survey(id: str, patient_name: str, patient_phone: str) -> str:
     client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
     link = f'{TWILIO_SURVEY_LINK}&id={id}'
-    message_body = f'Hi {patient_name.title()}, thank you for visiting us! We hope your recent appointment today with the BHUC clinic was helpful. Please take a moment to share your feedback anonymously in our short survey. Your input helps us improve our services. Tap {link} to start. Thank you!'
+    message_body = (
+        f"Hi {patient_name.title()}, thank you for visiting us! "
+        f"We hope your recent appointment today was helpful. "
+        f"Please take a moment to share your feedback anonymously in our short survey. "
+        f"Your input helps us improve our services. Tap {link} to start. Thank you!"
+    )
 
     message = client.messages.create(
         messaging_service_sid=TWILIO_CAMPAIGN_SID,

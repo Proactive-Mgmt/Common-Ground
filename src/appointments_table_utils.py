@@ -52,10 +52,30 @@ def get_appointments() -> list[TableAppointment]:
     """
     Returns filtered list of appointments.
     """
+    logger = ptmlog.get_logger()
+
     STORAGE_ACCOUNT_CONNECTION_STRING = os.environ['STORAGE_ACCOUNT_CONNECTION_STRING']
     table_client = TableClient.from_connection_string(STORAGE_ACCOUNT_CONNECTION_STRING, 'appointments')
 
-    my_filter = "appointmentStatus eq 'Seen' and provider eq 'BHUC COMMON GROUND' and type eq 'CLINICIAN' and sentOn eq ''"
+    # Build provider filter from environment (comma-separated list). Default to BHUC for backward compatibility.
+    allowed_providers_raw = os.getenv('ALLOWED_PROVIDERS', 'BHUC COMMON GROUND')
+    allowed_providers = [p.strip() for p in allowed_providers_raw.split(',') if p.strip()]
+
+    # Escape single quotes for OData filter safety
+    def escape_odate_literal(value: str) -> str:
+        return value.replace("'", "''")
+
+    if not allowed_providers:
+        # Fallback safety: if somehow empty, default to BHUC
+        allowed_providers = ['BHUC COMMON GROUND']
+
+    provider_conditions = [f"provider eq '{escape_odate_literal(p)}'" for p in allowed_providers]
+    provider_filter = f"({' or '.join(provider_conditions)})"
+
+    my_filter = f"appointmentStatus eq 'Seen' and {provider_filter} and type eq 'CLINICIAN' and sentOn eq ''"
+
+    logger.debug('table_query_filter', filter=my_filter, allowed_providers=allowed_providers)
+
     entities = table_client.query_entities(my_filter)
 
     table_appointments = []
