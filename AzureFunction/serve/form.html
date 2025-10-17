@@ -14,11 +14,11 @@
         <form id="hopeScaleForm" action="/api/submit" method="get"
             class="w-full max-w-4xl bg-white rounded-lg shadow-xl p-3 sm:p-6" aria-labelledby="formTitle">
             <h1 id="formTitle" class="text-3xl font-bold mb-4 text-red-900 text-center">Common Ground Customer Satisfaction Survey</h1>
-            <p class="mb-6 text-base sm:text-lg text-center">Your feedback matters! We would appreciate it if you took a moment to complete this short survey - your input helps us improve and serve you better.</p>
+            <p class="mb-6 text-base sm:text-lg text-center">Your feedback matters! We would appreciate if you took a moment to complete this short survey - your input helps us improve and serve you better.</p>
             <section class="mb-6 p-4 border rounded-lg bg-white form-section flex flex-col gap-8">
                 <!-- 1. Satisfaction with service at BHUC today -->
                 <fieldset class="flex flex-col gap-2" aria-labelledby="serviceSatisfactionLegend">
-                    <legend id="serviceSatisfactionLegend" class="font-semibold mb-4">How would you rate your satisfaction with the service you received at BHUC today?</legend>
+                    <legend id="serviceSatisfactionLegend" class="font-semibold mb-4">How would you rate your satisfaction with the service you received through the Behavioral Health Urgent Care today?</legend>
                     <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-stretch sm:items-center gap-3 sm:gap-4">
                         <label class="flex flex-col items-center sm:flex-1 w-full cursor-pointer" for="serviceSat1">
                             <input id="serviceSat1" type="radio" name="SatisfactionWithService" value="Very Unsatisfied" aria-label="Very Unsatisfied" class="peer sr-only">
@@ -45,7 +45,7 @@
 
                 <!-- 2. Likelihood to recommend BHUC -->
                 <fieldset class="flex flex-col gap-2" aria-labelledby="recommendLegend">
-                    <legend id="recommendLegend" class="font-semibold mb-1">How likely would you be to recommend BHUC to a friend in a similar need?</legend>
+                    <legend id="recommendLegend" class="font-semibold mb-1">How likely would you be to recommend the Behavioral Health Urgent Care to a friend in a similar need?</legend>
                     <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-stretch sm:items-center gap-3 sm:gap-4">
                         <label class="flex flex-col items-center sm:flex-1 w-full" for="rec1">
                             <span class="mb-1 font-medium">Very Unlikely</span>
@@ -186,7 +186,7 @@
     <div id="moreQuestionsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" aria-modal="true" role="dialog" aria-labelledby="modalTitle">
         <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 transform transition-all">
             <h2 id="modalTitle" class="text-2xl font-bold mb-4 text-red-900">Just one moment!</h2>
-            <p class="text-lg mb-6 text-gray-700">Would you like to answer a few optional follow-up questions before submitting?</p>
+            <p class="text-lg mb-6 text-gray-700">Are you willing to answer a few more follow-up questions before submitting?</p>
             <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <button type="button" id="modalYesBtn" class="flex-1 px-6 py-3 bg-red-900 text-white font-semibold rounded-md hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-800 focus:ring-offset-2 transition-colors duration-150 touch-manipulation">
                     Yes, I'll answer more
