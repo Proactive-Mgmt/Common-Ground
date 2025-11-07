@@ -35,12 +35,23 @@ async def handle_mfa(page: Page):
 
 async def login(page: Page) -> None:
     logger = ptmlog.get_logger()
+    DEBUG_HTML: bool = os.getenv('DEBUG_HTML', 'FALSE') == 'TRUE'
     logger.info('logging into practice fusion')
 
     PRACTICEFUSION_USERNAME = os.environ['PRACTICEFUSION_USERNAME']
     PRACTICEFUSION_PASSWORD = os.environ['PRACTICEFUSION_PASSWORD']
 
     await page.goto(LOGIN_URL, wait_until="domcontentloaded")
+    
+    # Save HTML at initial login page load
+    if DEBUG_HTML:
+        try:
+            html_content = await page.content()
+            with open('./screenshots/00_initial_login_page.html', 'w') as f:
+                f.write(html_content)
+            logger.info('saved initial login page HTML')
+        except:
+            logger.warning('failed to save initial login page HTML')
 
     # Fill out credentials and click login button
     await page.locator('#inputUsername').fill(PRACTICEFUSION_USERNAME)
@@ -49,15 +60,56 @@ async def login(page: Page) -> None:
 
     # Wait for the URL to change to the main page or the MFA page
     await page.wait_for_url(re.compile(r'(#\/login\/securitycheck|#\/PF\/home\/main)$'))
+    
+    # Save HTML after login attempt
+    if DEBUG_HTML:
+        try:
+            html_content = await page.content()
+            with open('./screenshots/00_after_login_click.html', 'w') as f:
+                f.write(html_content)
+            logger.info('saved HTML after login click')
+        except:
+            logger.warning('failed to save HTML after login click')
+    
     if page.url.endswith('#/login/securitycheck'):
         logger.info('practice fusion mfa page detected, handling mfa')
+        
+        # Save HTML at MFA page
+        if DEBUG_HTML:
+            try:
+                html_content = await page.content()
+                with open('./screenshots/00_mfa_page.html', 'w') as f:
+                    f.write(html_content)
+                logger.info('saved MFA page HTML')
+            except:
+                logger.warning('failed to save MFA page HTML')
+        
         await handle_mfa(page)
+        
+        # Save HTML after MFA
+        if DEBUG_HTML:
+            try:
+                html_content = await page.content()
+                with open('./screenshots/00_after_mfa.html', 'w') as f:
+                    f.write(html_content)
+                logger.info('saved HTML after MFA')
+            except:
+                logger.warning('failed to save HTML after MFA')
 
     # If we are still not on the main page, something has gone wrong
     try:
         await page.wait_for_url(MAIN_PAGE_URL)
     except PlaywrightTimeoutError:
         logger.exception('timed out waiting for main page after login', actual_url=page.url)
+        # Save HTML on error
+        if DEBUG_HTML:
+            try:
+                html_content = await page.content()
+                with open('./screenshots/00_login_error.html', 'w') as f:
+                    f.write(html_content)
+                logger.info('saved HTML on login error')
+            except:
+                pass
         raise
 
     logger.info('successfully logged in to practice fusion')
@@ -73,6 +125,17 @@ async def set_schedule_page_to_date(page: Page, target_date: date) -> None:
     # Navigate directly to the schedule view; SPA may never reach reliable network idle
     logger.info('setting schedule page to default state')
     await page.goto(SCHEDULE_URL, wait_until="domcontentloaded")
+    
+    # Save HTML after navigating to schedule URL
+    DEBUG_HTML: bool = os.getenv('DEBUG_HTML', 'FALSE') == 'TRUE'
+    if DEBUG_HTML:
+        try:
+            html_content = await page.content()
+            with open('./screenshots/02_schedule_url_loaded.html', 'w') as f:
+                f.write(html_content)
+            logger.info('saved HTML after schedule URL load')
+        except:
+            logger.warning('failed to save HTML after schedule URL load')
 
     # Ensure we actually landed on the schedule page; if not, try UI navigation fallback
     try:
@@ -116,6 +179,16 @@ async def set_schedule_page_to_date(page: Page, target_date: date) -> None:
             for _ in range(days_difference):
                 await page.locator('button.rotate-180').click()
                 await page.wait_for_timeout(1000)
+            
+            # Save HTML after date navigation
+            if DEBUG_HTML:
+                try:
+                    html_content = await page.content()
+                    with open(f'./screenshots/02_after_date_navigation_{target_date}.html', 'w') as f:
+                        f.write(html_content)
+                    logger.info('saved HTML after date navigation', target_date=target_date)
+                except:
+                    logger.warning('failed to save HTML after date navigation')
         except PlaywrightTimeoutError:
             logger.error("Timeout waiting for .decrement-date button to appear on schedule page")
             raise
@@ -183,8 +256,11 @@ async def get_schedule_pages(target_dates: list[date]) -> list[str]:
             if DEBUG_HTML:
                 logger.info('saving post-login HTML')
                 html_content = await page.content()
-                with open('./screenshots/01_after_login.html', 'w') as f:
-                    f.write(html_content)
+                try:
+                    with open('./screenshots/01_after_login.html', 'w') as f:
+                        f.write(html_content)
+                except:
+                    logger.warning('failed to save HTML to local file')
             
             for i, target_date in enumerate(target_dates):
                 schedule_page = await get_schedule_page(page, target_date)
