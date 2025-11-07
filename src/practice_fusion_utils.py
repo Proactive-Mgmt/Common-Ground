@@ -123,6 +123,7 @@ async def set_schedule_page_to_date(page: Page, target_date: date) -> None:
 
 async def get_schedule_page(page: Page, target_date: date) -> str:
     logger = ptmlog.get_logger()
+    DEBUG_HTML: bool = os.getenv('DEBUG_HTML', 'FALSE') == 'TRUE'
     logger.info('getting schedule page content', target_date=target_date)
 
     # Set the schedule page to the target date
@@ -132,6 +133,13 @@ async def get_schedule_page(page: Page, target_date: date) -> str:
         # Wait for a specific element that indicates the schedule is loaded
         await page.wait_for_selector('div[data-element="appointments-table"]', state='visible', timeout=45000)
         logger.info('appointments table loaded')
+        
+        # Save HTML after navigating to the date
+        if DEBUG_HTML:
+            logger.info('saving HTML after date navigation', target_date=target_date)
+            html_content = await page.content()
+            with open(f'./screenshots/02_after_date_navigation_{target_date}.html', 'w') as f:
+                f.write(html_content)
 
         # Open the print view with retries and explicit wait for visibility
         for attempt in range(3):
@@ -160,6 +168,8 @@ async def get_schedule_page(page: Page, target_date: date) -> str:
 
 async def get_schedule_pages(target_dates: list[date]) -> list[str]:
     HEADLESS: bool = os.getenv('HEADLESS', 'TRUE') == 'TRUE'
+    DEBUG_HTML: bool = os.getenv('DEBUG_HTML', 'FALSE') == 'TRUE'
+    logger = ptmlog.get_logger()
     
     schedule_pages: list[str] = []
     async with async_playwright() as pw:
@@ -168,10 +178,30 @@ async def get_schedule_pages(target_dates: list[date]) -> list[str]:
         page    = await context.new_page()
         try:
             await login(page)
-            for target_date in target_dates:
-                schedule_pages.append(await get_schedule_page(page, target_date))
+            
+            # Save HTML after login for debugging
+            if DEBUG_HTML:
+                logger.info('saving post-login HTML')
+                html_content = await page.content()
+                with open('./screenshots/01_after_login.html', 'w') as f:
+                    f.write(html_content)
+            
+            for i, target_date in enumerate(target_dates):
+                schedule_page = await get_schedule_page(page, target_date)
+                schedule_pages.append(schedule_page)
+                
+                # Save the schedule page HTML for debugging
+                if DEBUG_HTML:
+                    logger.info('saving schedule page HTML', target_date=target_date)
+                    with open(f'./screenshots/03_schedule_page_{target_date}.html', 'w') as f:
+                        f.write(schedule_page)
         except:
             await page.screenshot(path='./screenshots/error_screenshot.png')
+            # Always save HTML on error
+            logger.error('saving error HTML')
+            html_content = await page.content()
+            with open('./screenshots/error_page.html', 'w') as f:
+                f.write(html_content)
             raise
         finally:
             save_playwright_storage_state('practicefusion', await context.storage_state())
