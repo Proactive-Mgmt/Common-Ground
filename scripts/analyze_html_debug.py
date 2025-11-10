@@ -118,7 +118,7 @@ def analyze_html_file(filepath: Path):
         print(f"Canonical URL: {canonical.get('href')}")
 
 def main():
-    screenshots_dir = Path(__file__).parent / 'screenshots'
+    screenshots_dir = Path(__file__).parent.parent / 'screenshots'
     
     if not screenshots_dir.exists():
         print(f"Error: {screenshots_dir} does not exist")

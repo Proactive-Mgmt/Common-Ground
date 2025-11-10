@@ -1,5 +1,9 @@
+#!/bin/bash
 # Build the Docker image
-docker build -t practicefusion .
+# This script should be run from the project root directory
+
+# Build the Docker image from the docker/practicefusion directory
+docker build -f docker/practicefusion/Dockerfile -t practicefusion .
 
 # Tag the image for your ACR
 docker tag practicefusion commongroundcr.azurecr.io/practicefusion:latest
