@@ -71,7 +71,7 @@ Are you willing to answer a few more follow-up questions before submitting?
 ## Technical Details
 - **File Modified**: `AzureFunction/serve/form.html`
 - **Git Commit**: 36baad3
-- **Repository**: bitbucket.org:michaeljason77/cg-hopescalesurvey.git
+- **Repository**: https://github.com/proactive-mgmt/Common-Ground/tree/main/hope-scale-survey (migrated from bitbucket.org:michaeljason77/cg-hopescalesurvey.git)
 - **Branch**: main
 
 ## Next Steps

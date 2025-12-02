@@ -14,8 +14,8 @@
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
-cd cg-hopescalesurvey
+git clone https://github.com/proactive-mgmt/Common-Ground.git
+cd Common-Ground/hope-scale-survey
 ```
 
 2. **Install Python dependencies**
