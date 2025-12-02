@@ -1,12 +1,5 @@
 # Common Ground Hope Scale Survey
 
-> **⚠️ DEPRECATED: This repository has been migrated to GitHub**  
-> This Bitbucket repository is no longer maintained.  
-> **New Location:** https://github.com/proactive-mgmt/Common-Ground/tree/main/hope-scale-survey  
-> Please update your remotes and submit all future issues/PRs to the GitHub repository.
-
----
-
 Automated survey distribution system that syncs appointments from Practice Fusion EHR, stores them in Azure Table Storage, and sends patient surveys via Twilio SMS.
 
 ## Features
