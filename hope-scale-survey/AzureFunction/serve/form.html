@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Common Ground Customer Satisfaction Survey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom styles removed in favor of Tailwind utility classes -->
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-sans leading-normal touch-manipulation">
+    <div class="flex justify-center pt-6 sm:pt-10 px-1 sm:px-0">
+        <form id="hopeScaleForm" action="/api/submit" method="get"
+            class="w-full max-w-4xl bg-white rounded-lg shadow-xl p-3 sm:p-6" aria-labelledby="formTitle">
+            <h1 id="formTitle" class="text-3xl font-bold mb-4 text-red-900 text-center">Common Ground Customer Satisfaction Survey</h1>
+            <p class="mb-6 text-base sm:text-lg text-center">Your feedback matters! We would appreciate if you took a moment to complete this short survey - your input helps us improve and serve you better.</p>
+            <section class="mb-6 p-4 border rounded-lg bg-white form-section flex flex-col gap-8">
+                <!-- 1. Satisfaction with service at BHUC today -->
+                <fieldset class="flex flex-col gap-2" aria-labelledby="serviceSatisfactionLegend">
+                    <legend id="serviceSatisfactionLegend" class="font-semibold mb-4">How would you rate your satisfaction with the service you received through the Behavioral Health Urgent Care today?</legend>
+                    <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-stretch sm:items-center gap-3 sm:gap-4">
+                        <label class="flex flex-col items-center sm:flex-1 w-full cursor-pointer" for="serviceSat1">
+                            <input id="serviceSat1" type="radio" name="SatisfactionWithService" value="Very Unsatisfied" aria-label="Very Unsatisfied" class="peer sr-only">
+                            <span class="mb-2 select-none text-6xl sm:text-7xl transition-all duration-200 peer-checked:scale-125 rounded-full p-2 peer-checked:bg-red-100 peer-checked:ring-4 peer-checked:ring-red-800" aria-hidden="true">😞</span>
+                        </label>
+                        <label class="flex flex-col items-center sm:flex-1 w-full cursor-pointer" for="serviceSat2">
+                            <input id="serviceSat2" type="radio" name="SatisfactionWithService" value="Unsatisfied" aria-label="Unsatisfied" class="peer sr-only">
+                            <span class="mb-2 select-none text-6xl sm:text-7xl transition-all duration-200 peer-checked:scale-125 rounded-full p-2 peer-checked:bg-red-100 peer-checked:ring-4 peer-checked:ring-red-800" aria-hidden="true">🙁</span>
+                        </label>
+                        <label class="flex flex-col items-center sm:flex-1 w-full cursor-pointer" for="serviceSat3">
+                            <input id="serviceSat3" type="radio" name="SatisfactionWithService" value="Neutral" aria-label="Neutral" class="peer sr-only">
+                            <span class="mb-2 select-none text-6xl sm:text-7xl transition-all duration-200 peer-checked:scale-125 rounded-full p-2 peer-checked:bg-red-100 peer-checked:ring-4 peer-checked:ring-red-800" aria-hidden="true">😐</span>
+                        </label>
+                        <label class="flex flex-col items-center sm:flex-1 w-full cursor-pointer" for="serviceSat4">
+                            <input id="serviceSat4" type="radio" name="SatisfactionWithService" value="Satisfied" aria-label="Satisfied" class="peer sr-only">
+                            <span class="mb-2 select-none text-6xl sm:text-7xl transition-all duration-200 peer-checked:scale-125 rounded-full p-2 peer-checked:bg-red-100 peer-checked:ring-4 peer-checked:ring-red-800" aria-hidden="true">🙂</span>
+                        </label>
+                        <label class="flex flex-col items-center sm:flex-1 w-full cursor-pointer" for="serviceSat5">
+                            <input id="serviceSat5" type="radio" name="SatisfactionWithService" value="Very Satisfied" aria-label="Very Satisfied" class="peer sr-only">
+                            <span class="mb-2 select-none text-6xl sm:text-7xl transition-all duration-200 peer-checked:scale-125 rounded-full p-2 peer-checked:bg-red-100 peer-checked:ring-4 peer-checked:ring-red-800" aria-hidden="true">😄</span>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <!-- 2. Likelihood to recommend BHUC -->
+                <fieldset class="flex flex-col gap-2" aria-labelledby="recommendLegend">
+                    <legend id="recommendLegend" class="font-semibold mb-1">How likely would you be to recommend the Behavioral Health Urgent Care to a friend in a similar need?</legend>
+                    <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-stretch sm:items-center gap-3 sm:gap-4">
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="rec1">
+                            <span class="mb-1 font-medium">Very Unlikely</span>
+                            <input id="rec1" type="radio" name="LikelihoodToRecommendBHUC" value="Very Unlikely" aria-label="Very Unlikely" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                        </label>
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="rec2">
+                            <span class="mb-1 font-medium">Unlikely</span>
+                            <input id="rec2" type="radio" name="LikelihoodToRecommendBHUC" value="Unlikely" aria-label="Unlikely" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                        </label>
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="rec3">
+                            <span class="mb-1 font-medium">Neutral</span>
+                            <input id="rec3" type="radio" name="LikelihoodToRecommendBHUC" value="Neutral" aria-label="Neutral" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                        </label>
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="rec4">
+                            <span class="mb-1 font-medium">Likely</span>
+                            <input id="rec4" type="radio" name="LikelihoodToRecommendBHUC" value="Likely" aria-label="Likely" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                        </label>
+                        <label class="flex flex-col items-center sm:flex-1 w-full" for="rec5">
+                            <span class="mb-1 font-medium">Very Likely</span>
+                            <input id="rec5" type="radio" name="LikelihoodToRecommendBHUC" value="Very Likely" aria-label="Very Likely" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                        </label>
+                    </div>
+                </fieldset>
+
+                <!-- Remaining questions shown only if user agrees (modal-driven) -->
+                <input id="continueYes" type="radio" name="ProceedWithMoreQuestions" value="Yes" aria-label="Yes" class="hidden">
+                <input id="continueNo" type="radio" name="ProceedWithMoreQuestions" value="No" aria-label="No" class="hidden">
+                <div id="moreQuestionsSection" class="flex flex-col gap-8 hidden">
+                    <!-- 3. Providers courteous and welcoming -->
+                    <fieldset class="flex flex-col gap-2" aria-labelledby="courteousLegend">
+                        <legend id="courteousLegend" class="font-semibold mb-1">Were the providers courteous and welcoming?</legend>
+                        <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-stretch sm:items-center gap-3 sm:gap-4">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="staffYes">
+                                <span class="mb-1 font-medium">Yes</span>
+                                <input id="staffYes" type="radio" name="StaffFriendlyAndWelcoming" value="Yes" aria-label="Yes" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="staffNo">
+                                <span class="mb-1 font-medium">No</span>
+                                <input id="staffNo" type="radio" name="StaffFriendlyAndWelcoming" value="No" aria-label="No" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <!-- 4. Reason for visit addressed -->
+                    <fieldset class="flex flex-col gap-2" aria-labelledby="reasonLegend">
+                        <legend id="reasonLegend" class="font-semibold mb-1">Was the reason for your visit addressed?</legend>
+                        <div class="flex flex-col sm:flex-row justify-start sm:justify-between items-stretch sm:items-center gap-3 sm:gap-4">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="reasonYes">
+                                <span class="mb-1 font-medium">Yes</span>
+                                <input id="reasonYes" type="radio" name="reasonAppropriatelyAddressed" value="Yes" aria-label="Yes" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="reasonNo">
+                                <span class="mb-1 font-medium">No</span>
+                                <input id="reasonNo" type="radio" name="reasonAppropriatelyAddressed" value="No" aria-label="No" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <!-- 5. Ease of scheduling appointment -->
+                    <fieldset class="flex flex-col gap-2" aria-labelledby="schedExpLegend">
+                        <legend id="schedExpLegend" class="font-semibold mb-1">How easy did you find it to schedule your appointment?</legend>
+                        <div class="flex flex-col sm:grid sm:grid-cols-5 gap-3 sm:gap-4">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="schedExp1">
+                                <span class="mb-1 font-medium text-center text-sm">Very difficult</span>
+                                <input id="schedExp1" type="radio" name="ExperienceOfSchedulingAnAppointment" value="Very difficult" aria-label="Very difficult" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="schedExp2">
+                                <span class="mb-1 font-medium text-center text-sm">Difficult</span>
+                                <input id="schedExp2" type="radio" name="ExperienceOfSchedulingAnAppointment" value="Difficult" aria-label="Difficult" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="schedExp3">
+                                <span class="mb-1 font-medium text-center text-sm">Neutral</span>
+                                <input id="schedExp3" type="radio" name="ExperienceOfSchedulingAnAppointment" value="Neutral" aria-label="Neutral" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="schedExp4">
+                                <span class="mb-1 font-medium text-center text-sm">Easy</span>
+                                <input id="schedExp4" type="radio" name="ExperienceOfSchedulingAnAppointment" value="Easy" aria-label="Easy" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="schedExp5">
+                                <span class="mb-1 font-medium text-center text-sm">Very Easy</span>
+                                <input id="schedExp5" type="radio" name="ExperienceOfSchedulingAnAppointment" value="Very Easy" aria-label="Very Easy" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <!-- 7. Waiting room time perception -->
+                    <fieldset class="flex flex-col gap-2" aria-labelledby="waitTimeLegend">
+                        <legend id="waitTimeLegend" class="font-semibold mb-1">How did you feel about the amount of time you spent in the waiting room before being seen?</legend>
+                        <div class="flex flex-col sm:grid sm:grid-cols-3 gap-3 sm:gap-4">
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="wait1">
+                                <span class="mb-1 font-medium text-center text-sm">Not long at all</span>
+                                <input id="wait1" type="radio" name="WaitingRoomTimeExperience" value="Not long at all" aria-label="Not long at all" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="wait2">
+                                <span class="mb-1 font-medium text-center text-sm">An acceptable amount of time</span>
+                                <input id="wait2" type="radio" name="WaitingRoomTimeExperience" value="An acceptable amount of time" aria-label="An acceptable amount of time" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                            <label class="flex flex-col items-center sm:flex-1 w-full" for="wait3">
+                                <span class="mb-1 font-medium text-center text-sm">Too long</span>
+                                <input id="wait3" type="radio" name="WaitingRoomTimeExperience" value="Too long" aria-label="Too long" class="form-radio h-7 w-7 text-red-800 focus:ring-2 focus:ring-red-800 touch-manipulation">
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <!-- 8. How did you hear about the BHUC? -->
+                    <fieldset class="flex flex-col gap-2" aria-labelledby="bhucLegend">
+                        <legend id="bhucLegend" class="font-semibold mb-1">How did you hear about the BHUC?</legend>
+                        <div class="space-y-3">
+                            <label for="bhucSelect" class="sr-only">How did you hear about the BHUC?</label>
+                            <select id="bhucSelect" name="HowDidYouHearAboutBHUC" class="w-full p-3 border rounded text-base focus:ring-2 focus:ring-red-800 touch-manipulation" aria-label="How did you hear about the BHUC?">
+                                <option value="">Please select an option</option>
+                                <option value="Primary Care provider">Primary Care provider</option>
+                                <option value="Community Mental Health clinic">Community Mental Health clinic</option>
+                                <option value="Private practice psychiatrist or therapist">Private practice psychiatrist or therapist</option>
+                                <option value="Insurance provider">Insurance provider</option>
+                                <option value="School/Educational program">School/Educational program</option>
+                                <option value="Family or Friend">Family or Friend</option>
+                                <option value="Google search">Google search</option>
+                                <option value="Social media">Social media</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div id="bhucOtherWrapper" class="hidden">
+                                <label for="bhucOther" class="block text-sm font-medium">Please specify</label>
+                                <input id="bhucOther" name="HowDidYouHearAboutBHUC_Other" type="text" class="w-full p-3 border rounded text-base focus:ring-2 focus:ring-red-800 touch-manipulation" placeholder="Please specify...">
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </section>
+            <input type="hidden" name="code" value="IifVw4ysJXbW3XWP5QIIQySQQ_I0FTuSXSCVXAQ3aXN2AzFufHSeHQ==">
+            <div class="flex flex-col sm:flex-row justify-end space-y-4 sm:space-y-0 sm:space-x-4 mt-6">
+                <button type="submit" class="w-full sm:w-auto px-12 py-4 border border-transparent shadow-sm text-base font-medium rounded-md bg-red-900 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-900 transition-colors duration-150 text-white touch-manipulation">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Custom Modal -->
+    <div id="moreQuestionsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" aria-modal="true" role="dialog" aria-labelledby="modalTitle">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 transform transition-all">
+            <h2 id="modalTitle" class="text-2xl font-bold mb-4 text-red-900">Just one moment!</h2>
+            <p class="text-lg mb-6 text-gray-700">Are you willing to answer a few more follow-up questions before submitting?</p>
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <button type="button" id="modalYesBtn" class="flex-1 px-6 py-3 bg-red-900 text-white font-semibold rounded-md hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-800 focus:ring-offset-2 transition-colors duration-150 touch-manipulation">
+                    Yes, I'll answer more
+                </button>
+                <button type="button" id="modalNoBtn" class="flex-1 px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors duration-150 touch-manipulation">
+                    No, submit now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var yes = document.getElementById('continueYes');
+            var no = document.getElementById('continueNo');
+            var section = document.getElementById('moreQuestionsSection');
+            var modal = document.getElementById('moreQuestionsModal');
+            var modalYesBtn = document.getElementById('modalYesBtn');
+            var modalNoBtn = document.getElementById('modalNoBtn');
+            var form = document.getElementById('hopeScaleForm');
+            var shouldSubmit = false;
+
+            function toggleMore() {
+                if (yes && yes.checked) {
+                    section && section.classList.remove('hidden');
+                } else {
+                    section && section.classList.add('hidden');
+                }
+            }
+
+            function showModal() {
+                console.log('showModal called');
+                console.log('modal element:', modal);
+                if (modal) {
+                    console.log('Removing hidden class from modal');
+                    modal.classList.remove('hidden');
+                    // Focus the yes button for accessibility
+                    if (modalYesBtn) modalYesBtn.focus();
+                } else {
+                    console.error('Modal element not found!');
+                }
+            }
+
+            function hideModal() {
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
+            }
+
+            // Handle "Yes" button click in modal
+            if (modalYesBtn) {
+                modalYesBtn.addEventListener('click', function () {
+                    if (yes) yes.checked = true;
+                    toggleMore();
+                    hideModal();
+                    if (section && section.scrollIntoView) {
+                        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }
+
+            // Handle "No" button click in modal
+            if (modalNoBtn) {
+                modalNoBtn.addEventListener('click', function () {
+                    if (no) no.checked = true;
+                    hideModal();
+                    shouldSubmit = true;
+                    if (form) form.submit();
+                });
+            }
+
+            // Close modal when clicking outside of it
+            if (modal) {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) {
+                        hideModal();
+                    }
+                });
+            }
+
+            // BHUC Select "Other" field handler
+            var bhucSelect = document.getElementById('bhucSelect');
+            var otherWrapper = document.getElementById('bhucOtherWrapper');
+            var otherInput = document.getElementById('bhucOther');
+            function toggleOther() {
+                if (!bhucSelect) return;
+                if (bhucSelect.value === 'Other') {
+                    otherWrapper && otherWrapper.classList.remove('hidden');
+                } else {
+                    otherWrapper && otherWrapper.classList.add('hidden');
+                    if (otherInput) otherInput.value = '';
+                }
+            }
+            if (bhucSelect) {
+                bhucSelect.addEventListener('change', toggleOther);
+                toggleOther();
+            }
+
+            // Form submission handler
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    console.log('Form submit event triggered');
+                    console.log('shouldSubmit:', shouldSubmit);
+                    console.log('yes checked:', yes ? yes.checked : 'no yes element');
+                    console.log('no checked:', no ? no.checked : 'no no element');
+                    
+                    // If we've already set shouldSubmit flag, allow the form to submit
+                    if (shouldSubmit) {
+                        console.log('Allowing form submission');
+                        return;
+                    }
+
+                    var proceedAnswered = (yes && yes.checked) || (no && no.checked);
+                    console.log('proceedAnswered:', proceedAnswered);
+                    
+                    if (!proceedAnswered) {
+                        console.log('Preventing default and showing modal');
+                        e.preventDefault();
+                        showModal();
+                    }
+                });
+            } else {
+                console.error('Form element not found!');
+            }
+        })();
+    </script>
+</body>
+
+</html>

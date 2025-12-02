@@ -1,0 +1,9 @@
+azure-data-tables
+azure-storage-blob
+twilio
+pyotp
+structlog
+pydantic
+bs4
+playwright
+tzdata

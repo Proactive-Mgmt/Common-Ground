@@ -1,0 +1,32 @@
+{
+    "CRON_EXPRESSION": "15 23 * * *",
+    "RESOURCE_GROUP_NAME": "HopeScaleSurvey",
+    "IMAGE_NAME": "practicefusion",
+    "CONTAINER_APP_JOB_NAME": "practicefusion",
+    "REPLICA_TIMEOUT": "43200",
+    "ENV_VARS": {
+        "STORAGE_ACCOUNT_CONNECTION_STRING": "secretref:storage-account-connection-string",
+        "PRACTICEFUSION_USERNAME": "secretref:practicefusion-username",
+        "PRACTICEFUSION_PASSWORD": "secretref:practicefusion-password",
+        "TWILIO_ACCOUNT_SID": "secretref:twilio-account-sid",
+        "TWILIO_AUTH_TOKEN": "secretref:twilio-auth-token",
+        "TWILIO_CAMPAIGN_SID": "secretref:twilio-campaign-sid",
+        "TWILIO_SURVEY_LINK": "https://survey.cghelps.org/api/serve?code=zZZPw2iBoFp7-c-JdB6LMChg5sfcsILMEEmiU1W8HxnbAzFuD_Zx4g%3D%3D",
+        "CALLHARBOR_USERNAME": "secretref:callharbor-username",
+        "CALLHARBOR_PASSWORD": "secretref:callharbor-password",
+        "CALLHARBOR_MFA_SECRET": "secretref:callharbor-mfa-secret",
+        "HEADLESS": "TRUE",
+        "ALLOWED_PROVIDERS": "BHUC COMMON GROUND,ES OAKLAND,ES MACOMB,CNS"
+    },
+    "SECRETS": {
+        "storage-account-connection-string": "STORAGE_ACCOUNT_CONNECTION_STRING",
+        "practicefusion-username": "PRACTICEFUSION_USERNAME",
+        "practicefusion-password": "PRACTICEFUSION_PASSWORD",
+        "twilio-account-sid": "TWILIO_ACCOUNT_SID",
+        "twilio-auth-token": "TWILIO_AUTH_TOKEN",
+        "twilio-campaign-sid": "TWILIO_CAMPAIGN_SID",
+        "callharbor-username": "CALLHARBOR_USERNAME",
+        "callharbor-password": "CALLHARBOR_PASSWORD",
+        "callharbor-mfa-secret": "CALLHARBOR_MFA_SECRET"
+    }
+}

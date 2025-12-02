@@ -1,0 +1,79 @@
+Initializing orchestrator
+First attempt. Appointments: 
+current time  2024-07-19 00:35:33.872574  local_tz   EDT
+Initializing Selenium driver...
+Driver initialized successfully.
+ driver Succesfully Initialized...
+Attempting login for user: syoung@commongroundhelps.org
+Handling MFA...
+An exception occurred during login: Message: no such element: Unable to locate element: {"method":"css selector","selector":"[id="code"]"}
+  (Session info: chrome-headless-shell=126.0.6478.126); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+
+Fist attempt failed. Waiting 60 second to second attempt... 
+Traceback (most recent call last):
+  File "/app/rpa.py", line 267, in run_rpa
+    return return_appointments()
+current time  2024-07-19 00:36:53.869548  local_tz   EDT
+Initializing Selenium driver...
+Driver initialized successfully.
+ driver Succesfully Initialized...
+Attempting login for user: syoung@commongroundhelps.org
+Handling MFA...
+An exception occurred during login: Message: no such element: Unable to locate element: {"method":"css selector","selector":"[id="code"]"}
+  (Session info: chrome-headless-shell=126.0.6478.126); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/app/rpa.py", line 261, in return_appointments
+    raise e
+  File "/app/rpa.py", line 253, in return_appointments
+    login(driver, username, password, login_url)
+  File "/app/rpa.py", line 132, in login
+    raise e
+  File "/app/rpa.py", line 126, in login
+    handle_mfa(driver)
+  File "/app/rpa.py", line 97, in handle_mfa
+    code_field = driver.find_element(By.ID, "code")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 748, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 354, in execute
+    self.error_handler.check_response(response)
+  File "/usr/local/lib/python3.11/site-packages/selenium/webdriver/remote/errorhandler.py", line 229, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"css selector","selector":"[id="code"]"}
+  (Session info: chrome-headless-shell=126.0.6478.126); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/app.py", line 57, in <module>
+    main()
+  File "/app/app.py", line 29, in main
+    appointments = json.loads(run_rpa())
+                              ^^^^^^^^^
+  File "/app/rpa.py", line 272, in run_rpa
+    return return_appointments()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/app/rpa.py", line 261, in return_appointments
+    raise e
+  File "/app/rpa.py", line 253, in return_appointments
+    login(driver, username, password, login_url)
+  File "/app/rpa.py", line 132, in login
+    raise e
+  File "/app/rpa.py", line 126, in login
+    handle_mfa(driver)
+  File "/app/rpa.py", line 97, in handle_mfa
+    code_field = driver.find_element(By.ID, "code")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 748, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/selenium/webdriver/remote/webdriver.py", line 354, in execute
+    self.error_handler.check_response(response)
+  File "/usr/local/lib/python3.11/site-packages/selenium/webdriver/remote/errorhandler.py", line 229, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"css selector","selector":"[id="code"]"}
+  (Session info: chrome-headless-shell=126.0.6478.126); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+
