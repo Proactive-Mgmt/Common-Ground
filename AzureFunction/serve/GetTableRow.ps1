@@ -10,8 +10,12 @@ function Get-TableRow {
 
     $ErrorActionPreference = 'stop'  # Set error action preference to 'stop' to halt execution on error
 
-    # Define Azure Storage account connection string and table name
-    $ConnectionString = '==>REPLACED==>=***REMOVED***;EndpointSuffix=core.windows.net'
+    # Get connection string from environment variable
+    $ConnectionString = $env:STORAGE_ACCOUNT_CONNECTION_STRING
+    if (-not $ConnectionString) {
+        Write-Error "STORAGE_ACCOUNT_CONNECTION_STRING environment variable is not set"
+        return $null
+    }
     $TableName = 'appointments'
 
     # Create the storage context using the connection string
@@ -52,8 +56,12 @@ function Validate-Row {
 
     $ErrorActionPreference = 'stop'  # Set error action preference to 'stop' to halt execution on error
 
-    # Define Azure Storage account connection string and table name
-    $ConnectionString = '==>REPLACED==>=***REMOVED***;EndpointSuffix=core.windows.net'
+    # Get connection string from environment variable
+    $ConnectionString = $env:STORAGE_ACCOUNT_CONNECTION_STRING
+    if (-not $ConnectionString) {
+        Write-Error "STORAGE_ACCOUNT_CONNECTION_STRING environment variable is not set"
+        return 3
+    }
     $TableName = 'appointments'
 
     # Create the storage context using the connection string

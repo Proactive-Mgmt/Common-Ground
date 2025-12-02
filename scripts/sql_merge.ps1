@@ -1,6 +1,6 @@
 # Connection Variables
 $storageAccountName = "hopescalesurvey9d6a"
-$storage==>REPLACED==> = "***REMOVED***"
+$storageAccountKey = "***REMOVED***"
 $tableName = "appointments"
 $sqlServer = "CGSQL4"
 $database = "CG_Reporting"
@@ -10,7 +10,7 @@ $password = "***REMOVED***"
 
 # Create Context
 try {
-    $context = New-AzStorageContext -StorageAccountName $storageAccountName -Storage==>REPLACED==> $storage==>REPLACED==>
+    $context = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageAccountKey
     Write-Output "Context created successfully"
 } catch {
     Write-Error "Error creating storage context: $_"
