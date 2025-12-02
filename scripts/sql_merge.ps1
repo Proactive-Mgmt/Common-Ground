@@ -1,12 +1,12 @@
-# Connection Variables
-$storageAccountName = "hopescalesurvey9d6a"
-$storageAccountKey = "***REMOVED***"
-$tableName = "appointments"
-$sqlServer = "CGSQL4"
-$database = "CG_Reporting"
-$table = "[dbo].[HopeSurveyAnswers]"
-$username = "ReplicationUser"
-$password = "***REMOVED***"
+# Connection Variables - loaded from environment
+$storageAccountName = $env:STORAGE_ACCOUNT_NAME
+$storageAccountKey = $env:STORAGE_ACCOUNT_KEY
+$tableName = $env:TABLE_NAME ?? "appointments"
+$sqlServer = $env:SQL_SERVER
+$database = $env:SQL_DATABASE ?? "CG_Reporting"
+$table = $env:SQL_TABLE ?? "[dbo].[HopeSurveyAnswers]"
+$username = $env:SQL_USERNAME
+$password = $env:SQL_PASSWORD
 
 # Create Context
 try {

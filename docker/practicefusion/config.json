@@ -11,7 +11,7 @@
         "TWILIO_ACCOUNT_SID": "secretref:twilio-account-sid",
         "TWILIO_AUTH_TOKEN": "secretref:twilio-auth-token",
         "TWILIO_CAMPAIGN_SID": "secretref:twilio-campaign-sid",
-        "TWILIO_SURVEY_LINK": "https://survey.cghelps.org/api/serve?code=***REMOVED***",
+        "TWILIO_SURVEY_LINK": "https://survey.cghelps.org/api/serve?code=zZZPw2iBoFp7-c-JdB6LMChg5sfcsILMEEmiU1W8HxnbAzFuD_Zx4g%3D%3D",
         "CALLHARBOR_USERNAME": "secretref:callharbor-username",
         "CALLHARBOR_PASSWORD": "secretref:callharbor-password",
         "CALLHARBOR_MFA_SECRET": "secretref:callharbor-mfa-secret",
