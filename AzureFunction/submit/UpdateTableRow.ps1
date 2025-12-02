@@ -10,7 +10,12 @@ function Update-TableRow {
     )
 
     $ErrorActionPreference = 'stop'
-    $ConnectionString = '==>REPLACED==>=***REMOVED***;EndpointSuffix=core.windows.net'
+    # Get connection string from environment variable
+    $ConnectionString = $env:STORAGE_ACCOUNT_CONNECTION_STRING
+    if (-not $ConnectionString) {
+        Write-Error "STORAGE_ACCOUNT_CONNECTION_STRING environment variable is not set"
+        return
+    }
     $TableName = 'appointments'
 
 
